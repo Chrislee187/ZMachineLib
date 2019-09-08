@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using ZMachineLib;
+using ZMachineLib.Operations;
 
 namespace ConsoleZMachine
 {
@@ -7,7 +8,7 @@ namespace ConsoleZMachine
 	{
 		static void Main(string[] args)
 		{
-			ZMachine zMachine = new ZMachine(new ConsoleIO());
+			var zMachine = new ZMachine2(new ConsoleIO());
 
 			FileStream fs = File.OpenRead(@"zork1.dat");
 			zMachine.LoadFile(fs);

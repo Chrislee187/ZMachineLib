@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace ZMachineLib
 {
 	[DataContract]
-	internal class ZStackFrame
+	public class ZStackFrame
 	{
 		[DataMember]
 		public uint PC { get; set; }
