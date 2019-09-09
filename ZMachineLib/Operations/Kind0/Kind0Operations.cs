@@ -33,4 +33,22 @@ namespace ZMachineLib.Operations.Kind0
             Add(Kind0OpCodes.Piracy, new Piracy(machine));;
         }
     }
+
+    public class Kind1Operations : Dictionary<Kind1OpCodes, IOperation>
+    {
+//        public RTrue RTrue { get; }
+//        public RFalse RFalse { get; }
+//        public Save Save { get; }
+//        public Restore Restore { get; }
+        public Kind1Operations(ZMachine2 machine,
+            IZMachineIO io)
+        {
+//            RTrue = new RTrue(machine);
+//            RFalse = new RFalse(machine);
+//            Save = new Save(machine, io, RTrue, RFalse);
+//            Restore = new Restore(machine, io);
+
+//            Add(Kind0OpCodes.RTrue, RTrue);
+        }
+    }
 }

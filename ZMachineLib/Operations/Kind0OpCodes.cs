@@ -17,4 +17,9 @@
         Verify = 0x0d,
         Piracy = 0x0f
     }
+
+    public enum Kind1OpCodes : ushort
+    {
+        
+    }
 }

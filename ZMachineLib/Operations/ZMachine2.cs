@@ -34,6 +34,7 @@ namespace ZMachineLib.Operations
 
 
         private Kind0Operations _kind0Ops;
+        private Kind1Operations _kind1Ops;
         private readonly Opcode[] _1Opcodes = new Opcode[0x10];
         private readonly Opcode[] _2Opcodes = new Opcode[0x20];
         private readonly Opcode[] _varOpcodes = new Opcode[0x20];
@@ -205,6 +206,8 @@ namespace ZMachineLib.Operations
             _kind0Ops = new Kind0Operations(this, _io);
             RTrue = _kind0Ops[Kind0OpCodes.RTrue];
             RFalse = _kind0Ops[Kind0OpCodes.RFalse];
+
+            _kind1Ops = new Kind1Operations(this, _io);
         }
 
         public void Run(bool terminateOnInput = false)
@@ -230,7 +233,10 @@ namespace ZMachineLib.Operations
                 else if (o < 0x80)
                     opcode = _2Opcodes?[o & 0x1f];
                 else if (o < 0xb0)
+                {
                     opcode = _1Opcodes?[o & 0x0f];
+                    _kind1Ops.TryGetValue((Kind1OpCodes)(o & 0x0f), out operation);
+                }
                 else if (o < 0xc0)
                 {
                     opcode = null;
