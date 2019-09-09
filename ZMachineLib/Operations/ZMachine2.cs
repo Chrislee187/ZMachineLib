@@ -8,41 +8,17 @@ namespace ZMachineLib.Operations
 {
     public class ZMachine2
     {
-        private const int ParentOffsetV3 = 4;
-        private const int SiblingOffsetV3 = 5;
-        private const int ChildOffsetV3 = 6;
-        private const int PropertyOffsetV3 = 7;
-        private const int ObjectSizeV3 = 9;
-        private const int PropertyDefaultTableSizeV3 = 62;
-
-        private const int ParentOffsetV5 = 6;
-        private const int SiblingOffsetV5 = 8;
-        private const int ChildOffsetV5 = 10;
-        private const int PropertyOffsetV5 = 12;
-        private const int ObjectSizeV5 = 14;
-        private const int PropertyDefaultTableSizeV5 = 126;
-
-        private int ParentOffset;
-        private int SiblingOffset;
-        private int ChildOffset;
-        private int PropertyOffset;
-        private int ObjectSize;
-        private int PropertyDefaultTableSize;
-
-        private const int VersionOffset = 0x00;
-        private const int InitialPCOffset = 0x06;
-        private const int DictionaryOffset = 0x08;
-        private const int ObjectTableOffset = 0x0a;
-        private const int GlobalVarOffset = 0x0c;
-        private const int StaticMemoryOffset = 0x0e;
-        private const int AbbreviationTableOffset = 0x18;
-
+        private readonly ZsciiString _zsciiString;
         private readonly IZMachineIO _io;
-        internal byte[] Memory;
+
+        private VersionOffsets _versionOffsets;
         private Stream _file;
         private bool _running;
         private Random _random = new Random();
         private string[] _dictionaryWords;
+
+        internal byte[] Memory;
+        internal Stack<ZStackFrame> Stack = new Stack<ZStackFrame>();
 
         internal byte Version;
         internal ushort Globals;
@@ -56,7 +32,6 @@ namespace ZMachineLib.Operations
         private ushort _dictionary;
         private bool _terminateOnInput;
 
-        internal Stack<ZStackFrame> Stack = new Stack<ZStackFrame>();
 
         private Kind0Operations _kind0Ops;
         private readonly Opcode[] _1Opcodes = new Opcode[0x10];
@@ -74,15 +49,14 @@ namespace ZMachineLib.Operations
             Name = "UNKNOWN"
         };
 
-        private readonly string _table = @" ^0123456789.,!?_#'""/\-:()";
         private byte _entryLength;
         private ushort _wordStart;
 
         public ZMachine2(IZMachineIO io)
         {
             _io = io;
+            _zsciiString = new ZsciiString(this);
 
-//            InitOpcodes(_0Opcodes);
             InitOpcodes(_1Opcodes);
             InitOpcodes(_2Opcodes);
             InitOpcodes(_varOpcodes);
@@ -184,17 +158,9 @@ namespace ZMachineLib.Operations
         {
             _file = stream;
 
-            Memory = new byte[stream.Length];
-            stream.Seek(0, SeekOrigin.Begin);
-            stream.Read(Memory, 0, (int) stream.Length);
+            Memory = InitialiseMemoryBuffer(stream);
 
-            Version = Memory[VersionOffset];
-            _pc = GetWord(InitialPCOffset);
-            _dictionary = GetWord(DictionaryOffset);
-            _objectTable = GetWord(ObjectTableOffset);
-            Globals = GetWord(GlobalVarOffset);
-            AbbreviationsTable = GetWord(AbbreviationTableOffset);
-            DynamicMemorySize = GetWord(StaticMemoryOffset);
+            ReadHeaderInfo();
 
             // TODO: set these via IZMachineIO
             Memory[0x01] = 0x01;
@@ -207,27 +173,29 @@ namespace ZMachineLib.Operations
 
             ParseDictionary();
 
-            if (Version <= 3)
-            {
-                ParentOffset = ParentOffsetV3;
-                SiblingOffset = SiblingOffsetV3;
-                ChildOffset = ChildOffsetV3;
-                PropertyOffset = PropertyOffsetV3;
-                ObjectSize = ObjectSizeV3;
-                PropertyDefaultTableSize = PropertyDefaultTableSizeV3;
-            }
-            else if (Version <= 5)
-            {
-                ParentOffset = ParentOffsetV5;
-                SiblingOffset = SiblingOffsetV5;
-                ChildOffset = ChildOffsetV5;
-                PropertyOffset = PropertyOffsetV5;
-                ObjectSize = ObjectSizeV5;
-                PropertyDefaultTableSize = PropertyDefaultTableSizeV5;
-            }
+            _versionOffsets = VersionOffsets.For(Version);
 
             ZStackFrame zsf = new ZStackFrame {PC = _pc};
             Stack.Push(zsf);
+        }
+
+        private byte[] InitialiseMemoryBuffer(Stream stream)
+        {
+            var buffer = new byte[stream.Length];
+            stream.Seek(0, SeekOrigin.Begin);
+            stream.Read(buffer, 0, (int) stream.Length);
+            return buffer;
+        }
+
+        private void ReadHeaderInfo()
+        {
+            Version = Memory[HeaderOffsets.VersionOffset];
+            _pc = GetWord(HeaderOffsets.InitialPCOffset);
+            _dictionary = GetWord(HeaderOffsets.DictionaryOffset);
+            _objectTable = GetWord(HeaderOffsets.ObjectTableOffset);
+            Globals = GetWord(HeaderOffsets.GlobalVarOffset);
+            DynamicMemorySize = GetWord(HeaderOffsets.StaticMemoryOffset);
+            AbbreviationsTable = GetWord(HeaderOffsets.AbbreviationTableOffset);
         }
 
         public IOperation RTrue { get; private set; }
@@ -265,7 +233,6 @@ namespace ZMachineLib.Operations
                     opcode = _1Opcodes?[o & 0x0f];
                 else if (o < 0xc0)
                 {
-//                    opcode = _0Opcodes?[o & 0x0f];
                     opcode = null;
                     _kind0Ops.TryGetValue((Kind0OpCodes) (o & 0x0f), out operation);
                 }
@@ -354,89 +321,9 @@ namespace ZMachineLib.Operations
         {
             // TODO: print properly
 
-            List<byte> chars = GetZsciiChars(args[0]);
-            string s = DecodeZsciiChars(chars);
+            string s = _zsciiString.GetZsciiString(args[0]);
             _io.Print(s);
             Log.Write($"[{s}]");
-        }
-
-
-        private string DecodeZsciiChars(List<byte> chars)
-        {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < chars.Count; i++)
-            {
-                if (chars[i] == 0x00)
-                    sb.Append(" ");
-                else if (chars[i] >= 0x01 && chars[i] <= 0x03)
-                {
-                    ushort offset = (ushort) (32 * (chars[i] - 1) + chars[++i]);
-                    ushort lookup = (ushort) (AbbreviationsTable + (offset * 2));
-                    ushort wordAddr = GetWord(lookup);
-                    List<byte> abbrev = GetZsciiChars((ushort) (wordAddr * 2));
-                    sb.Append(DecodeZsciiChars(abbrev));
-                }
-                else if (chars[i] == 0x04)
-                    sb.Append(Convert.ToChar((chars[++i] - 6) + 'A'));
-                else if (chars[i] == 0x05)
-                {
-                    if (i == chars.Count - 1 || chars[i + 1] == 0x05)
-                        break;
-
-                    if (chars[i + 1] == 0x06)
-                    {
-                        ushort x = (ushort) (chars[i + 2] << 5 | chars[i + 3]);
-                        i += 3;
-                        sb.Append(Convert.ToChar(x));
-                    }
-                    else if (chars[i + 1] == 0x07)
-                    {
-                        sb.AppendLine("");
-                        i++;
-                    }
-                    else
-                        sb.Append(_table[chars[++i] - 6]);
-                }
-                else
-                    sb.Append(Convert.ToChar((chars[i] - 6) + 'a'));
-            }
-
-            return sb.ToString();
-        }
-
-        private List<byte> GetZsciiChars(uint address)
-        {
-            List<byte> chars = new List<byte>();
-            ushort word;
-            do
-            {
-                word = GetWord(address);
-                chars.AddRange(GetZsciiChar(address));
-                address += 2;
-            } while ((word & 0x8000) != 0x8000);
-
-            return chars;
-        }
-
-        private List<byte> GetZsciiChar(uint address)
-        {
-            List<byte> chars = new List<byte>();
-
-            var word = GetWord(address);
-
-            byte c = (byte) (word >> 10 & 0x1f);
-            chars.Add(c);
-            c = (byte) (word >> 5 & 0x1f);
-            chars.Add(c);
-            c = (byte) (word >> 0 & 0x1f);
-            chars.Add(c);
-
-            return chars;
-        }
-
-        private void NewLine(List<ushort> args)
-        {
-            _io.Print(Environment.NewLine);
         }
 
         private void PrintNum(List<ushort> args)
@@ -456,24 +343,21 @@ namespace ZMachineLib.Operations
         private void PrintObj(List<ushort> args)
         {
             ushort addr = GetPropertyHeaderAddress(args[0]);
-            var chars = GetZsciiChars((ushort) (addr + 1));
-            string s = DecodeZsciiChars(chars);
+            string s = _zsciiString.GetZsciiString((ushort)(addr + 1));
             _io.Print(s);
             Log.Write($"[{s}]");
         }
 
         private void PrintAddr(List<ushort> args)
         {
-            List<byte> chars = GetZsciiChars(args[0]);
-            string s = DecodeZsciiChars(chars);
+            string s = _zsciiString.GetZsciiString(args[0]);
             _io.Print(s);
             Log.Write($"[{s}]");
         }
 
         private void PrintPAddr(List<ushort> args)
         {
-            List<byte> chars = GetZsciiChars(GetPackedAddress(args[0]));
-            string s = DecodeZsciiChars(chars);
+            string s = _zsciiString.GetZsciiString(GetPackedAddress(args[0]));
             _io.Print(s);
             Log.Write($"[{s}]");
         }
@@ -628,15 +512,15 @@ namespace ZMachineLib.Operations
             ushort obj1Addr = GetObjectAddress(args[0]);
             ushort obj2Addr = GetObjectAddress(args[1]);
 
-            ushort parent1 = GetObjectNumber((ushort) (obj1Addr + ParentOffset));
-            ushort sibling1 = GetObjectNumber((ushort) (obj1Addr + SiblingOffset));
-            ushort child2 = GetObjectNumber((ushort) (obj2Addr + ChildOffset));
+            ushort parent1 = GetObjectNumber((ushort) (obj1Addr + _versionOffsets.Parent));
+            ushort sibling1 = GetObjectNumber((ushort) (obj1Addr + _versionOffsets.Sibling));
+            ushort child2 = GetObjectNumber((ushort) (obj2Addr + _versionOffsets.Child));
 
             ushort parent1Addr = GetObjectAddress(parent1);
 
-            ushort parent1Child = GetObjectNumber((ushort) (parent1Addr + ChildOffset));
+            ushort parent1Child = GetObjectNumber((ushort) (parent1Addr + _versionOffsets.Child));
             ushort parent1ChildAddr = GetObjectAddress(parent1Child);
-            ushort parent1ChildSibling = GetObjectNumber((ushort) (parent1ChildAddr + SiblingOffset));
+            ushort parent1ChildSibling = GetObjectNumber((ushort) (parent1ChildAddr + _versionOffsets.Sibling));
 
             if (parent1 == obj2 && child2 == obj1)
                 return;
@@ -645,7 +529,7 @@ namespace ZMachineLib.Operations
             if (parent1Child == obj1)
             {
                 // set parent1's child to obj1's sibling
-                SetObjectNumber((ushort) (parent1Addr + ChildOffset), sibling1);
+                SetObjectNumber((ushort) (parent1Addr + _versionOffsets.Child), sibling1);
             }
             else // else if I'm not the child but there is a child, we need to link the broken sibling chain
             {
@@ -659,23 +543,23 @@ namespace ZMachineLib.Operations
                     if (currentSibling == obj1)
                     {
                         // set the current object's sibling to the next sibling
-                        SetObjectNumber((ushort) (addr + SiblingOffset), sibling1);
+                        SetObjectNumber((ushort) (addr + _versionOffsets.Sibling), sibling1);
                         break;
                     }
 
                     addr = GetObjectAddress(currentSibling);
-                    currentSibling = GetObjectNumber((ushort) (addr + SiblingOffset));
+                    currentSibling = GetObjectNumber((ushort) (addr + _versionOffsets.Sibling));
                 }
             }
 
             // set obj1's parent to obj2
-            SetObjectNumber((ushort) (obj1Addr + ParentOffset), obj2);
+            SetObjectNumber((ushort) (obj1Addr + _versionOffsets.Parent), obj2);
 
             // set obj2's child to obj1
-            SetObjectNumber((ushort) (obj2Addr + ChildOffset), obj1);
+            SetObjectNumber((ushort) (obj2Addr + _versionOffsets.Child), obj1);
 
             // set obj1's sibling to obj2's child
-            SetObjectNumber((ushort) (obj1Addr + SiblingOffset), child2);
+            SetObjectNumber((ushort) (obj1Addr + _versionOffsets.Sibling), child2);
         }
 
         private void RemoveObj(List<ushort> args)
@@ -685,18 +569,18 @@ namespace ZMachineLib.Operations
 
             Log.Write($"[{GetObjectName(args[0])}] ");
             ushort objAddr = GetObjectAddress(args[0]);
-            ushort parent = GetObjectNumber((ushort) (objAddr + ParentOffset));
+            ushort parent = GetObjectNumber((ushort) (objAddr + _versionOffsets.Parent));
             ushort parentAddr = GetObjectAddress(parent);
-            ushort parentChild = GetObjectNumber((ushort) (parentAddr + ChildOffset));
-            ushort sibling = GetObjectNumber((ushort) (objAddr + SiblingOffset));
+            ushort parentChild = GetObjectNumber((ushort) (parentAddr + _versionOffsets.Child));
+            ushort sibling = GetObjectNumber((ushort) (objAddr + _versionOffsets.Sibling));
 
             // if object is the first child, set first child to the sibling
             if (parent == args[0])
-                SetObjectNumber((ushort) (parentAddr + ChildOffset), sibling);
+                SetObjectNumber((ushort) (parentAddr + _versionOffsets.Child), sibling);
             else if (parentChild != 0)
             {
                 ushort addr = GetObjectAddress(parentChild);
-                ushort currentSibling = GetObjectNumber((ushort) (addr + SiblingOffset));
+                ushort currentSibling = GetObjectNumber((ushort) (addr + _versionOffsets.Sibling));
 
                 // while sibling of parent1's child has siblings
                 while (currentSibling != 0)
@@ -705,17 +589,17 @@ namespace ZMachineLib.Operations
                     if (currentSibling == args[0])
                     {
                         // set the current object's sibling to the next sibling
-                        SetObjectNumber((ushort) (addr + SiblingOffset), sibling);
+                        SetObjectNumber((ushort) (addr + _versionOffsets.Sibling), sibling);
                         break;
                     }
 
                     addr = GetObjectAddress(currentSibling);
-                    currentSibling = GetObjectNumber((ushort) (addr + SiblingOffset));
+                    currentSibling = GetObjectNumber((ushort) (addr + _versionOffsets.Sibling));
                 }
             }
 
             // set the object's parent to nothing
-            SetObjectNumber((ushort) (objAddr + ParentOffset), 0);
+            SetObjectNumber((ushort) (objAddr + _versionOffsets.Parent), 0);
         }
 
         private void GetProp(List<ushort> args)
@@ -950,7 +834,7 @@ namespace ZMachineLib.Operations
             Log.Write($"[{GetObjectName(args[0])}] ");
 
             ushort addr = GetObjectAddress(args[0]);
-            ushort parent = GetObjectNumber((ushort) (addr + ParentOffset));
+            ushort parent = GetObjectNumber((ushort) (addr + _versionOffsets.Parent));
 
             Log.Write($"[{GetObjectName(parent)}] ");
 
@@ -967,7 +851,7 @@ namespace ZMachineLib.Operations
             Log.Write($"[{GetObjectName(args[0])}] ");
 
             ushort addr = GetObjectAddress(args[0]);
-            ushort child = GetObjectNumber((ushort) (addr + ChildOffset));
+            ushort child = GetObjectNumber((ushort) (addr + _versionOffsets.Child));
 
             Log.Write($"[{GetObjectName(child)}] ");
 
@@ -986,7 +870,7 @@ namespace ZMachineLib.Operations
             Log.Write($"[{GetObjectName(args[0])}] ");
 
             ushort addr = GetObjectAddress(args[0]);
-            ushort sibling = GetObjectNumber((ushort) (addr + SiblingOffset));
+            ushort sibling = GetObjectNumber((ushort) (addr + _versionOffsets.Sibling));
 
             Log.Write($"[{GetObjectName(sibling)}] ");
 
@@ -1081,7 +965,7 @@ namespace ZMachineLib.Operations
             Log.Write($"C[{GetObjectName(args[0])}] P[{GetObjectName(args[1])}] ");
 
             ushort addr = GetObjectAddress(args[0]);
-            ushort parent = GetObjectNumber((ushort) (addr + ParentOffset));
+            ushort parent = GetObjectNumber((ushort) (addr + _versionOffsets.Parent));
             Jump(parent == args[1]);
         }
 
@@ -1580,7 +1464,7 @@ namespace ZMachineLib.Operations
 
         private ushort GetObjectAddress(ushort obj)
         {
-            ushort objectAddr = (ushort) (_objectTable + PropertyDefaultTableSize + (obj - 1) * ObjectSize);
+            ushort objectAddr = (ushort) (_objectTable + _versionOffsets.PropertyDefaultTableSize + (obj - 1) * _versionOffsets.ObjectSize);
             return objectAddr;
         }
 
@@ -1602,7 +1486,7 @@ namespace ZMachineLib.Operations
         private ushort GetPropertyHeaderAddress(ushort obj)
         {
             ushort objectAddr = GetObjectAddress(obj);
-            ushort propAddr = (ushort) (objectAddr + PropertyOffset);
+            ushort propAddr = (ushort) (objectAddr + _versionOffsets.Property);
             ushort prop = GetWord(propAddr);
             return prop;
         }
@@ -1649,8 +1533,7 @@ namespace ZMachineLib.Operations
                 ushort addr = GetPropertyHeaderAddress(obj);
                 if (Memory[addr] != 0)
                 {
-                    List<byte> chars = GetZsciiChars((uint) (addr + 1));
-                    s = DecodeZsciiChars(chars);
+                    s = _zsciiString.GetZsciiString((uint)(addr + 1));
                 }
             }
 
@@ -1661,7 +1544,7 @@ namespace ZMachineLib.Operations
         {
             ushort lowest = 0xffff;
 
-            for (ushort i = 1; i < 255 && (_objectTable + i * ObjectSize) < lowest; i++)
+            for (ushort i = 1; i < 255 && (_objectTable + i * _versionOffsets.ObjectSize) < lowest; i++)
             {
                 ushort addr = PrintObjectInfo(i, true);
                 if (addr < lowest)
@@ -1674,7 +1557,7 @@ namespace ZMachineLib.Operations
             for (ushort i = 1; i < 255; i++)
             {
                 ushort addr = GetObjectAddress(i);
-                ushort parent = GetObjectNumber((ushort) (addr + ParentOffset));
+                ushort parent = GetObjectNumber((ushort) (addr + _versionOffsets.Parent));
                 if (parent == 0)
                     PrintTree(i, 0);
             }
@@ -1689,8 +1572,8 @@ namespace ZMachineLib.Operations
 
                 PrintObjectInfo(obj, false);
                 ushort addr = GetObjectAddress(obj);
-                ushort child = GetObjectNumber((ushort) (addr + ChildOffset));
-                obj = GetObjectNumber((ushort) (addr + SiblingOffset));
+                ushort child = GetObjectNumber((ushort) (addr + _versionOffsets.Child));
+                obj = GetObjectNumber((ushort) (addr + _versionOffsets.Sibling));
                 if (child != 0)
                     PrintTree(child, depth + 1);
             }
@@ -1704,10 +1587,10 @@ namespace ZMachineLib.Operations
             ushort startAddr = GetObjectAddress(obj);
 
             ulong attributes = (ulong) GetUint(startAddr) << 16 | GetWord((uint) (startAddr + 4));
-            ushort parent = GetObjectNumber((ushort) (startAddr + ParentOffset));
-            ushort sibling = GetObjectNumber((ushort) (startAddr + SiblingOffset));
-            ushort child = GetObjectNumber((ushort) (startAddr + ChildOffset));
-            ushort propAddr = GetWord((uint) (startAddr + PropertyOffset));
+            ushort parent = GetObjectNumber((ushort) (startAddr + _versionOffsets.Parent));
+            ushort sibling = GetObjectNumber((ushort) (startAddr + _versionOffsets.Sibling));
+            ushort child = GetObjectNumber((ushort) (startAddr + _versionOffsets.Child));
+            ushort propAddr = GetWord((uint) (startAddr + _versionOffsets.Property));
 
             Log.Write($"{obj} ({obj:X2}) at {propAddr:X5}: ");
 
@@ -1715,8 +1598,7 @@ namespace ZMachineLib.Operations
             string s = string.Empty;
             if (size > 0)
             {
-                var name = GetZsciiChars(propAddr);
-                s = DecodeZsciiChars(name);
+                s = _zsciiString.GetZsciiString(propAddr);
             }
 
             propAddr += (ushort) (size * 2);
@@ -1776,11 +1658,11 @@ namespace ZMachineLib.Operations
             for (int i = 0; i < numEntries; i++)
             {
                 ushort wordAddress = (ushort) (address + i * _entryLength);
-                var chars = GetZsciiChar(wordAddress);
-                chars.AddRange(GetZsciiChar((uint) (wordAddress + 2)));
+                var chars = _zsciiString.GetZsciiChar(wordAddress);
+                chars.AddRange(_zsciiString.GetZsciiChar((uint) (wordAddress + 2)));
                 if (_entryLength == 9)
-                    chars.AddRange(GetZsciiChar((uint) (wordAddress + 4)));
-                string s = DecodeZsciiChars(chars);
+                    chars.AddRange(_zsciiString.GetZsciiChar((uint) (wordAddress + 4)));
+                string s = _zsciiString.DecodeZsciiChars(chars);
                 _dictionaryWords[i] = s;
             }
         }
