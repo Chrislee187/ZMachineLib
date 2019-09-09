@@ -27,10 +27,10 @@ namespace ZMachineLib.Operations
         internal ushort ReadTextAddr;
         internal ushort ReadParseAddr;
 
-        private ushort _pc;
+        internal ushort Pc;
         internal ushort ObjectTable;
-        private ushort _dictionary;
-        private bool _terminateOnInput;
+        internal ushort Dictionary;
+        internal bool TerminateOnInput;
 
 
         private Kind0Operations _kind0Ops;
@@ -156,7 +156,7 @@ namespace ZMachineLib.Operations
 
             Offsets = VersionOffsets.For(Version);
 
-            ZStackFrame zsf = new ZStackFrame {PC = _pc};
+            ZStackFrame zsf = new ZStackFrame {PC = Pc};
             Stack.Push(zsf);
         }
 
@@ -171,8 +171,8 @@ namespace ZMachineLib.Operations
         private void ReadHeaderInfo()
         {
             Version = Memory[HeaderOffsets.VersionOffset];
-            _pc = GetWord(HeaderOffsets.InitialPCOffset);
-            _dictionary = GetWord(HeaderOffsets.DictionaryOffset);
+            Pc = GetWord(HeaderOffsets.InitialPCOffset);
+            Dictionary = GetWord(HeaderOffsets.DictionaryOffset);
             ObjectTable = GetWord(HeaderOffsets.ObjectTableOffset);
             Globals = GetWord(HeaderOffsets.GlobalVarOffset);
             DynamicMemorySize = GetWord(HeaderOffsets.StaticMemoryOffset);
@@ -200,7 +200,7 @@ namespace ZMachineLib.Operations
 
         public void Run(bool terminateOnInput = false)
         {
-            _terminateOnInput = terminateOnInput;
+            TerminateOnInput = terminateOnInput;
 
             _running = true;
 
@@ -429,7 +429,7 @@ namespace ZMachineLib.Operations
             ReadTextAddr = args[0];
             ReadParseAddr = args[1];
 
-            if (_terminateOnInput)
+            if (TerminateOnInput)
                 _running = false;
             else
             {
@@ -1644,7 +1644,7 @@ namespace ZMachineLib.Operations
 
         private void ParseDictionary()
         {
-            ushort address = _dictionary;
+            ushort address = Dictionary;
 
             byte len = Memory[address++];
             address += len;
