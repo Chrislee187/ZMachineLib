@@ -10,7 +10,7 @@ namespace ZMachineLib.Operations.Kind0
         }
         private static byte[] nopBytes;
         public Nop(Kind0OpCodes opCode = Kind0OpCodes.Nop) 
-            : base(opCode, null)
+            : base((ushort)opCode, null)
         {
         }
     }

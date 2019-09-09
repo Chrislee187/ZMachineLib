@@ -5,10 +5,10 @@
         protected readonly IZMachineIO Io;
 
         protected readonly ZsciiString ZsciiString;
-        protected BasePrintingOperations(Kind0OpCodes code,
+        protected BasePrintingOperations(ushort code,
             ZMachine2 machine,
             IZMachineIO io) 
-            : base(code, machine)
+            : base((ushort) code, machine)
         {
             Io = io;
             ZsciiString = new ZsciiString(machine);

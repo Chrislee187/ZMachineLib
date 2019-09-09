@@ -5,7 +5,7 @@ namespace ZMachineLib.Operations.Kind0
     public sealed class Piracy : ZMachineOperation
     {
         public Piracy(ZMachine2 machine)
-            : base(Kind0OpCodes.Verify, machine)
+            : base((ushort)Kind0OpCodes.Verify, machine)
         {
 
         }

@@ -4,7 +4,7 @@ namespace ZMachineLib.Operations
 {
     public interface IOperation
     {
-        Kind0OpCodes Code { get; }
+        ushort Code { get; }
         void Execute(List<ushort> args);
     }
 }

@@ -12,7 +12,7 @@ namespace ZMachineLib.Operations.Kind0
             ZMachine2 machine,
             IZMachineIO io,
             RTrue rTrue, RFalse rFalse)
-            : base(opCode, machine)
+            : base((ushort)opCode, machine)
         {
             RFalse = rFalse;
             RTrue = rTrue;

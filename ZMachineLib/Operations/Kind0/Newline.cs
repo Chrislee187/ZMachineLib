@@ -8,7 +8,7 @@ namespace ZMachineLib.Operations.Kind0
         private readonly IZMachineIO _io;
 
         public Newline(ZMachine2 machine, IZMachineIO io)
-            : base(Kind0OpCodes.NewLine, machine)
+            : base((ushort)Kind0OpCodes.NewLine, machine)
         {
             _io = io;
         }

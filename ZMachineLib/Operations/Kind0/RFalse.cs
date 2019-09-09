@@ -5,7 +5,7 @@ namespace ZMachineLib.Operations.Kind0
     public sealed class RFalse : ZMachineOperation
     {
         public RFalse(ZMachine2 machine)
-            : base(Kind0OpCodes.RFalse, machine)
+            : base((ushort)Kind0OpCodes.RFalse, machine)
         {
         }
 

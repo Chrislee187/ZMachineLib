@@ -5,7 +5,7 @@ namespace ZMachineLib.Operations.Kind0
     public sealed class RetPopped : ZMachineOperation
     {
         public RetPopped(ZMachine2 machine)
-            : base(Kind0OpCodes.RetPopped, machine)
+            : base((ushort)Kind0OpCodes.RetPopped, machine)
         {
         }
 

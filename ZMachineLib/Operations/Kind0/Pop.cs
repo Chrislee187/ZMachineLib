@@ -5,7 +5,7 @@ namespace ZMachineLib.Operations.Kind0
     public sealed class Pop : ZMachineOperation
     {
         public Pop(ZMachine2 machine)
-            : base(Kind0OpCodes.Pop, machine)
+            : base((ushort)Kind0OpCodes.Pop, machine)
         {
         }
 

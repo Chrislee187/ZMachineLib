@@ -1792,7 +1792,7 @@ namespace ZMachineLib
 
 			propAddr += (ushort)(size*2);
 
-			Log.WriteLine($"[{s}] A:{attributes:X12} P:{parent}({parent:X2}) S:{sibling}({sibling:X2}) C:{child}({child:X2})");
+			Log.WriteLine($"[{s}] A:{attributes:X12} P:{parent}({parent:X2}) ZsciiString:{sibling}({sibling:X2}) C:{child}({child:X2})");
 
 			if(properties)
 			{

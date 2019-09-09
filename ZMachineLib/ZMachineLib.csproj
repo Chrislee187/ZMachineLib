@@ -19,8 +19,4 @@
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Operations\Kind1\" />
-  </ItemGroup>
-
 </Project>

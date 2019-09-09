@@ -5,7 +5,7 @@ namespace ZMachineLib.Operations.Kind0
     public sealed class RTrue : ZMachineOperation
     {
         public RTrue(ZMachine2 machine)
-            : base(Kind0OpCodes.RTrue, machine)
+            : base((ushort)Kind0OpCodes.RTrue, machine)
         {
         }
 

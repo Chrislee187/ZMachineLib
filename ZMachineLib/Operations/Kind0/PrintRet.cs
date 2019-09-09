@@ -10,7 +10,7 @@ namespace ZMachineLib.Operations.Kind0
         public PrintRet(ZMachine2 machine,
             IZMachineIO io,
             RTrue rTrue)
-            : base(Kind0OpCodes.Print, machine, io)
+            : base((ushort) Kind0OpCodes.PrintRet, machine, io)
         {
             _rTrue = rTrue;
         }

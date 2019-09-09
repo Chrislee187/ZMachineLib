@@ -7,7 +7,7 @@ namespace ZMachineLib.Operations.Kind0
         private readonly IZMachineIO _io;
 
         public ShowStatus(ZMachine2 machine, IZMachineIO io)
-            : base(Kind0OpCodes.ShowStatus, machine)
+            : base((ushort)Kind0OpCodes.ShowStatus, machine)
         {
             _io = io;
         }

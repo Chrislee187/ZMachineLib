@@ -6,7 +6,7 @@ namespace ZMachineLib.Operations.Kind0
     {
         public Print(ZMachine2 machine,
             IZMachineIO io)
-            : base(Kind0OpCodes.Print, machine, io)
+            : base((ushort) Kind0OpCodes.Print, machine, io)
         {
         }
 
