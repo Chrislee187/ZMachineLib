@@ -36,7 +36,7 @@ namespace ZMachineLib.Operations.Kind0
                 else if (chars[i] >= 0x01 && chars[i] <= 0x03)
                 {
                     var offset = (ushort)(32 * (chars[i] - 1) + chars[++i]);
-                    var lookup = (ushort)(Machine.AbbreviationsTable + (offset * 2));
+                    var lookup = (ushort)(Machine.Header.AbbreviationsTable + (offset * 2));
                     var wordAddr = GetWord(lookup);
                     var abbrev = GetZsciiChars((ushort)(wordAddr * 2));
                     sb.Append(DecodeZsciiChars(abbrev));

@@ -16,8 +16,8 @@ namespace ZMachineLib.Operations
         {
             Machine.Stack = newStack;
         }
-        protected ushort Version => Machine.Version;
-        protected ushort Globals => Machine.Globals;
+        protected ushort Version => Machine.Header.Version;
+        protected ushort Globals => Machine.Header.Globals;
         protected ushort ReadParseAddr
         {
             get => Machine.ReadParseAddr;
@@ -30,11 +30,11 @@ namespace ZMachineLib.Operations
             set => Machine.ReadTextAddr = value;
         }
 
-        protected ushort ObjectTable => Machine.ObjectTable;
+        protected ushort ObjectTable => Machine.Header.ObjectTable;
         protected VersionedOffsets Offsets => Machine.VersionedOffsets;
         protected VersionedOffsets VersionedOffsets => Machine.VersionedOffsets;
         protected ZsciiString ZsciiString => Machine.ZsciiString;
-        protected ushort DynamicMemorySize => Machine.DynamicMemorySize;
+        protected ushort DynamicMemorySize => Machine.Header.DynamicMemorySize;
 
         protected ZMachineOperation(ushort code,
             ZMachine2 machine)

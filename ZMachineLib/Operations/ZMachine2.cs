@@ -18,16 +18,9 @@ namespace ZMachineLib.Operations
         internal byte[] Memory;
         internal Stack<ZStackFrame> Stack = new Stack<ZStackFrame>();
 
-        internal byte Version;
-        internal ushort Globals;
-        internal ushort AbbreviationsTable;
-        internal ushort DynamicMemorySize;
         internal ushort ReadTextAddr;
         internal ushort ReadParseAddr;
 
-        internal ushort Pc;
-        internal ushort ObjectTable;
-        internal ushort Dictionary;
         internal bool TerminateOnInput;
 
         private Stream _gameFileStream;
@@ -58,6 +51,7 @@ namespace ZMachineLib.Operations
 
         internal byte _entryLength;
         internal ushort _wordStart;
+        public FileHeader Header { get; private set; }
 
         public ZMachine2(IZMachineIo io)
         {
@@ -95,9 +89,11 @@ namespace ZMachineLib.Operations
 
         private void LoadFile(Stream stream)
         {
-            Memory = InitialiseMemoryBuffer(stream);
+            Memory = ReadToMemory(stream);
 
-            ReadHeaderInfo();
+            Header = ReadHeaderInfo();
+            // NOTE: Need header to be read (mainly for the Version) before we can setup the Ops as few of them have header value dependencies
+            SetupNewOperations();
 
             // TODO: set these via IZMachineIO
             Memory[0x01] = 0x01;
@@ -106,33 +102,20 @@ namespace ZMachineLib.Operations
 
             SetupOpCodes();
 
-            SetupNewOperations();
-
             ParseDictionary();
 
-            VersionedOffsets = VersionedOffsets.For(Version);
+            VersionedOffsets = VersionedOffsets.For(Header.Version);
 
-            var zsf = new ZStackFrame {PC = Pc};
+            var zsf = new ZStackFrame {PC = Header.Pc };
             Stack.Push(zsf);
         }
 
-        private byte[] InitialiseMemoryBuffer(Stream stream)
+        private byte[] ReadToMemory(Stream stream)
         {
             var buffer = new byte[stream.Length];
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(buffer, 0, (int) stream.Length);
             return buffer;
-        }
-
-        private void ReadHeaderInfo()
-        {
-            Version = Memory[HeaderOffsets.VersionOffset];
-            Pc = GetWord(HeaderOffsets.InitialPcOffset);
-            Dictionary = GetWord(HeaderOffsets.DictionaryOffset);
-            ObjectTable = GetWord(HeaderOffsets.ObjectTableOffset);
-            Globals = GetWord(HeaderOffsets.GlobalVarOffset);
-            DynamicMemorySize = GetWord(HeaderOffsets.StaticMemoryOffset);
-            AbbreviationsTable = GetWord(HeaderOffsets.AbbreviationTableOffset);
         }
 
         public IOperation RTrue { get; private set; }
@@ -355,7 +338,7 @@ namespace ZMachineLib.Operations
             else
             {
                 Log.Write($"-> G{dest - 0x10:X2} ({value:X4}), ");
-                StoreWord((ushort) (Globals + 2 * (dest - 0x10)), value);
+                StoreWord((ushort) (Header.Globals + 2 * (dest - 0x10)), value);
             }
         }
 
@@ -378,18 +361,19 @@ namespace ZMachineLib.Operations
             }
             else
             {
-                val = GetWord((ushort) (Globals + 2 * (variable - 0x10)));
+                val = GetWord((ushort) (Header.Globals + 2 * (variable - 0x10)));
                 Log.Write($"G{variable - 0x10:X2} ({val:X4}), ");
             }
 
             return val;
         }
 
-        private ushort GetWord(uint address)
-        {
-            return (ushort) (Memory[address] << 8 | Memory[address + 1]);
-        }
+        private ushort GetWord(uint address) => GetWord(Memory, address);
 
+        public static ushort GetWord(byte[] memory, uint address)
+        {
+            return (ushort)(memory[address] << 8 | memory[address + 1]);
+        }
         private void StoreWord(ushort address, ushort value)
         {
             Memory[address + 0] = (byte) (value >> 8);
@@ -398,7 +382,7 @@ namespace ZMachineLib.Operations
 
         private void ParseDictionary()
         {
-            var address = Dictionary;
+            var address = Header.Dictionary;
 
             var len = Memory[address++];
             address += len;
@@ -425,5 +409,32 @@ namespace ZMachineLib.Operations
 
         private void Restore(List<ushort> args) => _kind0Ops.Restore.Execute(args);
         private void Save(List<ushort> args) => _kind0Ops.Save.Execute(args);
+
+        private FileHeader ReadHeaderInfo() => new FileHeader(Memory);
+
+        public class FileHeader
+        {
+            public byte Version { get; private set; }
+            public ushort Pc { get; private set; }
+            public ushort Dictionary { get; private set; }
+            public ushort ObjectTable { get; private set; }
+            public ushort Globals { get; private set; }
+            public ushort DynamicMemorySize { get; private set; }
+            public ushort AbbreviationsTable { get; private set; }
+
+            public FileHeader(byte[] memory)
+            {
+                Version = memory[HeaderOffsets.VersionOffset];
+                Pc = ZMachine2.GetWord(memory, HeaderOffsets.InitialPcOffset);
+                Dictionary = GetWord(memory, HeaderOffsets.DictionaryOffset);
+                ObjectTable = GetWord(memory, HeaderOffsets.ObjectTableOffset);
+                Globals = GetWord(memory, HeaderOffsets.GlobalVarOffset);
+                DynamicMemorySize = GetWord(memory, HeaderOffsets.StaticMemoryOffset);
+                AbbreviationsTable = GetWord(memory, HeaderOffsets.AbbreviationTableOffset);
+            }
+
+
+
+        }
     }
 }
