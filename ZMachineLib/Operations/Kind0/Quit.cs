@@ -14,7 +14,7 @@ namespace ZMachineLib.Operations.Kind0
 
         public override void Execute(List<ushort> args)
         {
-            Machine._running = false;
+            Machine.Running = false;
             _io.Quit();
         }
     }

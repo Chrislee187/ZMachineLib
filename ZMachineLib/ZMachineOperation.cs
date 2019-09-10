@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Operations;
 using ZMachineLib.Operations.Kind0;
 
-namespace ZMachineLib.Operations
+namespace ZMachineLib
 {
     public abstract class ZMachineOperation : IOperation
     {
@@ -17,7 +18,7 @@ namespace ZMachineLib.Operations
             Machine.Stack = newStack;
         }
         protected ushort Version => Machine.Header.Version;
-        protected ushort Globals => Machine.Header.Globals;
+        private ushort Globals => Machine.Header.Globals;
         protected ushort ReadParseAddr
         {
             get => Machine.ReadParseAddr;

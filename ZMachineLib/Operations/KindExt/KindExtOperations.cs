@@ -12,14 +12,15 @@ namespace ZMachineLib.Operations.KindExt
             IZMachineIo io,
             Kind0Operations kind0Operations)
         {
-            _operations.Add(KindExtOpCodes.Save, kind0Operations.Save);
-            _operations.Add(KindExtOpCodes.Restore, kind0Operations.Restore);
+            _operations.Add(KindExtOpCodes.Save, kind0Operations[Kind0OpCodes.Save]);
+            _operations.Add(KindExtOpCodes.Restore, kind0Operations[Kind0OpCodes.Restore]);
             _operations.Add(KindExtOpCodes.LogShift, new LogShift(machine));
             _operations.Add(KindExtOpCodes.ArtShift, new ArtShift(machine));
             _operations.Add(KindExtOpCodes.SetFont, new SetFont(machine));
 
         }
 
+        #region IReadOnlyDictionary<>
         public IEnumerator<KeyValuePair<KindExtOpCodes, IOperation>> GetEnumerator() => _operations.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)_operations).GetEnumerator();
@@ -34,6 +35,7 @@ namespace ZMachineLib.Operations.KindExt
 
         public IEnumerable<KindExtOpCodes> Keys => _operations.Keys;
 
-        public IEnumerable<IOperation> Values => _operations.Values;
+        public IEnumerable<IOperation> Values => _operations.Values; 
+        #endregion
     }
 }

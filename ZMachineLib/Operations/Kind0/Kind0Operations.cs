@@ -7,25 +7,17 @@ namespace ZMachineLib.Operations.Kind0
     public class Kind0Operations : IReadOnlyDictionary<Kind0OpCodes, IOperation>
     {
         private readonly IDictionary<Kind0OpCodes, IOperation> _operations = new Dictionary<Kind0OpCodes, IOperation>();
-        public RTrue RTrue { get; }
-        public RFalse RFalse { get; }
-        public Save Save { get; }
-        public Restore Restore { get; }
+
         public Kind0Operations(ZMachine2 machine,
             IZMachineIo io)
         {
-            RTrue = new RTrue(machine);
-            RFalse = new RFalse(machine);
-            Save = new Save(machine, io, RTrue, RFalse);
-            Restore = new Restore(machine, io);
-
-            _operations.Add(Kind0OpCodes.RTrue, RTrue);
-            _operations.Add(Kind0OpCodes.RFalse, RFalse);
+            _operations.Add(Kind0OpCodes.RTrue, new RTrue(machine));
+            _operations.Add(Kind0OpCodes.RFalse, new RFalse(machine));
             _operations.Add(Kind0OpCodes.Print, new Print(machine, io));
-            _operations.Add(Kind0OpCodes.PrintRet, new PrintRet(machine, io, RTrue));
+            _operations.Add(Kind0OpCodes.PrintRet, new PrintRet(machine, io, (RTrue) _operations[Kind0OpCodes.RTrue]));
             _operations.Add(Kind0OpCodes.Nop, new Nop());
-            _operations.Add(Kind0OpCodes.Save, Save);
-            _operations.Add(Kind0OpCodes.Restore, Restore);
+            _operations.Add(Kind0OpCodes.Save, new Save(machine, io, (RTrue)_operations[Kind0OpCodes.RTrue], (RFalse)_operations[Kind0OpCodes.RFalse]));
+            _operations.Add(Kind0OpCodes.Restore, new Restore(machine, io));
             _operations.Add(Kind0OpCodes.Restart, new Restart(machine));
             _operations.Add(Kind0OpCodes.RetPopped, new RetPopped(machine));
             _operations.Add(Kind0OpCodes.Pop, new Pop(machine));
@@ -36,9 +28,11 @@ namespace ZMachineLib.Operations.Kind0
             _operations.Add(Kind0OpCodes.Piracy, new Piracy(machine));
         }
 
+        #region IReadOnlyDictionary<>
+
         public IEnumerator<KeyValuePair<Kind0OpCodes, IOperation>> GetEnumerator() => _operations.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable) _operations).GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)_operations).GetEnumerator();
 
         public int Count => _operations.Count;
 
@@ -50,6 +44,7 @@ namespace ZMachineLib.Operations.Kind0
 
         public IEnumerable<Kind0OpCodes> Keys => _operations.Keys;
 
-        public IEnumerable<IOperation> Values => _operations.Values;
+        public IEnumerable<IOperation> Values => _operations.Values; 
+        #endregion
     }
 }

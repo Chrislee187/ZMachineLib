@@ -39,6 +39,7 @@ namespace ZMachineLib.Operations.KindVar
             _operations.Add(KindVarOpCodes.CheckArgCount, new CheckArgCount(machine));
         }
 
+        #region IReadOnlyDictionary<>
         public IEnumerator<KeyValuePair<KindVarOpCodes, IOperation>> GetEnumerator() => _operations.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)_operations).GetEnumerator();
@@ -53,6 +54,7 @@ namespace ZMachineLib.Operations.KindVar
 
         public IEnumerable<KindVarOpCodes> Keys => _operations.Keys;
 
-        public IEnumerable<IOperation> Values => _operations.Values;
+        public IEnumerable<IOperation> Values => _operations.Values; 
+        #endregion
     }
 }

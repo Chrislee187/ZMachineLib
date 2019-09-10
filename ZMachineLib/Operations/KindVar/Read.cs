@@ -19,7 +19,7 @@ namespace ZMachineLib.Operations.KindVar
             ReadParseAddr = args[1];
 
             if (Machine.TerminateOnInput)
-                Machine._running = false;
+                Machine.Running = false;
             else
             {
                 var max = Memory[ReadTextAddr];
@@ -62,8 +62,8 @@ namespace ZMachineLib.Operations.KindVar
                     if (tokenised[i].Length > len)
                         tokenised[i] = tokenised[i].Substring(0, len);
 
-                    var wordIndex = (ushort)(Array.IndexOf(Machine._dictionaryWords, tokenised[i]));
-                    var addr = (ushort)(wordIndex == 0xffff ? 0 : Machine._wordStart + wordIndex * Machine._entryLength);
+                    var wordIndex = (ushort)(Array.IndexOf(Machine.DictionaryWords, tokenised[i]));
+                    var addr = (ushort)(wordIndex == 0xffff ? 0 : Machine.WordStart + wordIndex * Machine.EntryLength);
                     StoreWord((ushort)(ReadParseAddr + 2 + i * 4), addr);
                     Memory[ReadParseAddr + 4 + i * 4] = (byte)tokenised[i].Length;
                     var index = input.IndexOf(tokenised[i], last, StringComparison.Ordinal);

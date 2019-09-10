@@ -36,9 +36,10 @@ namespace ZMachineLib.Operations.Kind1
             }
         }
 
+        #region IReadOnlyDictionary<>
         public IEnumerator<KeyValuePair<Kind1OpCodes, IOperation>> GetEnumerator() => _operations.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable) _operations).GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)_operations).GetEnumerator();
 
         public int Count => _operations.Count;
 
@@ -50,6 +51,7 @@ namespace ZMachineLib.Operations.Kind1
 
         public IEnumerable<Kind1OpCodes> Keys => _operations.Keys;
 
-        public IEnumerable<IOperation> Values => _operations.Values;
+        public IEnumerable<IOperation> Values => _operations.Values; 
+        #endregion
     }
 }

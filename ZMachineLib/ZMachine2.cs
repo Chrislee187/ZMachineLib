@@ -1,35 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using ZMachineLib.Operations;
 using ZMachineLib.Operations.Kind0;
 using ZMachineLib.Operations.Kind1;
 using ZMachineLib.Operations.Kind2;
 using ZMachineLib.Operations.KindExt;
 using ZMachineLib.Operations.KindVar;
 
-namespace ZMachineLib.Operations
+namespace ZMachineLib
 {
     public class ZMachine2
     {
-        public ZsciiString ZsciiString { get; }
-        private readonly IZMachineIo _io;
-
+        internal FileHeader Header { get; private set; }
         internal VersionedOffsets VersionedOffsets;
 
         internal byte[] Memory;
         internal Stack<ZStackFrame> Stack = new Stack<ZStackFrame>();
+        
+        internal ZsciiString ZsciiString { get; }
 
         internal ushort ReadTextAddr;
         internal ushort ReadParseAddr;
 
         internal bool TerminateOnInput;
+        internal bool Running;
+        internal string[] DictionaryWords;
+        internal byte EntryLength;
+        internal ushort WordStart;
 
         private Stream _gameFileStream;
-        internal bool _running;
         private System.Random _random = new System.Random();
-        internal string[] _dictionaryWords;
+        private readonly IZMachineIo _io;
 
-
+        // ReSharper disable once CollectionNeverUpdated.Local
         private Kind0Operations _kind0Ops;
         // ReSharper disable once CollectionNeverUpdated.Local
         private Kind1Operations _kind1Ops;
@@ -40,32 +44,11 @@ namespace ZMachineLib.Operations
         // ReSharper disable once CollectionNeverUpdated.Local
         private KindExtOperations _kindExtOps;
 
-        private readonly Opcode _unknownOpCode = new Opcode
-        {
-            Handler = delegate
-            {
-                Log.Flush();
-                throw new Exception("Unknown OpCode");
-            },
-            Name = "UNKNOWN"
-        };
-
-        internal byte _entryLength;
-        internal ushort _wordStart;
-        public FileHeader Header { get; private set; }
-
         public ZMachine2(IZMachineIo io)
         {
             _io = io;
             ZsciiString = new ZsciiString(this);
         }
-
-        private void InitOpCodes(Opcode[] opCodes)
-        {
-            for (var i = 0; i < opCodes.Length; i++)
-                opCodes[i] = _unknownOpCode;
-        }
-
 
         public void RunFile(Stream stream, bool terminateOnInput = false)
         {
@@ -127,9 +110,9 @@ namespace ZMachineLib.Operations
         {
             TerminateOnInput = terminateOnInput;
 
-            _running = true;
+            Running = true;
 
-            while (_running)
+            while (Running)
             {
                 IOperation operation = null;
 
@@ -180,40 +163,6 @@ namespace ZMachineLib.Operations
 
                 Log.Flush();
             }
-        }
-
-        private void SetFont(List<ushort> args)
-        {
-            // TODO
-
-            var dest = Memory[Stack.Peek().PC++];
-            StoreWordInVariable(dest, 0);
-        }
-
-        private void ArtShift(List<ushort> args)
-        {
-            // keep the sign bit, so make it a short
-            var val = (short) args[0];
-            if ((short) args[1] > 0)
-                val <<= args[1];
-            else if ((short) args[1] < 0)
-                val >>= -args[1];
-
-            var dest = Memory[Stack.Peek().PC++];
-            StoreWordInVariable(dest, (ushort) val);
-        }
-
-        private void LogShift(List<ushort> args)
-        {
-            // kill the sign bit, so make it a ushort
-            var val = args[0];
-            if ((short) args[1] > 0)
-                val <<= args[1];
-            else if ((short) args[1] < 0)
-                val >>= -args[1];
-
-            var dest = Memory[Stack.Peek().PC++];
-            StoreWordInVariable(dest, val);
         }
 
         private List<ushort> GetOperands(byte opcode)
@@ -293,27 +242,6 @@ namespace ZMachineLib.Operations
             return arg;
         }
 
-        private void StoreWordInVariable(byte dest, ushort value, bool push = true)
-        {
-            if (dest == 0)
-            {
-                Log.Write($"-> SP ({value:X4}), ");
-                if (!push)
-                    Stack.Peek().RoutineStack.Pop();
-                Stack.Peek().RoutineStack.Push(value);
-            }
-            else if (dest < 0x10)
-            {
-                Log.Write($"-> L{dest - 1:X2} ({value:X4}), ");
-                Stack.Peek().Variables[dest - 1] = value;
-            }
-            else
-            {
-                Log.Write($"-> G{dest - 0x10:X2} ({value:X4}), ");
-                StoreWord((ushort) (Header.Globals + 2 * (dest - 0x10)), value);
-            }
-        }
-
         private ushort GetVariable(byte variable, bool pop = true)
         {
             ushort val;
@@ -342,15 +270,7 @@ namespace ZMachineLib.Operations
 
         private ushort GetWord(uint address) => GetWord(Memory, address);
 
-        public static ushort GetWord(byte[] memory, uint address)
-        {
-            return (ushort)(memory[address] << 8 | memory[address + 1]);
-        }
-        private void StoreWord(ushort address, ushort value)
-        {
-            Memory[address + 0] = (byte) (value >> 8);
-            Memory[address + 1] = (byte) value;
-        }
+        private static ushort GetWord(byte[] memory, uint address) => (ushort)(memory[address] << 8 | memory[address + 1]);
 
         private void ParseDictionary()
         {
@@ -359,28 +279,25 @@ namespace ZMachineLib.Operations
             var len = Memory[address++];
             address += len;
 
-            _entryLength = Memory[address++];
+            EntryLength = Memory[address++];
             var numEntries = GetWord(address);
             address += 2;
 
-            _wordStart = address;
+            WordStart = address;
 
-            _dictionaryWords = new string[numEntries];
+            DictionaryWords = new string[numEntries];
 
             for (var i = 0; i < numEntries; i++)
             {
-                var wordAddress = (ushort) (address + i * _entryLength);
+                var wordAddress = (ushort) (address + i * EntryLength);
                 var chars = ZsciiString.GetZsciiChar(wordAddress);
                 chars.AddRange(ZsciiString.GetZsciiChar((uint) (wordAddress + 2)));
-                if (_entryLength == 9)
+                if (EntryLength == 9)
                     chars.AddRange(ZsciiString.GetZsciiChar((uint) (wordAddress + 4)));
                 var s = ZsciiString.DecodeZsciiChars(chars);
-                _dictionaryWords[i] = s;
+                DictionaryWords[i] = s;
             }
         }
-
-        private void Restore(List<ushort> args) => _kind0Ops.Restore.Execute(args);
-        private void Save(List<ushort> args) => _kind0Ops.Save.Execute(args);
 
         private FileHeader ReadHeaderInfo() => new FileHeader(Memory);
 

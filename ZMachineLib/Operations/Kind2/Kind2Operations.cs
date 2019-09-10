@@ -39,6 +39,7 @@ namespace ZMachineLib.Operations.Kind2
             _operations.Add(Kind2OpCodes.SetColor, new SetColor(machine, io));
         }
 
+        #region IReadOnlyDictionary<>
         public IEnumerator<KeyValuePair<Kind2OpCodes, IOperation>> GetEnumerator() => _operations.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)_operations).GetEnumerator();
@@ -53,6 +54,7 @@ namespace ZMachineLib.Operations.Kind2
 
         public IEnumerable<Kind2OpCodes> Keys => _operations.Keys;
 
-        public IEnumerable<IOperation> Values => _operations.Values;
+        public IEnumerable<IOperation> Values => _operations.Values; 
+        #endregion
     }
 }
