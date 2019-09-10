@@ -31,7 +31,7 @@ namespace Tests
 
             SetupInputs("zork1.349.txt");
 
-            machine.LoadFile(File.OpenRead(@"zork1.dat"));
+            machine.RunFile(File.OpenRead(@"zork1.dat"));
             Should.NotThrow(() => machine.Run());
 
             VerifyOutput(

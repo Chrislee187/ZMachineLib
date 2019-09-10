@@ -23,7 +23,7 @@ namespace ZMachineLib.Operations.Kind0
             Add(Kind0OpCodes.Nop, new Nop());
             Add(Kind0OpCodes.Save, Save);
             Add(Kind0OpCodes.Restore, Restore);
-            Add(Kind0OpCodes.Restart, new Nop(Kind0OpCodes.Restart));
+            Add(Kind0OpCodes.Restart, new Restart(machine));
             Add(Kind0OpCodes.RetPopped, new RetPopped(machine));
             Add(Kind0OpCodes.Pop, new Pop(machine));
             Add(Kind0OpCodes.Quit, new Nop(Kind0OpCodes.Quit));

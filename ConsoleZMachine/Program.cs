@@ -11,8 +11,7 @@ namespace ConsoleZMachine
 			var zMachine = new ZMachine2(new ConsoleIO());
 
 			FileStream fs = File.OpenRead(@"zork1.dat");
-			zMachine.LoadFile(fs);
-			zMachine.Run();
+			zMachine.RunFile(fs);
 		}
 	}
 }

@@ -14,7 +14,7 @@ namespace ZMachineLib.Operations
         private readonly IZMachineIO _io;
 
         public VersionOffsets VersionOffsets { get; private set; }
-        private Stream _file;
+        private Stream _gameFileStream;
         private bool _running;
         private Random _random = new Random();
         private string[] _dictionaryWords;
@@ -106,10 +106,19 @@ namespace ZMachineLib.Operations
             _extOpcodes[0x04] = new Opcode {Handler = SetFont, Name = "SET_FONT"};
         }
 
-        public void LoadFile(Stream stream)
+        public void RunFile(Stream stream, bool terminateOnInput = false)
         {
-            _file = stream;
+            _gameFileStream = stream;
+            LoadFile(stream);
+            Run();
+        }
 
+        internal void ReloadFile()
+        {
+            LoadFile(_gameFileStream);
+        }
+        private void LoadFile(Stream stream)
+        {
             Memory = InitialiseMemoryBuffer(stream);
 
             ReadHeaderInfo();
@@ -169,7 +178,6 @@ namespace ZMachineLib.Operations
             _kind2Ops = new Kind2Operations(this, _io);
         }
 
-
         public void Run(bool terminateOnInput = false)
         {
             TerminateOnInput = terminateOnInput;
@@ -223,9 +231,6 @@ namespace ZMachineLib.Operations
                     {
                         switch ((Kind0OpCodes)operation.Code)
                         {
-                            case Kind0OpCodes.Restart:
-                                LoadFile(_file);
-                                break;
                             case Kind0OpCodes.Quit:
                                 _running = false;
                                 _io.Quit();
