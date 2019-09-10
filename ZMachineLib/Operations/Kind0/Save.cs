@@ -18,14 +18,14 @@ namespace ZMachineLib.Operations.Kind0
             var state = CreateState();
             var val = Io.Save(state);
 
-            if (Machine.Version < 5)
+            if (Version < 5)
             {
                 Jump(val);
             }
             else
             {
                 StoreWordInVariable(
-                    Machine.Memory[Machine.Stack.Peek().PC++], 
+                    Memory[Stack.Peek().PC++], 
                     (ushort)(val ? 1 : 0)
                     );
             }
@@ -36,11 +36,11 @@ namespace ZMachineLib.Operations.Kind0
         {
             var ms = new MemoryStream();
             var bw = new BinaryWriter(ms);
-            bw.Write(Machine.ReadParseAddr);
-            bw.Write(Machine.ReadTextAddr);
-            bw.Write(Machine.Memory, 0, Machine.DynamicMemorySize - 1);
+            bw.Write(ReadParseAddr);
+            bw.Write(ReadTextAddr);
+            bw.Write(Memory, 0, DynamicMemorySize - 1);
             var dcs = new DataContractJsonSerializer(typeof(Stack<ZStackFrame>));
-            dcs.WriteObject(ms, Machine.Stack);
+            dcs.WriteObject(ms, Stack);
             ms.Position = 0;
             return ms;
         }

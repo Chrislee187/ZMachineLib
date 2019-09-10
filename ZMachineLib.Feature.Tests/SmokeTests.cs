@@ -32,13 +32,31 @@ namespace Tests
             machine.LoadFile(File.OpenRead(@"zork1.dat"));
             Should.NotThrow(() => machine.Run());
 
-            VerifyOutput(
+            VerifyOutputContained(
                 "ZORK I",
                 "West of House"
             );
         }
+        [Test]
 
-        private  void SetupInputSequence(params string[] commands)
+        public void Should_move_north_then_south_without_error()
+        {
+
+            SetupInputSequence("n", "s", "quit", "y");
+            var machine = new ZMachine2(_zMachineIo.Object);
+
+            machine.LoadFile(File.OpenRead(@"zork1.dat"));
+            Should.NotThrow(() => machine.Run());
+
+            VerifyOutputContained(
+                "ZORK I",
+                "West of House",
+                "North of House",
+                "boarded"
+            );
+        }
+
+        private void SetupInputSequence(params string[] commands)
         {
             var setup = _zMachineIo.SetupSequence(io => io.Read(It.IsAny<int>()));
 
@@ -49,7 +67,7 @@ namespace Tests
         }
 
 
-        private void VerifyOutput(params string[] commands)
+        private void VerifyOutputContained(params string[] commands)
         {
             foreach (var command in commands)
             {

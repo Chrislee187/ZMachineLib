@@ -19,14 +19,14 @@ namespace ZMachineLib.Operations.Kind0
             if (stream != null)
                 RestoreState(stream);
 
-            if (Machine.Version < 5)
+            if (Version < 5)
             {
                 Jump(stream != null);
             }
             else
             {
                 StoreWordInVariable(
-                    Machine.Memory[Machine.Stack.Peek().PC++], 
+                    Memory[Stack.Peek().PC++], 
                     (ushort)(stream != null ? 1 : 0));
             }
         }
@@ -35,11 +35,11 @@ namespace ZMachineLib.Operations.Kind0
         {
             var br = new BinaryReader(stream);
             stream.Position = 0;
-            Machine.ReadParseAddr = br.ReadUInt16();
-            Machine.ReadTextAddr = br.ReadUInt16();
-            stream.Read(Machine.Memory, 0, Machine.DynamicMemorySize - 1);
+            ReadParseAddr = br.ReadUInt16();
+            ReadTextAddr = br.ReadUInt16();
+            stream.Read(Memory, 0, DynamicMemorySize - 1);
             var dcs = new DataContractJsonSerializer(typeof(Stack<ZStackFrame>));
-            Machine.Stack = (Stack<ZStackFrame>)dcs.ReadObject(stream);
+            SetStack((Stack<ZStackFrame>)dcs.ReadObject(stream));
             stream.Dispose();
         }
     }

@@ -11,12 +11,12 @@ namespace ZMachineLib.Operations.Kind0
 
         public override void Execute(List<ushort> args)
         {
-            var stackFrame = Machine.Stack.Pop();
+            var stackFrame = Stack.Pop();
 
             if (stackFrame.StoreResult)
             {
                 StoreWordInVariable(
-                    Machine.Memory[Machine.Stack.Peek().PC++], 
+                    Memory[Stack.Peek().PC++], 
                     stackFrame.RoutineStack.Pop()
                     );
             }

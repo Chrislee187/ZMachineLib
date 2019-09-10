@@ -14,13 +14,13 @@ namespace ZMachineLib.Operations.Kind1
             Log.Write($"[{GetObjectName(args[0])}] ");
 
             ushort addr = GetObjectAddress(args[0]);
-            ushort child = GetObjectNumber((ushort)(addr + Machine.Offsets.Child));
+            ushort child = GetObjectNumber((ushort)(addr + Offsets.Child));
 
             Log.Write($"[{GetObjectName(child)}] ");
 
-            byte dest = Machine.Memory[Machine.Stack.Peek().PC++];
+            byte dest = Memory[Stack.Peek().PC++];
 
-            if (Machine.Version <= 3)
+            if (Version <= 3)
                 StoreByteInVariable(dest, (byte)child);
             else
                 StoreWordInVariable(dest, child);

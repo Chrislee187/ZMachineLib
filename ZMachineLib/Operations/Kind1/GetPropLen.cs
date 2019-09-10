@@ -11,17 +11,17 @@ namespace ZMachineLib.Operations.Kind1
 
         public override void Execute(List<ushort> args)
         {
-            byte dest = Machine.Memory[Machine.Stack.Peek().PC++];
-            byte propInfo = Machine.Memory[args[0] - 1];
+            byte dest = Memory[Stack.Peek().PC++];
+            byte propInfo = Memory[args[0] - 1];
             byte len;
-            if (Machine.Version > 3 && (propInfo & 0x80) == 0x80)
+            if (Version > 3 && (propInfo & 0x80) == 0x80)
             {
-                len = (byte)(Machine.Memory[args[0] - 1] & 0x3f);
+                len = (byte)(Memory[args[0] - 1] & 0x3f);
                 if (len == 0)
                     len = 64;
             }
             else
-                len = (byte)((propInfo >> (Machine.Version <= 3 ? 5 : 6)) + 1);
+                len = (byte)((propInfo >> (Version <= 3 ? 5 : 6)) + 1);
 
             StoreByteInVariable(dest, len);
         }

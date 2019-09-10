@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using ZMachineLib.Operations.Kind0;
+using ZMachineLib.Operations.Kind1;
+using ZMachineLib.Operations.Kind2;
 
 namespace ZMachineLib.Operations
 {
@@ -35,8 +37,8 @@ namespace ZMachineLib.Operations
 
         private Kind0Operations _kind0Ops;
         private Kind1Operations _kind1Ops;
+        private Kind2Operations _kind2Ops;
 
-        private readonly Opcode[] _2Opcodes = new Opcode[0x20];
         private readonly Opcode[] _varOpcodes = new Opcode[0x20];
         private readonly Opcode[] _extOpcodes = new Opcode[0x20];
 
@@ -57,8 +59,6 @@ namespace ZMachineLib.Operations
         {
             _io = io;
             ZsciiString = new ZsciiString(this);
-
-            InitOpcodes(_2Opcodes);
             InitOpcodes(_varOpcodes);
             InitOpcodes(_extOpcodes);
         }
@@ -71,35 +71,6 @@ namespace ZMachineLib.Operations
 
         private void SetupOpcodes()
         {
-
-            _2Opcodes[0x01] = new Opcode {Handler = Je, Name = "JE"};
-            _2Opcodes[0x02] = new Opcode {Handler = Jl, Name = "JL"};
-            _2Opcodes[0x03] = new Opcode {Handler = Jg, Name = "JG"};
-            _2Opcodes[0x04] = new Opcode {Handler = DecCheck, Name = "DEC_CHECK"};
-            _2Opcodes[0x05] = new Opcode {Handler = IncCheck, Name = "INC_CHECK"};
-            _2Opcodes[0x06] = new Opcode {Handler = Jin, Name = "JIN"};
-            _2Opcodes[0x07] = new Opcode {Handler = Test, Name = "TEST"};
-            _2Opcodes[0x08] = new Opcode {Handler = Or, Name = "OR"};
-            _2Opcodes[0x09] = new Opcode {Handler = And, Name = "AND"};
-            _2Opcodes[0x0a] = new Opcode {Handler = TestAttribute, Name = "TEST_ATTR"};
-            _2Opcodes[0x0b] = new Opcode {Handler = SetAttribute, Name = "SET_ATTR"};
-            _2Opcodes[0x0c] = new Opcode {Handler = ClearAttribute, Name = "CLEAR_ATTR"};
-            _2Opcodes[0x0d] = new Opcode {Handler = Store, Name = "STORE"};
-            _2Opcodes[0x0e] = new Opcode {Handler = InsertObj, Name = "INSERT_OBJ"};
-            _2Opcodes[0x0f] = new Opcode {Handler = LoadW, Name = "LOADW"};
-            _2Opcodes[0x10] = new Opcode {Handler = LoadB, Name = "LOADB"};
-            _2Opcodes[0x11] = new Opcode {Handler = GetProp, Name = "GET_PROP"};
-            _2Opcodes[0x12] = new Opcode {Handler = GetPropAddr, Name = "GET_PROP_ADDR"};
-            _2Opcodes[0x13] = new Opcode {Handler = GetNextProp, Name = "GET_NEXT_PROP"};
-            _2Opcodes[0x14] = new Opcode {Handler = Add, Name = "ADD"};
-            _2Opcodes[0x15] = new Opcode {Handler = Sub, Name = "SUB"};
-            _2Opcodes[0x16] = new Opcode {Handler = Mul, Name = "MUL"};
-            _2Opcodes[0x17] = new Opcode {Handler = Div, Name = "DIV"};
-            _2Opcodes[0x18] = new Opcode {Handler = Mod, Name = "MOD"};
-            _2Opcodes[0x19] = new Opcode {Handler = Call2S, Name = "CALL_2S"};
-            _2Opcodes[0x1a] = new Opcode {Handler = Call2N, Name = "CALL_2N"};
-            _2Opcodes[0x1b] = new Opcode {Handler = SetColor, Name = "SET_COLOR"};
-
             _varOpcodes[0x00] = new Opcode {Handler = Call, Name = "CALL(_VS)"};
             _varOpcodes[0x01] = new Opcode {Handler = StoreW, Name = "STOREW"};
             _varOpcodes[0x02] = new Opcode {Handler = StoreB, Name = "STOREB"};
@@ -195,6 +166,7 @@ namespace ZMachineLib.Operations
             RFalse = _kind0Ops[Kind0OpCodes.RFalse];
 
             _kind1Ops = new Kind1Operations(this, _io);
+            _kind2Ops = new Kind2Operations(this, _io);
         }
 
 
@@ -220,7 +192,10 @@ namespace ZMachineLib.Operations
                     o |= 0xc0;
                 }
                 else if (o < 0x80)
-                    opcode = _2Opcodes?[o & 0x1f];
+                {
+                    _kind2Ops.TryGetValue((Kind2OpCodes)(o & 0x1f), out operation);
+                    opKind = OpKinds.Kind2;
+                }
                 else if (o < 0xb0)
                 {
                     _kind1Ops.TryGetValue((Kind1OpCodes)(o & 0x0f), out operation);
@@ -232,7 +207,10 @@ namespace ZMachineLib.Operations
                     opKind = OpKinds.Kind0;
                 }
                 else if (o < 0xe0)
-                    opcode = _2Opcodes?[o & 0x1f];
+                {
+                    _kind2Ops.TryGetValue((Kind2OpCodes)(o & 0x1f), out operation);
+                    opKind = OpKinds.Kind2;
+                }
                 else
                     opcode = _varOpcodes?[o & 0x1f];
 
@@ -342,33 +320,6 @@ namespace ZMachineLib.Operations
             Log.Write($"[{s}]");
         }
 
-        private void PrintObj(List<ushort> args)
-        {
-            ushort addr = GetPropertyHeaderAddress(args[0]);
-            string s = ZsciiString.GetZsciiString((ushort)(addr + 1));
-            _io.Print(s);
-            Log.Write($"[{s}]");
-        }
-
-        private void PrintAddr(List<ushort> args)
-        {
-            string s = ZsciiString.GetZsciiString(args[0]);
-            _io.Print(s);
-            Log.Write($"[{s}]");
-        }
-
-        private void PrintPAddr(List<ushort> args)
-        {
-            string s = ZsciiString.GetZsciiString(GetPackedAddress(args[0]));
-            _io.Print(s);
-            Log.Write($"[{s}]");
-        }
-
-        private void ShowStatus(List<ushort> args)
-        {
-            _io.ShowStatus();
-        }
-
         private void SplitWindow(List<ushort> args)
         {
             _io.SplitWindow(args[0]);
@@ -400,11 +351,6 @@ namespace ZMachineLib.Operations
 
             byte dest = Memory[Stack.Peek().PC++];
             StoreWordInVariable(dest, 0);
-        }
-
-        private void SetColor(List<ushort> args)
-        {
-            _io.SetColor((ZColor) args[0], (ZColor) args[1]);
         }
 
         private void SoundEffect(List<ushort> args)
@@ -500,218 +446,6 @@ namespace ZMachineLib.Operations
             byte dest = Memory[Stack.Peek().PC++];
             StoreByteInVariable(dest, (byte) key);
         }
-
-        private void InsertObj(List<ushort> args)
-        {
-            if (args[0] == 0 || args[1] == 0)
-                return;
-
-            Log.Write($"[{GetObjectName(args[0])}] [{GetObjectName(args[1])}] ");
-
-            ushort obj1 = args[0];
-            ushort obj2 = args[1];
-
-            ushort obj1Addr = GetObjectAddress(args[0]);
-            ushort obj2Addr = GetObjectAddress(args[1]);
-
-            ushort parent1 = GetObjectNumber((ushort) (obj1Addr + Offsets.Parent));
-            ushort sibling1 = GetObjectNumber((ushort) (obj1Addr + Offsets.Sibling));
-            ushort child2 = GetObjectNumber((ushort) (obj2Addr + Offsets.Child));
-
-            ushort parent1Addr = GetObjectAddress(parent1);
-
-            ushort parent1Child = GetObjectNumber((ushort) (parent1Addr + Offsets.Child));
-            ushort parent1ChildAddr = GetObjectAddress(parent1Child);
-            ushort parent1ChildSibling = GetObjectNumber((ushort) (parent1ChildAddr + Offsets.Sibling));
-
-            if (parent1 == obj2 && child2 == obj1)
-                return;
-
-            // if parent1's child is obj1 we need to assign the sibling
-            if (parent1Child == obj1)
-            {
-                // set parent1's child to obj1's sibling
-                SetObjectNumber((ushort) (parent1Addr + Offsets.Child), sibling1);
-            }
-            else // else if I'm not the child but there is a child, we need to link the broken sibling chain
-            {
-                ushort addr = parent1ChildAddr;
-                ushort currentSibling = parent1ChildSibling;
-
-                // while sibling of parent1's child has siblings
-                while (currentSibling != 0)
-                {
-                    // if obj1 is the sibling of the current object
-                    if (currentSibling == obj1)
-                    {
-                        // set the current object's sibling to the next sibling
-                        SetObjectNumber((ushort) (addr + Offsets.Sibling), sibling1);
-                        break;
-                    }
-
-                    addr = GetObjectAddress(currentSibling);
-                    currentSibling = GetObjectNumber((ushort) (addr + Offsets.Sibling));
-                }
-            }
-
-            // set obj1's parent to obj2
-            SetObjectNumber((ushort) (obj1Addr + Offsets.Parent), obj2);
-
-            // set obj2's child to obj1
-            SetObjectNumber((ushort) (obj2Addr + Offsets.Child), obj1);
-
-            // set obj1's sibling to obj2's child
-            SetObjectNumber((ushort) (obj1Addr + Offsets.Sibling), child2);
-        }
-
-        private void RemoveObj(List<ushort> args)
-        {
-            if (args[0] == 0)
-                return;
-
-            Log.Write($"[{GetObjectName(args[0])}] ");
-            ushort objAddr = GetObjectAddress(args[0]);
-            ushort parent = GetObjectNumber((ushort) (objAddr + Offsets.Parent));
-            ushort parentAddr = GetObjectAddress(parent);
-            ushort parentChild = GetObjectNumber((ushort) (parentAddr + Offsets.Child));
-            ushort sibling = GetObjectNumber((ushort) (objAddr + Offsets.Sibling));
-
-            // if object is the first child, set first child to the sibling
-            if (parent == args[0])
-                SetObjectNumber((ushort) (parentAddr + Offsets.Child), sibling);
-            else if (parentChild != 0)
-            {
-                ushort addr = GetObjectAddress(parentChild);
-                ushort currentSibling = GetObjectNumber((ushort) (addr + Offsets.Sibling));
-
-                // while sibling of parent1's child has siblings
-                while (currentSibling != 0)
-                {
-                    // if obj1 is the sibling of the current object
-                    if (currentSibling == args[0])
-                    {
-                        // set the current object's sibling to the next sibling
-                        SetObjectNumber((ushort) (addr + Offsets.Sibling), sibling);
-                        break;
-                    }
-
-                    addr = GetObjectAddress(currentSibling);
-                    currentSibling = GetObjectNumber((ushort) (addr + Offsets.Sibling));
-                }
-            }
-
-            // set the object's parent to nothing
-            SetObjectNumber((ushort) (objAddr + Offsets.Parent), 0);
-        }
-
-        private void GetProp(List<ushort> args)
-        {
-            Log.Write($"[{GetObjectName(args[0])}] ");
-
-            byte dest = Memory[Stack.Peek().PC++];
-            ushort val = 0;
-
-            ushort addr = GetPropertyAddress(args[0], (byte) args[1]);
-            if (addr > 0)
-            {
-                byte propInfo = Memory[addr++];
-                byte len;
-
-                if (Version > 3 && (propInfo & 0x80) == 0x80)
-                    len = (byte) (Memory[addr++] & 0x3f);
-                else
-                    len = (byte) ((propInfo >> (Version <= 3 ? 5 : 6)) + 1);
-
-                for (int i = 0; i < len; i++)
-                    val |= (ushort) (Memory[addr + i] << (len - 1 - i) * 8);
-            }
-            else
-                val = GetWord((ushort) (ObjectTable + (args[1] - 1) * 2));
-
-            StoreWordInVariable(dest, val);
-        }
-
-        private void GetPropAddr(List<ushort> args)
-        {
-            Log.Write($"[{GetObjectName(args[0])}] ");
-
-            byte dest = Memory[Stack.Peek().PC++];
-            ushort addr = GetPropertyAddress(args[0], (byte) args[1]);
-
-            if (addr > 0)
-            {
-                byte propInfo = Memory[addr + 1];
-
-                if (Version > 3 && (propInfo & 0x80) == 0x80)
-                    addr += 2;
-                else
-                    addr += 1;
-            }
-
-            StoreWordInVariable(dest, addr);
-        }
-
-        private void GetNextProp(List<ushort> args)
-        {
-            Log.Write($"[{GetObjectName(args[0])}] ");
-
-            bool next = false;
-
-            byte dest = Memory[Stack.Peek().PC++];
-            if (args[1] == 0)
-                next = true;
-
-            ushort propHeaderAddr = GetPropertyHeaderAddress(args[0]);
-            byte size = Memory[propHeaderAddr];
-            propHeaderAddr += (ushort) (size * 2 + 1);
-
-            while (Memory[propHeaderAddr] != 0x00)
-            {
-                byte propInfo = Memory[propHeaderAddr];
-                byte len;
-                if (Version > 3 && (propInfo & 0x80) == 0x80)
-                {
-                    len = (byte) (Memory[++propHeaderAddr] & 0x3f);
-                    if (len == 0)
-                        len = 64;
-                }
-                else
-                    len = (byte) ((propInfo >> (Version <= 3 ? 5 : 6)) + 1);
-
-                byte propNum = (byte) (propInfo & (Version <= 3 ? 0x1f : 0x3f));
-
-                if (next)
-                {
-                    StoreByteInVariable(dest, propNum);
-                    return;
-                }
-
-                if (propNum == args[1])
-                    next = true;
-
-                propHeaderAddr += (ushort) (len + 1);
-            }
-
-            StoreByteInVariable(dest, 0);
-        }
-
-        private void GetPropLen(List<ushort> args)
-        {
-            byte dest = Memory[Stack.Peek().PC++];
-            byte propInfo = Memory[args[0] - 1];
-            byte len;
-            if (Version > 3 && (propInfo & 0x80) == 0x80)
-            {
-                len = (byte) (Memory[args[0] - 1] & 0x3f);
-                if (len == 0)
-                    len = 64;
-            }
-            else
-                len = (byte) ((propInfo >> (Version <= 3 ? 5 : 6)) + 1);
-
-            StoreByteInVariable(dest, len);
-        }
-
         private void PutProp(List<ushort> args)
         {
             Log.Write($"[{GetObjectName(args[0])}] ");
@@ -748,156 +482,6 @@ namespace ZMachineLib.Operations
             }
         }
 
-        private void TestAttribute(List<ushort> args)
-        {
-            var obj = args[0];
-            var attr = args[1];
-
-            Log.Write($"[{GetObjectName(obj)}] ");
-            PrintObjectInfo(obj, false);
-
-            ushort objectAddr = GetObjectAddress(obj);
-            ulong attributes;
-            ulong flag;
-
-            if (Version <= 3)
-            {
-                attributes = GetUint(objectAddr);
-                flag = 0x80000000 >> attr;
-            }
-            else
-            {
-                attributes = (ulong) GetUint(objectAddr) << 16 | GetWord((uint) (objectAddr + 4));
-                flag = (ulong) (0x800000000000 >> attr);
-            }
-
-            bool branch = (flag & attributes) == flag;
-            Jump(branch);
-        }
-
-        private void SetAttribute(List<ushort> args)
-        {
-            var obj = args[0];
-            var attr = args[1];
-
-            if (obj == 0)
-                return;
-
-            Log.Write($"[{GetObjectName(obj)}] ");
-
-            ushort objectAddr = GetObjectAddress(obj);
-            ulong attributes;
-            ulong flag;
-
-            if (Version <= 3)
-            {
-                attributes = GetUint(objectAddr);
-                flag = 0x80000000 >> attr;
-                attributes |= flag;
-                StoreUint(objectAddr, (uint) attributes);
-            }
-            else
-            {
-                attributes = (ulong) GetUint(objectAddr) << 16 | GetWord((uint) (objectAddr + 4));
-                flag = (ulong) (0x800000000000 >> attr);
-                attributes |= flag;
-                StoreUint(objectAddr, (uint) (attributes >> 16));
-                StoreWord((ushort) (objectAddr + 4), (ushort) attributes);
-            }
-        }
-
-        private void ClearAttribute(List<ushort> args)
-        {
-            Log.Write($"[{GetObjectName(args[0])}] ");
-
-            ushort objectAddr = GetObjectAddress(args[0]);
-            ulong attributes;
-            ulong flag;
-
-            if (Version <= 3)
-            {
-                attributes = GetUint(objectAddr);
-                flag = 0x80000000 >> args[1];
-                attributes &= ~flag;
-                StoreUint(objectAddr, (uint) attributes);
-            }
-            else
-            {
-                attributes = (ulong) GetUint(objectAddr) << 16 | GetWord((uint) (objectAddr + 4));
-                flag = (ulong) (0x800000000000 >> args[1]);
-                attributes &= ~flag;
-                StoreUint(objectAddr, (uint) attributes >> 16);
-                StoreWord((ushort) (objectAddr + 4), (ushort) attributes);
-            }
-        }
-
-        private void GetParent(List<ushort> args)
-        {
-            Log.Write($"[{GetObjectName(args[0])}] ");
-
-            ushort addr = GetObjectAddress(args[0]);
-            ushort parent = GetObjectNumber((ushort) (addr + Offsets.Parent));
-
-            Log.Write($"[{GetObjectName(parent)}] ");
-
-            byte dest = Memory[Stack.Peek().PC++];
-
-            if (Version <= 3)
-                StoreByteInVariable(dest, (byte) parent);
-            else
-                StoreWordInVariable(dest, parent);
-        }
-
-        private void GetChild(List<ushort> args)
-        {
-            Log.Write($"[{GetObjectName(args[0])}] ");
-
-            ushort addr = GetObjectAddress(args[0]);
-            ushort child = GetObjectNumber((ushort) (addr + Offsets.Child));
-
-            Log.Write($"[{GetObjectName(child)}] ");
-
-            byte dest = Memory[Stack.Peek().PC++];
-
-            if (Version <= 3)
-                StoreByteInVariable(dest, (byte) child);
-            else
-                StoreWordInVariable(dest, child);
-
-            Jump(child != 0);
-        }
-
-        private void GetSibling(List<ushort> args)
-        {
-            Log.Write($"[{GetObjectName(args[0])}] ");
-
-            ushort addr = GetObjectAddress(args[0]);
-            ushort sibling = GetObjectNumber((ushort) (addr + Offsets.Sibling));
-
-            Log.Write($"[{GetObjectName(sibling)}] ");
-
-            byte dest = Memory[Stack.Peek().PC++];
-
-            if (Version <= 3)
-                StoreByteInVariable(dest, (byte) sibling);
-            else
-                StoreWordInVariable(dest, sibling);
-
-            Jump(sibling != 0);
-        }
-
-        private void Load(List<ushort> args)
-        {
-            byte dest = Memory[Stack.Peek().PC++];
-            ushort val = GetVariable((byte) args[0], false);
-            StoreByteInVariable(dest, (byte) val);
-        }
-
-        private void Store(List<ushort> args)
-        {
-            StoreWordInVariable((byte) args[0], args[1], false);
-        }
-
         private void StoreB(List<ushort> args)
         {
             ushort addr = (ushort) (args[0] + args[1]);
@@ -908,67 +492,6 @@ namespace ZMachineLib.Operations
         {
             ushort addr = (ushort) (args[0] + 2 * args[1]);
             StoreWord(addr, args[2]);
-        }
-
-        private void LoadB(List<ushort> args)
-        {
-            ushort addr = (ushort) (args[0] + args[1]);
-            byte b = Memory[addr];
-            byte dest = Memory[Stack.Peek().PC++];
-            StoreByteInVariable(dest, b);
-        }
-
-        private void LoadW(List<ushort> args)
-        {
-            ushort addr = (ushort) (args[0] + 2 * args[1]);
-            ushort word = GetWord(addr);
-            byte dest = Memory[Stack.Peek().PC++];
-            StoreWordInVariable(dest, word);
-        }
-
-        private void Jump(List<ushort> args)
-        {
-            Stack.Peek().PC = (uint) (Stack.Peek().PC + (short) (args[0] - 2));
-            Log.Write($"-> {Stack.Peek().PC:X5}");
-        }
-
-        private void Je(List<ushort> args)
-        {
-            bool equal = false;
-            for (int i = 1; i < args.Count; i++)
-            {
-                if (args[0] == args[i])
-                {
-                    equal = true;
-                    break;
-                }
-            }
-
-            Jump(equal);
-        }
-
-        private void Jz(List<ushort> args)
-        {
-            Jump(args[0] == 0);
-        }
-
-        private void Jl(List<ushort> args)
-        {
-            Jump((short) args[0] < (short) args[1]);
-        }
-
-        private void Jg(List<ushort> args)
-        {
-            Jump((short) args[0] > (short) args[1]);
-        }
-
-        private void Jin(List<ushort> args)
-        {
-            Log.Write($"C[{GetObjectName(args[0])}] P[{GetObjectName(args[1])}] ");
-
-            ushort addr = GetObjectAddress(args[0]);
-            ushort parent = GetObjectNumber((ushort) (addr + Offsets.Parent));
-            Jump(parent == args[1]);
         }
 
         private void Jump(bool flag)
@@ -1031,57 +554,6 @@ namespace ZMachineLib.Operations
             Log.Write($"-> {Stack.Peek().PC:X5}");
         }
 
-        private void Add(List<ushort> args)
-        {
-            short val = (short) (args[0] + args[1]);
-            byte dest = Memory[Stack.Peek().PC++];
-            StoreWordInVariable(dest, (ushort) val);
-        }
-
-        private void Sub(List<ushort> args)
-        {
-            short val = (short) (args[0] - args[1]);
-            byte dest = Memory[Stack.Peek().PC++];
-            StoreWordInVariable(dest, (ushort) val);
-        }
-
-        private void Mul(List<ushort> args)
-        {
-            short val = (short) (args[0] * args[1]);
-            byte dest = Memory[Stack.Peek().PC++];
-            StoreWordInVariable(dest, (ushort) val);
-        }
-
-        private void Div(List<ushort> args)
-        {
-            byte dest = Memory[Stack.Peek().PC++];
-
-            if (args[1] == 0)
-                return;
-
-            short val = (short) ((short) args[0] / (short) args[1]);
-            StoreWordInVariable(dest, (ushort) val);
-        }
-
-        private void Mod(List<ushort> args)
-        {
-            short val = (short) ((short) args[0] % (short) args[1]);
-            byte dest = Memory[Stack.Peek().PC++];
-            StoreWordInVariable(dest, (ushort) val);
-        }
-
-        private void Inc(List<ushort> args)
-        {
-            short val = (short) (GetVariable((byte) args[0]) + 1);
-            StoreWordInVariable((byte) args[0], (ushort) val);
-        }
-
-        private void Dec(List<ushort> args)
-        {
-            short val = (short) (GetVariable((byte) args[0]) - 1);
-            StoreWordInVariable((byte) args[0], (ushort) val);
-        }
-
         private void ArtShift(List<ushort> args)
         {
             // keep the sign bit, so make it a short
@@ -1121,45 +593,10 @@ namespace ZMachineLib.Operations
             StoreWordInVariable(dest, val);
         }
 
-        private void Or(List<ushort> args)
-        {
-            ushort or = (ushort) (args[0] | args[1]);
-            byte dest = Memory[Stack.Peek().PC++];
-            StoreWordInVariable(dest, or);
-        }
-
-        private void And(List<ushort> args)
-        {
-            ushort and = (ushort) (args[0] & args[1]);
-            byte dest = Memory[Stack.Peek().PC++];
-            StoreWordInVariable(dest, and);
-        }
-
         private void Not(List<ushort> args)
         {
             byte dest = Memory[Stack.Peek().PC++];
             StoreWordInVariable(dest, (ushort) ~args[0]);
-        }
-
-        private void Test(List<ushort> args)
-        {
-            Jump((args[0] & args[1]) == args[1]);
-        }
-
-        private void DecCheck(List<ushort> args)
-        {
-            short val = (short) GetVariable((byte) args[0]);
-            val--;
-            StoreWordInVariable((byte) args[0], (ushort) val);
-            Jump(val < (short) args[1]);
-        }
-
-        private void IncCheck(List<ushort> args)
-        {
-            short val = (short) GetVariable((byte) args[0]);
-            val++;
-            StoreWordInVariable((byte) args[0], (ushort) val);
-            Jump(val > (short) args[1]);
         }
 
         private void Call(List<ushort> args)
@@ -1203,26 +640,6 @@ namespace ZMachineLib.Operations
             zsf.ArgumentCount = args.Count - 1;
         }
 
-        private void Call1N(List<ushort> args)
-        {
-            Call(args, false);
-        }
-
-        private void Call1S(List<ushort> args)
-        {
-            Call(args, true);
-        }
-
-        private void Call2S(List<ushort> args)
-        {
-            Call(args, true);
-        }
-
-        private void Call2N(List<ushort> args)
-        {
-            Call(args, false);
-        }
-
         private void CallVN(List<ushort> args)
         {
             Call(args, false);
@@ -1237,36 +654,6 @@ namespace ZMachineLib.Operations
         {
             Call(args, true);
         }
-
-        private void Ret(List<ushort> args)
-        {
-            ZStackFrame sf = Stack.Pop();
-            if (sf.StoreResult)
-            {
-                byte dest = Memory[Stack.Peek().PC++];
-                StoreWordInVariable(dest, args[0]);
-            }
-        }
-
-        private void RetPopped(List<ushort> args)
-        {
-            ushort val = Stack.Peek().RoutineStack.Pop();
-            ZStackFrame sf = Stack.Pop();
-            if (sf.StoreResult)
-            {
-                byte dest = Memory[Stack.Peek().PC++];
-                StoreWordInVariable(dest, val);
-            }
-        }
-
-        private void Pop(List<ushort> args)
-        {
-            if (Stack.Peek().RoutineStack.Count > 0)
-                Stack.Peek().RoutineStack.Pop();
-            else
-                Stack.Pop();
-        }
-
 
         private void CheckArgCount(List<ushort> args)
         {
@@ -1440,20 +827,6 @@ namespace ZMachineLib.Operations
             Memory[address + 1] = (byte) value;
         }
 
-        private uint GetUint(uint address)
-        {
-            return (uint) (Memory[address] << 24 | Memory[address + 1] << 16 | Memory[address + 2] << 8 |
-                           Memory[address + 3]);
-        }
-
-        private void StoreUint(uint address, uint val)
-        {
-            Memory[address + 0] = (byte) (val >> 24);
-            Memory[address + 1] = (byte) (val >> 16);
-            Memory[address + 2] = (byte) (val >> 8);
-            Memory[address + 3] = (byte) (val >> 0);
-        }
-
         private uint GetPackedAddress(ushort address)
         {
             if (Version <= 3)
@@ -1470,60 +843,12 @@ namespace ZMachineLib.Operations
             return objectAddr;
         }
 
-        private ushort GetObjectNumber(ushort objectAddr)
-        {
-            if (Version <= 3)
-                return Memory[objectAddr];
-            return GetWord(objectAddr);
-        }
-
-        private void SetObjectNumber(ushort objectAddr, ushort obj)
-        {
-            if (Version <= 3)
-                Memory[objectAddr] = (byte) obj;
-            else
-                StoreWord(objectAddr, obj);
-        }
-
         private ushort GetPropertyHeaderAddress(ushort obj)
         {
             ushort objectAddr = GetObjectAddress(obj);
             ushort propAddr = (ushort) (objectAddr + Offsets.Property);
             ushort prop = GetWord(propAddr);
             return prop;
-        }
-
-        private ushort GetPropertyAddress(ushort obj, byte prop)
-        {
-            ushort propHeaderAddr = GetPropertyHeaderAddress(obj);
-
-            // skip past text
-            byte size = Memory[propHeaderAddr];
-            propHeaderAddr += (ushort) (size * 2 + 1);
-
-            while (Memory[propHeaderAddr] != 0x00)
-            {
-                byte propInfo = Memory[propHeaderAddr];
-                byte propNum = (byte) (propInfo & (Version <= 3 ? 0x1f : 0x3f));
-
-                if (propNum == prop)
-                    return propHeaderAddr;
-
-                byte len;
-
-                if (Version > 3 && (propInfo & 0x80) == 0x80)
-                {
-                    len = (byte) (Memory[++propHeaderAddr] & 0x3f);
-                    if (len == 0)
-                        len = 64;
-                }
-                else
-                    len = (byte) ((propInfo >> (Version <= 3 ? 5 : 6)) + 1);
-
-                propHeaderAddr += (ushort) (len + 1);
-            }
-
-            return 0;
         }
 
         private string GetObjectName(ushort obj)
@@ -1540,106 +865,6 @@ namespace ZMachineLib.Operations
             }
 
             return s;
-        }
-
-        private void PrintObjects()
-        {
-            ushort lowest = 0xffff;
-
-            for (ushort i = 1; i < 255 && (ObjectTable + i * Offsets.ObjectSize) < lowest; i++)
-            {
-                ushort addr = PrintObjectInfo(i, true);
-                if (addr < lowest)
-                    lowest = addr;
-            }
-        }
-
-        private void PrintObjectTree()
-        {
-            for (ushort i = 1; i < 255; i++)
-            {
-                ushort addr = GetObjectAddress(i);
-                ushort parent = GetObjectNumber((ushort) (addr + Offsets.Parent));
-                if (parent == 0)
-                    PrintTree(i, 0);
-            }
-        }
-
-        private void PrintTree(ushort obj, int depth)
-        {
-            while (obj != 0)
-            {
-                for (int i = 0; i < depth; i++)
-                    Log.Write(" . ");
-
-                PrintObjectInfo(obj, false);
-                ushort addr = GetObjectAddress(obj);
-                ushort child = GetObjectNumber((ushort) (addr + Offsets.Child));
-                obj = GetObjectNumber((ushort) (addr + Offsets.Sibling));
-                if (child != 0)
-                    PrintTree(child, depth + 1);
-            }
-        }
-
-        private ushort PrintObjectInfo(ushort obj, bool properties)
-        {
-            if (obj == 0)
-                return 0;
-
-            ushort startAddr = GetObjectAddress(obj);
-
-            ulong attributes = (ulong) GetUint(startAddr) << 16 | GetWord((uint) (startAddr + 4));
-            ushort parent = GetObjectNumber((ushort) (startAddr + Offsets.Parent));
-            ushort sibling = GetObjectNumber((ushort) (startAddr + Offsets.Sibling));
-            ushort child = GetObjectNumber((ushort) (startAddr + Offsets.Child));
-            ushort propAddr = GetWord((uint) (startAddr + Offsets.Property));
-
-            Log.Write($"{obj} ({obj:X2}) at {propAddr:X5}: ");
-
-            byte size = Memory[propAddr++];
-            string s = string.Empty;
-            if (size > 0)
-            {
-                s = ZsciiString.GetZsciiString(propAddr);
-            }
-
-            propAddr += (ushort) (size * 2);
-
-            Log.WriteLine(
-                $"[{s}] A:{attributes:X12} P:{parent}({parent:X2}) ZsciiString:{sibling}({sibling:X2}) C:{child}({child:X2})");
-
-            if (properties)
-            {
-                string ss = string.Empty;
-                for (int i = 47; i >= 0; i--)
-                {
-                    if (((attributes >> i) & 0x01) == 0x01)
-                    {
-                        ss += 47 - i + ", ";
-                    }
-                }
-
-                Log.WriteLine("Attributes: " + ss);
-
-                while (Memory[propAddr] != 0x00)
-                {
-                    byte propInfo = Memory[propAddr];
-                    byte len;
-                    if (Version > 3 && (propInfo & 0x80) == 0x80)
-                        len = (byte) (Memory[propAddr + 1] & 0x3f);
-                    else
-                        len = (byte) ((propInfo >> (Version <= 3 ? 5 : 6)) + 1);
-                    byte propNum = (byte) (propInfo & (Version <= 3 ? 0x1f : 0x3f));
-
-                    Log.Write($"  P:{propNum:X2} at {propAddr:X4}: ");
-                    for (int i = 0; i < len; i++)
-                        Log.Write($"{Memory[propAddr++]:X2} ");
-                    Log.WriteLine("");
-                    propAddr++;
-                }
-            }
-
-            return propAddr;
         }
 
         private void ParseDictionary()

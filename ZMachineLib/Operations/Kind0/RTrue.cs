@@ -11,10 +11,10 @@ namespace ZMachineLib.Operations.Kind0
 
         public override void Execute(List<ushort> args)
         {
-            if (Machine.Stack.Pop().StoreResult)
+            if (Stack.Pop().StoreResult)
             {
                 StoreWordInVariable(
-                    Machine.Memory[Machine.Stack.Peek().PC++], 
+                    Memory[Stack.Peek().PC++], 
                     1);
             }
         }

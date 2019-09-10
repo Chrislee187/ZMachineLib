@@ -13,10 +13,10 @@ namespace ZMachineLib.Operations.Kind0
 
         public override void Execute(List<ushort> args)
         {
-            ZStackFrame sf = Machine.Stack.Pop();
+            ZStackFrame sf = Stack.Pop();
             if (sf.StoreResult)
             {
-                byte dest = Machine.Memory[Machine.Stack.Peek().PC++];
+                byte dest = Memory[Stack.Peek().PC++];
                 StoreWordInVariable(dest, args[0]);
             }
         }
@@ -30,8 +30,8 @@ namespace ZMachineLib.Operations.Kind0
 
         public override void Execute(List<ushort> args)
         {
-            Machine.Stack.Peek().PC = (uint)(Machine.Stack.Peek().PC + (short)(args[0] - 2));
-            Log.Write($"-> {Machine.Stack.Peek().PC:X5}");
+            Stack.Peek().PC = (uint)(Stack.Peek().PC + (short)(args[0] - 2));
+            Log.Write($"-> {Stack.Peek().PC:X5}");
         }
     }
 }
