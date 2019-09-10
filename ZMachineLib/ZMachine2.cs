@@ -268,9 +268,8 @@ namespace ZMachineLib
             return val;
         }
 
-        private ushort GetWord(uint address) => GetWord(Memory, address);
-
-        private static ushort GetWord(byte[] memory, uint address) => (ushort)(memory[address] << 8 | memory[address + 1]);
+        public ushort GetWord(uint address) => GetWord(Memory, address);
+        public static ushort GetWord(byte[] memory, uint address) => (ushort)(memory[address] << 8 | memory[address + 1]);
 
         private void ParseDictionary()
         {

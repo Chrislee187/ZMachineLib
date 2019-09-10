@@ -32,7 +32,7 @@ namespace ZMachineLib.Operations.Kind2
             }
             else
             {
-                attributes = (ulong)GetUint(objectAddr) << 16 | GetWord((uint)(objectAddr + 4));
+                attributes = (ulong)GetUint(objectAddr) << 16 | Machine.GetWord((uint)(objectAddr + 4));
                 flag = (ulong)(0x800000000000 >> attr);
                 attributes |= flag;
                 StoreUint(objectAddr, (uint)(attributes >> 16));

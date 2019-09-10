@@ -23,7 +23,7 @@ namespace ZMachineLib.Operations.KindVar
                 ushort val;
 
                 if (args.Count == 3 || (args[3] & 0x80) == 0x80)
-                    val = GetWord(addr);
+                    val = Machine.GetWord(addr);
                 else
                     val = Memory[addr];
 

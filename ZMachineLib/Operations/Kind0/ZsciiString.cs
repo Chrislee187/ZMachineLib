@@ -37,7 +37,7 @@ namespace ZMachineLib.Operations.Kind0
                 {
                     var offset = (ushort)(32 * (chars[i] - 1) + chars[++i]);
                     var lookup = (ushort)(Machine.Header.AbbreviationsTable + (offset * 2));
-                    var wordAddr = GetWord(lookup);
+                    var wordAddr = Machine.GetWord(lookup);
                     var abbrev = GetZsciiChars((ushort)(wordAddr * 2));
                     sb.Append(DecodeZsciiChars(abbrev));
                 }
@@ -75,7 +75,7 @@ namespace ZMachineLib.Operations.Kind0
             ushort word;
             do
             {
-                word = GetWord(address);
+                word = Machine.GetWord(address);
                 chars.AddRange(GetZsciiChar(address));
                 address += 2;
             }
@@ -88,7 +88,7 @@ namespace ZMachineLib.Operations.Kind0
         {
             var chars = new List<byte>();
 
-            var word = GetWord(address);
+            var word = Machine.GetWord(address);
 
             var c = (byte)(word >> 10 & 0x1f);
             chars.Add(c);
@@ -98,10 +98,6 @@ namespace ZMachineLib.Operations.Kind0
             chars.Add(c);
 
             return chars;
-        }
-        protected ushort GetWord(uint address)
-        {
-            return (ushort)(Machine.Memory[address] << 8 | Machine.Memory[address + 1]);
         }
     }
 }

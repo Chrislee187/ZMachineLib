@@ -9,6 +9,7 @@ namespace ZMachineLib
         public ushort Code { get; }
         
         protected readonly ZMachine2 Machine;
+        private ushort Globals => Machine.Header.Globals;
 
         protected byte[] Memory => Machine.Memory;
         protected Stack<ZStackFrame> Stack => Machine.Stack;
@@ -18,7 +19,6 @@ namespace ZMachineLib
             Machine.Stack = newStack;
         }
         protected ushort Version => Machine.Header.Version;
-        private ushort Globals => Machine.Header.Globals;
         protected ushort ReadParseAddr
         {
             get => Machine.ReadParseAddr;
@@ -99,11 +99,11 @@ namespace ZMachineLib
 
             var startAddr = GetObjectAddress(obj);
 
-            var attributes = (ulong)GetUint(startAddr) << 16 | GetWord((uint)(startAddr + 4));
+            var attributes = (ulong)GetUint(startAddr) << 16 | Machine.GetWord((uint)(startAddr + 4));
             var parent = GetObjectNumber((ushort)(startAddr + Offsets.Parent));
             var sibling = GetObjectNumber((ushort)(startAddr + Offsets.Sibling));
             var child = GetObjectNumber((ushort)(startAddr + Offsets.Child));
-            var propAddr = GetWord((uint)(startAddr + Offsets.Property));
+            var propAddr = Machine.GetWord((uint)(startAddr + Offsets.Property));
 
             Log.Write($"{obj} ({obj:X2}) at {propAddr:X5}: ");
 
@@ -170,7 +170,8 @@ namespace ZMachineLib
             else
                 StoreWord(objectAddr, obj);
         }
-        public void Call(List<ushort> args, bool storeResult)
+
+        protected void Call(List<ushort> args, bool storeResult)
         {
             if (args[0] == 0)
             {
@@ -195,7 +196,8 @@ namespace ZMachineLib
             {
                 for (var i = 0; i < count; i++)
                 {
-                    zsf.Variables[i] = GetWord(Stack.Peek().PC);
+                    uint address = Stack.Peek().PC;
+                    zsf.Variables[i] = Machine.GetWord(address);
                     Stack.Peek().PC += 2;
                 }
             }
@@ -225,34 +227,13 @@ namespace ZMachineLib
             }
             else
             {
-                val = GetWord((ushort)(Globals + 2 * (variable - 0x10)));
+                val = Machine.GetWord((ushort)(Globals + 2 * (variable - 0x10)));
                 Log.Write($"G{variable - 0x10:X2} ({val:X4}), ");
             }
 
             return val;
         }
 
-
-        private protected void StoreWordInVariable(byte dest, ushort value, bool push = true)
-        {
-            if (dest == 0)
-            {
-                Log.Write($"-> SP ({value:X4}), ");
-                if (!push)
-                    Stack.Peek().RoutineStack.Pop();
-                Stack.Peek().RoutineStack.Push(value);
-            }
-            else if (dest < 0x10)
-            {
-                Log.Write($"-> L{dest - 1:X2} ({value:X4}), ");
-                Stack.Peek().Variables[dest - 1] = value;
-            }
-            else
-            {
-                Log.Write($"-> G{dest - 0x10:X2} ({value:X4}), ");
-                StoreWord((ushort)(Globals + 2 * (dest - 0x10)), value);
-            }
-        }
 
         protected ushort GetObjectAddress(ushort obj)
         {
@@ -280,7 +261,7 @@ namespace ZMachineLib
         {
             var objectAddr = GetObjectAddress(obj);
             var propAddr = (ushort)(objectAddr + Offsets.Property);
-            var prop = GetWord(propAddr);
+            var prop = Machine.GetWord(propAddr);
             return prop;
         }
 
@@ -288,7 +269,28 @@ namespace ZMachineLib
         {
             if (Version <= 3)
                 return Memory[objectAddr];
-            return GetWord(objectAddr);
+            return Machine.GetWord(objectAddr);
+        }
+
+        private protected void StoreWordInVariable(byte dest, ushort value, bool push = true)
+        {
+            if (dest == 0)
+            {
+                Log.Write($"-> SP ({value:X4}), ");
+                if (!push)
+                    Stack.Peek().RoutineStack.Pop();
+                Stack.Peek().RoutineStack.Push(value);
+            }
+            else if (dest < 0x10)
+            {
+                Log.Write($"-> L{dest - 1:X2} ({value:X4}), ");
+                Stack.Peek().Variables[dest - 1] = value;
+            }
+            else
+            {
+                Log.Write($"-> G{dest - 0x10:X2} ({value:X4}), ");
+                StoreWord((ushort)(Globals + 2 * (dest - 0x10)), value);
+            }
         }
 
         protected void StoreByteInVariable(byte dest, byte value)
@@ -374,43 +376,6 @@ namespace ZMachineLib
                 Stack.Peek().PC += (uint)newOffset;
 
             Log.Write($"-> { Stack.Peek().PC:X5}");
-        }
-
-
-        protected List<byte> GetZsciiChars(uint address)
-        {
-            var chars = new List<byte>();
-            ushort word;
-            do
-            {
-                word = GetWord(address);
-                chars.AddRange(GetZsciiChar(address));
-                address += 2;
-            }
-            while ((word & 0x8000) != 0x8000);
-
-            return chars;
-        }
-
-        protected List<byte> GetZsciiChar(uint address)
-        {
-            var chars = new List<byte>();
-
-            var word = GetWord(address);
-
-            var c = (byte)(word >> 10 & 0x1f);
-            chars.Add(c);
-            c = (byte)(word >> 5 & 0x1f);
-            chars.Add(c);
-            c = (byte)(word >> 0 & 0x1f);
-            chars.Add(c);
-
-            return chars;
-        }
-
-        protected ushort GetWord(uint address)
-        {
-            return (ushort)(Memory[address] << 8 | Memory[address + 1]);
         }
     }
 }
