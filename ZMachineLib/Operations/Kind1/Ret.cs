@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ZMachineLib.Operations.Kind0
+namespace ZMachineLib.Operations.Kind1
 {
     public sealed class Ret : ZMachineOperation
     {
