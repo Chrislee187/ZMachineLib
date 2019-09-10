@@ -4,6 +4,7 @@ using System.IO;
 using ZMachineLib.Operations.Kind0;
 using ZMachineLib.Operations.Kind1;
 using ZMachineLib.Operations.Kind2;
+using ZMachineLib.Operations.KindExt;
 using ZMachineLib.Operations.KindVar;
 
 namespace ZMachineLib.Operations
@@ -36,8 +37,8 @@ namespace ZMachineLib.Operations
         private Kind2Operations _kind2Ops;
         // ReSharper disable once CollectionNeverUpdated.Local
         private KindVarOperations _kindVarOps;
-
-        private readonly Opcode[] _extOpCodes = new Opcode[0x20];
+        // ReSharper disable once CollectionNeverUpdated.Local
+        private KindExtOperations _kindExtOps;
 
         private readonly Opcode _unknownOpCode = new Opcode
         {
@@ -57,7 +58,6 @@ namespace ZMachineLib.Operations
         {
             _io = io;
             ZsciiString = new ZsciiString(this);
-            InitOpCodes(_extOpCodes);
         }
 
         private void InitOpCodes(Opcode[] opCodes)
@@ -66,14 +66,6 @@ namespace ZMachineLib.Operations
                 opCodes[i] = _unknownOpCode;
         }
 
-        private void SetupOpCodes()
-        {
-            _extOpCodes[0x00] = new Opcode {Handler = Save, Name = "SAVE"};
-            _extOpCodes[0x01] = new Opcode {Handler = Restore, Name = "RESTORE"};
-            _extOpCodes[0x02] = new Opcode {Handler = LogShift, Name = "LOG_SHIFT"};
-            _extOpCodes[0x03] = new Opcode {Handler = ArtShift, Name = "ART_SHIFT"};
-            _extOpCodes[0x04] = new Opcode {Handler = SetFont, Name = "SET_FONT"};
-        }
 
         public void RunFile(Stream stream, bool terminateOnInput = false)
         {
@@ -99,8 +91,6 @@ namespace ZMachineLib.Operations
             Memory[0x01] = 0x01;
             Memory[0x20] = 25;
             Memory[0x21] = 80;
-
-            SetupOpCodes();
 
             ParseDictionary();
 
@@ -130,6 +120,7 @@ namespace ZMachineLib.Operations
             _kind1Ops = new Kind1Operations(this, _io);
             _kind2Ops = new Kind2Operations(this, _io);
             _kindVarOps = new KindVarOperations(this, _io);
+            _kindExtOps = new KindExtOperations(this, _io, _kind0Ops);
         }
 
         public void Run(bool terminateOnInput = false)
@@ -140,7 +131,6 @@ namespace ZMachineLib.Operations
 
             while (_running)
             {
-                Opcode? opcode = null;
                 IOperation operation = null;
 
                 Log.Write($"PC: {Stack.Peek().PC:X5}");
@@ -148,42 +138,46 @@ namespace ZMachineLib.Operations
                 if (o == 0xbe)
                 {
                     o = Memory[Stack.Peek().PC++];
-                    opcode = _extOpCodes?[o & 0x1f];
+                    _kindExtOps.TryGetValue((KindExtOpCodes)(o & 0x1f), out operation);
                     // TODO: hack to make this a VAR opcode...
                     o |= 0xc0;
+
+                    Log.Write($" Ext ");
+
                 }
                 else if (o < 0x80)
                 {
                     _kind2Ops.TryGetValue((Kind2OpCodes)(o & 0x1f), out operation);
+                    Log.Write($" 2Op(0x80) ");
                 }
                 else if (o < 0xb0)
                 {
                     _kind1Ops.TryGetValue((Kind1OpCodes)(o & 0x0f), out operation);
+                    Log.Write($" 1Op ");
                 }
                 else if (o < 0xc0)
                 {
                     _kind0Ops.TryGetValue((Kind0OpCodes) (o & 0x0f), out operation);
+                    Log.Write($" 0Op ");
                 }
                 else if (o < 0xe0)
                 {
                     _kind2Ops.TryGetValue((Kind2OpCodes)(o & 0x1f), out operation);
+                    Log.Write($" 2Op(0xe0) ");
                 }
                 else
                 {
                     _kindVarOps.TryGetValue((KindVarOpCodes)(o & 0x1f), out operation);
+                    Log.Write($" Var ");
                 }
 
-                Log.Write($" Op ({o:X2}): {opcode?.Name} ");
+                Log.WriteLine($" Op Code ({operation?.Code:X2})");
                 var args = GetOperands(o);
 
-                if (operation != null)
-                {
-                    operation.Execute(args);
-                }
-                else
-                {
-                    opcode?.Handler(args);
-                }
+                if (operation == null) throw new Exception($"No operation found!");
+
+                operation?.Execute(args);
+
                 Log.Flush();
             }
         }

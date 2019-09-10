@@ -411,6 +411,5 @@ namespace ZMachineLib.Operations
         {
             return (ushort)(Memory[address] << 8 | Memory[address + 1]);
         }
-
     }
 }

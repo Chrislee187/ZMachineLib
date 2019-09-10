@@ -9,4 +9,4 @@ An incomplete ZMachine interpreter written in C#.  This library supports v1-v5, 
 An exercise in refactoring and a way for me to play some of the old Infocom game.
 
 # NOTE ON COPYRIGHT
-To avoid any copyright issues, this repo contains no actual games files, there are various sources available for these, a great starting point is here on github at (Historical Source)[https://github.com/historicalsource]
+To avoid any copyright issues, this repo contains no actual games files, there are various sources available for these, a great starting point is here on github at [Historical Source](https://github.com/historicalsource)
