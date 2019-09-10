@@ -41,15 +41,15 @@ namespace ZMachineLib.Operations
         // ReSharper disable once CollectionNeverUpdated.Local
         private Kind2Operations _kind2Ops;
 
-        private readonly Opcode[] _varOpcodes = new Opcode[0x20];
-        private readonly Opcode[] _extOpcodes = new Opcode[0x20];
+        private readonly Opcode[] _varOpCodes = new Opcode[0x20];
+        private readonly Opcode[] _extOpCodes = new Opcode[0x20];
 
-        private readonly Opcode _unknownOpcode = new Opcode
+        private readonly Opcode _unknownOpCode = new Opcode
         {
             Handler = delegate
             {
                 Log.Flush();
-                throw new Exception("Unknown opcode");
+                throw new Exception("Unknown OpCode");
             },
             Name = "UNKNOWN"
         };
@@ -61,51 +61,51 @@ namespace ZMachineLib.Operations
         {
             _io = io;
             ZsciiString = new ZsciiString(this);
-            InitOpcodes(_varOpcodes);
-            InitOpcodes(_extOpcodes);
+            InitOpCodes(_varOpCodes);
+            InitOpCodes(_extOpCodes);
         }
 
-        private void InitOpcodes(Opcode[] opcodes)
+        private void InitOpCodes(Opcode[] opCodes)
         {
-            for (var i = 0; i < opcodes.Length; i++)
-                opcodes[i] = _unknownOpcode;
+            for (var i = 0; i < opCodes.Length; i++)
+                opCodes[i] = _unknownOpCode;
         }
 
-        private void SetupOpcodes()
+        private void SetupOpCodes()
         {
-            _varOpcodes[0x00] = new Opcode {Handler = Call, Name = "CALL(_VS)"};
-            _varOpcodes[0x01] = new Opcode {Handler = StoreW, Name = "STOREW"};
-            _varOpcodes[0x02] = new Opcode {Handler = StoreB, Name = "STOREB"};
-            _varOpcodes[0x03] = new Opcode {Handler = PutProp, Name = "PUT_PROP"};
-            _varOpcodes[0x04] = new Opcode {Handler = Read, Name = "READ"};
-            _varOpcodes[0x05] = new Opcode {Handler = PrintChar, Name = "PRINT_CHAR"};
-            _varOpcodes[0x06] = new Opcode {Handler = PrintNum, Name = "PRINT_NUM"};
-            _varOpcodes[0x07] = new Opcode {Handler = Random, Name = "RANDOM"};
-            _varOpcodes[0x08] = new Opcode {Handler = Push, Name = "PUSH"};
-            _varOpcodes[0x09] = new Opcode {Handler = Pull, Name = "PULL"};
-            _varOpcodes[0x0a] = new Opcode {Handler = SplitWindow, Name = "SPLIT_WINDOW"};
-            _varOpcodes[0x0b] = new Opcode {Handler = SetWindow, Name = "SET_WINDOW"};
-            _varOpcodes[0x0c] = new Opcode {Handler = CallVs2, Name = "CALL_VS2"};
-            _varOpcodes[0x0d] = new Opcode {Handler = EraseWindow, Name = "ERASE_WINDOW"};
-            _varOpcodes[0x0f] = new Opcode {Handler = SetCursor, Name = "SET_CURSOR"};
-            _varOpcodes[0x11] = new Opcode {Handler = SetTextStyle, Name = "SET_TEXT_STYLE"};
-            _varOpcodes[0x12] = new Opcode {Handler = BufferMode, Name = "BUFFER_MODE"};
-            _varOpcodes[0x13] = new Opcode {Handler = OutputStream, Name = "OUTPUT_STREAM"};
-            _varOpcodes[0x15] = new Opcode {Handler = SoundEffect, Name = "SOUND_EFFECT"};
-            _varOpcodes[0x16] = new Opcode {Handler = ReadChar, Name = "READ_CHAR"};
-            _varOpcodes[0x17] = new Opcode {Handler = ScanTable, Name = "SCAN_TABLE"};
-            _varOpcodes[0x18] = new Opcode {Handler = Not, Name = "NOT"};
-            _varOpcodes[0x19] = new Opcode {Handler = CallVn, Name = "CALL_VN"};
-            _varOpcodes[0x1a] = new Opcode {Handler = CallVn2, Name = "CALL_VN2"};
-            _varOpcodes[0x1d] = new Opcode {Handler = CopyTable, Name = "COPY_TABLE"};
-            _varOpcodes[0x1e] = new Opcode {Handler = PrintTable, Name = "PRINT_TABLE"};
-            _varOpcodes[0x1f] = new Opcode {Handler = CheckArgCount, Name = "CHECK_ARG_COUNT"};
+            _varOpCodes[0x00] = new Opcode {Handler = Call, Name = "CALL(_VS)"};
+            _varOpCodes[0x01] = new Opcode {Handler = StoreW, Name = "STOREW"};
+            _varOpCodes[0x02] = new Opcode {Handler = StoreB, Name = "STOREB"};
+            _varOpCodes[0x03] = new Opcode {Handler = PutProp, Name = "PUT_PROP"};
+            _varOpCodes[0x04] = new Opcode {Handler = Read, Name = "READ"};
+            _varOpCodes[0x05] = new Opcode {Handler = PrintChar, Name = "PRINT_CHAR"};
+            _varOpCodes[0x06] = new Opcode {Handler = PrintNum, Name = "PRINT_NUM"};
+            _varOpCodes[0x07] = new Opcode {Handler = Random, Name = "RANDOM"};
+            _varOpCodes[0x08] = new Opcode {Handler = Push, Name = "PUSH"};
+            _varOpCodes[0x09] = new Opcode {Handler = Pull, Name = "PULL"};
+            _varOpCodes[0x0a] = new Opcode {Handler = SplitWindow, Name = "SPLIT_WINDOW"};
+            _varOpCodes[0x0b] = new Opcode {Handler = SetWindow, Name = "SET_WINDOW"};
+            _varOpCodes[0x0c] = new Opcode {Handler = CallVs2, Name = "CALL_VS2"};
+            _varOpCodes[0x0d] = new Opcode {Handler = EraseWindow, Name = "ERASE_WINDOW"};
+            _varOpCodes[0x0f] = new Opcode {Handler = SetCursor, Name = "SET_CURSOR"};
+            _varOpCodes[0x11] = new Opcode {Handler = SetTextStyle, Name = "SET_TEXT_STYLE"};
+            _varOpCodes[0x12] = new Opcode {Handler = BufferMode, Name = "BUFFER_MODE"};
+            _varOpCodes[0x13] = new Opcode {Handler = OutputStream, Name = "OUTPUT_STREAM"};
+            _varOpCodes[0x15] = new Opcode {Handler = SoundEffect, Name = "SOUND_EFFECT"};
+            _varOpCodes[0x16] = new Opcode {Handler = ReadChar, Name = "READ_CHAR"};
+            _varOpCodes[0x17] = new Opcode {Handler = ScanTable, Name = "SCAN_TABLE"};
+            _varOpCodes[0x18] = new Opcode {Handler = Not, Name = "NOT"};
+            _varOpCodes[0x19] = new Opcode {Handler = CallVn, Name = "CALL_VN"};
+            _varOpCodes[0x1a] = new Opcode {Handler = CallVn2, Name = "CALL_VN2"};
+            _varOpCodes[0x1d] = new Opcode {Handler = CopyTable, Name = "COPY_TABLE"};
+            _varOpCodes[0x1e] = new Opcode {Handler = PrintTable, Name = "PRINT_TABLE"};
+            _varOpCodes[0x1f] = new Opcode {Handler = CheckArgCount, Name = "CHECK_ARG_COUNT"};
 
-            _extOpcodes[0x00] = new Opcode {Handler = Save, Name = "SAVE"};
-            _extOpcodes[0x01] = new Opcode {Handler = Restore, Name = "RESTORE"};
-            _extOpcodes[0x02] = new Opcode {Handler = LogShift, Name = "LOG_SHIFT"};
-            _extOpcodes[0x03] = new Opcode {Handler = ArtShift, Name = "ART_SHIFT"};
-            _extOpcodes[0x04] = new Opcode {Handler = SetFont, Name = "SET_FONT"};
+            _extOpCodes[0x00] = new Opcode {Handler = Save, Name = "SAVE"};
+            _extOpCodes[0x01] = new Opcode {Handler = Restore, Name = "RESTORE"};
+            _extOpCodes[0x02] = new Opcode {Handler = LogShift, Name = "LOG_SHIFT"};
+            _extOpCodes[0x03] = new Opcode {Handler = ArtShift, Name = "ART_SHIFT"};
+            _extOpCodes[0x04] = new Opcode {Handler = SetFont, Name = "SET_FONT"};
         }
 
         public void RunFile(Stream stream, bool terminateOnInput = false)
@@ -119,6 +119,7 @@ namespace ZMachineLib.Operations
         {
             LoadFile(_gameFileStream);
         }
+
         private void LoadFile(Stream stream)
         {
             Memory = InitialiseMemoryBuffer(stream);
@@ -130,7 +131,7 @@ namespace ZMachineLib.Operations
             Memory[0x20] = 25;
             Memory[0x21] = 80;
 
-            SetupOpcodes();
+            SetupOpCodes();
 
             SetupNewOperations();
 
@@ -191,7 +192,7 @@ namespace ZMachineLib.Operations
                 if (o == 0xbe)
                 {
                     o = Memory[Stack.Peek().PC++];
-                    opcode = _extOpcodes?[o & 0x1f];
+                    opcode = _extOpCodes?[o & 0x1f];
                     // TODO: hack to make this a VAR opcode...
                     o |= 0xc0;
                 }
@@ -216,7 +217,7 @@ namespace ZMachineLib.Operations
                     opKind = OpKinds.Kind2;
                 }
                 else
-                    opcode = _varOpcodes?[o & 0x1f];
+                    opcode = _varOpCodes?[o & 0x1f];
 
                 Log.Write($" Op ({o:X2}): {opcode?.Name} ");
                 var args = GetOperands(o);

@@ -253,4 +253,4 @@ paket-files/
 
 # zMachine story files
 *.dat
-*.z5
+*.z?

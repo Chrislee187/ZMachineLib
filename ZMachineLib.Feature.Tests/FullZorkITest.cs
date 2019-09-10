@@ -25,7 +25,7 @@ namespace ZMachineLib.Feature.Tests
 
             SetupInputs("zork1.349.txt");
 
-            machine.RunFile(File.OpenRead(@"zork1.dat"));
+            machine.RunFile(File.OpenRead(@"zork1.z3"));
             Should.NotThrow(() => machine.Run());
 
             VerifyOutput(
