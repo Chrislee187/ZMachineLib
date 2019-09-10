@@ -11,8 +11,8 @@ namespace ZMachineLib.Operations.Kind1
 
         public override void Execute(List<ushort> args)
         {
-            byte dest = Memory[Stack.Peek().PC++];
-            byte propInfo = Memory[args[0] - 1];
+            var dest = Memory[Stack.Peek().PC++];
+            var propInfo = Memory[args[0] - 1];
             byte len;
             if (Version > 3 && (propInfo & 0x80) == 0x80)
             {

@@ -15,8 +15,8 @@ namespace ZMachineLib.Operations.Kind1
 
         public override void Execute(List<ushort> args)
         {
-            ushort addr = GetPropertyHeaderAddress(args[0]);
-            string s = ZsciiString.GetZsciiString((ushort)(addr + 1));
+            var addr = GetPropertyHeaderAddress(args[0]);
+            var s = ZsciiString.GetZsciiString((ushort)(addr + 1));
             _io.Print(s);
             Log.Write($"[{s}]");
         }

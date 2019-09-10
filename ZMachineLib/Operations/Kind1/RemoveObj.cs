@@ -18,19 +18,19 @@ namespace ZMachineLib.Operations.Kind1
                 return;
 
             Log.Write($"[{GetObjectName(args[0])}] ");
-            ushort objAddr = GetObjectAddress(args[0]);
-            ushort parent = GetObjectNumber((ushort)(objAddr + Offsets.Parent));
-            ushort parentAddr = GetObjectAddress(parent);
-            ushort parentChild = GetObjectNumber((ushort)(parentAddr + Offsets.Child));
-            ushort sibling = GetObjectNumber((ushort)(objAddr + Offsets.Sibling));
+            var objAddr = GetObjectAddress(args[0]);
+            var parent = GetObjectNumber((ushort)(objAddr + Offsets.Parent));
+            var parentAddr = GetObjectAddress(parent);
+            var parentChild = GetObjectNumber((ushort)(parentAddr + Offsets.Child));
+            var sibling = GetObjectNumber((ushort)(objAddr + Offsets.Sibling));
 
             // if object is the first child, set first child to the sibling
             if (parent == args[0])
                 SetObjectNumber((ushort)(parentAddr + Offsets.Child), sibling);
             else if (parentChild != 0)
             {
-                ushort addr = GetObjectAddress(parentChild);
-                ushort currentSibling = GetObjectNumber((ushort)(addr + Offsets.Sibling));
+                var addr = GetObjectAddress(parentChild);
+                var currentSibling = GetObjectNumber((ushort)(addr + Offsets.Sibling));
 
                 // while sibling of parent1's child has siblings
                 while (currentSibling != 0)

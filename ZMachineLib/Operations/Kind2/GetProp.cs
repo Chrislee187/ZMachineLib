@@ -13,13 +13,13 @@ namespace ZMachineLib.Operations.Kind2
         {
             Log.Write($"[{GetObjectName(args[0])}] ");
 
-            byte dest = Memory[Stack.Peek().PC++];
+            var dest = Memory[Stack.Peek().PC++];
             ushort val = 0;
 
-            ushort addr = GetPropertyAddress(args[0], (byte)args[1]);
+            var addr = GetPropertyAddress(args[0], (byte)args[1]);
             if (addr > 0)
             {
-                byte propInfo = Memory[addr++];
+                var propInfo = Memory[addr++];
                 byte len;
 
                 if (Version > 3 && (propInfo & 0x80) == 0x80)
@@ -27,7 +27,7 @@ namespace ZMachineLib.Operations.Kind2
                 else
                     len = (byte)((propInfo >> (Version <= 3 ? 5 : 6)) + 1);
 
-                for (int i = 0; i < len; i++)
+                for (var i = 0; i < len; i++)
                     val |= (ushort)(Memory[addr + i] << (len - 1 - i) * 8);
             }
             else

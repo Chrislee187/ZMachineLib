@@ -13,11 +13,7 @@ namespace ZMachineLib.Operations
         public ZsciiString ZsciiString { get; }
         private readonly IZMachineIO _io;
 
-        public VersionOffsets VersionOffsets { get; private set; }
-        private Stream _gameFileStream;
-        private bool _running;
-        private Random _random = new Random();
-        private string[] _dictionaryWords;
+        internal VersionedOffsets VersionedOffsets;
 
         internal byte[] Memory;
         internal Stack<ZStackFrame> Stack = new Stack<ZStackFrame>();
@@ -33,6 +29,11 @@ namespace ZMachineLib.Operations
         internal ushort ObjectTable;
         internal ushort Dictionary;
         internal bool TerminateOnInput;
+
+        private Stream _gameFileStream;
+        private bool _running;
+        private Random _random = new Random();
+        private string[] _dictionaryWords;
 
 
         private Kind0Operations _kind0Ops;
@@ -65,7 +66,7 @@ namespace ZMachineLib.Operations
 
         private void InitOpcodes(Opcode[] opcodes)
         {
-            for (int i = 0; i < opcodes.Length; i++)
+            for (var i = 0; i < opcodes.Length; i++)
                 opcodes[i] = UnknownOpcode;
         }
 
@@ -134,9 +135,9 @@ namespace ZMachineLib.Operations
 
             ParseDictionary();
 
-            Offsets = VersionOffsets.For(Version);
+            VersionedOffsets = VersionedOffsets.For(Version);
 
-            ZStackFrame zsf = new ZStackFrame {PC = Pc};
+            var zsf = new ZStackFrame {PC = Pc};
             Stack.Push(zsf);
         }
 
@@ -162,12 +163,6 @@ namespace ZMachineLib.Operations
         public IOperation RTrue { get; private set; }
         public IOperation RFalse { get; private set; }
 
-        public VersionOffsets Offsets
-        {
-            get { return VersionOffsets; }
-            set { VersionOffsets = value; }
-        }
-
         private void SetupNewOperations()
         {
             _kind0Ops = new Kind0Operations(this, _io);
@@ -188,10 +183,10 @@ namespace ZMachineLib.Operations
             {
                 Opcode? opcode = null;
                 IOperation operation = null;
-                OpKinds opKind = OpKinds.Unknown;
+                var opKind = OpKinds.Unknown;
 
                 Log.Write($"PC: {Stack.Peek().PC:X5}");
-                byte o = Memory[Stack.Peek().PC++];
+                var o = Memory[Stack.Peek().PC++];
                 if (o == 0xbe)
                 {
                     o = Memory[Stack.Peek().PC++];
@@ -255,15 +250,15 @@ namespace ZMachineLib.Operations
 
         private void ScanTable(List<ushort> args)
         {
-            byte dest = Memory[Stack.Peek().PC++];
+            var dest = Memory[Stack.Peek().PC++];
             byte len = 0x02;
 
             if (args.Count == 4)
                 len = (byte) (args[3] & 0x7f);
 
-            for (int i = 0; i < args[2]; i++)
+            for (var i = 0; i < args[2]; i++)
             {
-                ushort addr = (ushort) (args[1] + i * len);
+                var addr = (ushort) (args[1] + i * len);
                 ushort val;
 
                 if (args.Count == 3 || (args[3] & 0x80) == 0x80)
@@ -287,17 +282,17 @@ namespace ZMachineLib.Operations
         {
             if (args[1] == 0)
             {
-                for (int i = 0; i < args[2]; i++)
+                for (var i = 0; i < args[2]; i++)
                     Memory[args[0] + i] = 0;
             }
             else if ((short) args[1] < 0)
             {
-                for (int i = 0; i < Math.Abs(args[2]); i++)
+                for (var i = 0; i < Math.Abs(args[2]); i++)
                     Memory[args[1] + i] = Memory[args[0] + i];
             }
             else
             {
-                for (int i = Math.Abs(args[2]) - 1; i >= 0; i--)
+                for (var i = Math.Abs(args[2]) - 1; i >= 0; i--)
                     Memory[args[1] + i] = Memory[args[0] + i];
             }
         }
@@ -306,21 +301,21 @@ namespace ZMachineLib.Operations
         {
             // TODO: print properly
 
-            string s = ZsciiString.GetZsciiString(args[0]);
+            var s = ZsciiString.GetZsciiString(args[0]);
             _io.Print(s);
             Log.Write($"[{s}]");
         }
 
         private void PrintNum(List<ushort> args)
         {
-            string s = args[0].ToString();
+            var s = args[0].ToString();
             _io.Print(s);
             Log.Write($"[{s}]");
         }
 
         private void PrintChar(List<ushort> args)
         {
-            string s = Convert.ToChar(args[0]).ToString();
+            var s = Convert.ToChar(args[0]).ToString();
             _io.Print(s);
             Log.Write($"[{s}]");
         }
@@ -354,7 +349,7 @@ namespace ZMachineLib.Operations
         {
             // TODO
 
-            byte dest = Memory[Stack.Peek().PC++];
+            var dest = Memory[Stack.Peek().PC++];
             StoreWordInVariable(dest, 0);
         }
 
@@ -384,8 +379,8 @@ namespace ZMachineLib.Operations
                 _running = false;
             else
             {
-                byte max = Memory[ReadTextAddr];
-                string input = _io.Read(max);
+                var max = Memory[ReadTextAddr];
+                var input = _io.Read(max);
                 FinishRead(input);
             }
         }
@@ -400,42 +395,42 @@ namespace ZMachineLib.Operations
                 input = input.ToLower().Substring(0, Math.Min(input.Length, textMax));
                 Log.Write($"[{input}]");
 
-                int ix = 1;
+                var ix = 1;
 
                 if (Version >= 5)
                     Memory[ReadTextAddr + ix++] = (byte) input.Length;
 
-                for (int j = 0; j < input.Length; j++, ix++)
+                for (var j = 0; j < input.Length; j++, ix++)
                     Memory[ReadTextAddr + ix] = (byte) input[j];
 
                 if (Version < 5)
                     Memory[ReadTextAddr + ++ix] = 0;
 
-                string[] tokenised = input.Split(' ');
+                var tokenised = input.Split(' ');
 
                 Memory[ReadParseAddr + 1] = (byte) tokenised.Length;
 
-                int len = (Version <= 3) ? 6 : 9;
-                int last = 0;
-                int max = Math.Min(tokenised.Length, wordMax);
+                var len = (Version <= 3) ? 6 : 9;
+                var last = 0;
+                var max = Math.Min(tokenised.Length, wordMax);
 
-                for (int i = 0; i < max; i++)
+                for (var i = 0; i < max; i++)
                 {
                     if (tokenised[i].Length > len)
                         tokenised[i] = tokenised[i].Substring(0, len);
 
-                    ushort wordIndex = (ushort) (Array.IndexOf(_dictionaryWords, tokenised[i]));
-                    ushort addr = (ushort) (wordIndex == 0xffff ? 0 : _wordStart + wordIndex * _entryLength);
+                    var wordIndex = (ushort) (Array.IndexOf(_dictionaryWords, tokenised[i]));
+                    var addr = (ushort) (wordIndex == 0xffff ? 0 : _wordStart + wordIndex * _entryLength);
                     StoreWord((ushort) (ReadParseAddr + 2 + i * 4), addr);
                     Memory[ReadParseAddr + 4 + i * 4] = (byte) tokenised[i].Length;
-                    int index = input.IndexOf(tokenised[i], last, StringComparison.Ordinal);
+                    var index = input.IndexOf(tokenised[i], last, StringComparison.Ordinal);
                     Memory[ReadParseAddr + 5 + i * 4] = (byte) (index + (Version < 5 ? 1 : 2));
                     last = index + tokenised[i].Length;
                 }
 
                 if (Version >= 5)
                 {
-                    byte dest = Memory[Stack.Peek().PC++];
+                    var dest = Memory[Stack.Peek().PC++];
                     StoreByteInVariable(dest, 10);
                 }
 
@@ -446,22 +441,22 @@ namespace ZMachineLib.Operations
 
         private void ReadChar(List<ushort> args)
         {
-            char key = _io.ReadChar();
+            var key = _io.ReadChar();
 
-            byte dest = Memory[Stack.Peek().PC++];
+            var dest = Memory[Stack.Peek().PC++];
             StoreByteInVariable(dest, (byte) key);
         }
         private void PutProp(List<ushort> args)
         {
             Log.Write($"[{GetObjectName(args[0])}] ");
 
-            ushort prop = GetPropertyHeaderAddress(args[0]);
-            byte size = Memory[prop];
+            var prop = GetPropertyHeaderAddress(args[0]);
+            var size = Memory[prop];
             prop += (ushort) (size * 2 + 1);
 
             while (Memory[prop] != 0x00)
             {
-                byte propInfo = Memory[prop++];
+                var propInfo = Memory[prop++];
                 byte len;
                 if (Version > 3 && (propInfo & 0x80) == 0x80)
                 {
@@ -472,7 +467,7 @@ namespace ZMachineLib.Operations
                 else
                     len = (byte) ((propInfo >> (Version <= 3 ? 5 : 6)) + 1);
 
-                byte propNum = (byte) (propInfo & (Version <= 3 ? 0x1f : 0x3f));
+                var propNum = (byte) (propInfo & (Version <= 3 ? 0x1f : 0x3f));
                 if (propNum == args[1])
                 {
                     if (len == 1)
@@ -489,13 +484,13 @@ namespace ZMachineLib.Operations
 
         private void StoreB(List<ushort> args)
         {
-            ushort addr = (ushort) (args[0] + args[1]);
+            var addr = (ushort) (args[0] + args[1]);
             Memory[addr] = (byte) args[2];
         }
 
         private void StoreW(List<ushort> args)
         {
-            ushort addr = (ushort) (args[0] + 2 * args[1]);
+            var addr = (ushort) (args[0] + 2 * args[1]);
             StoreWord(addr, args[2]);
         }
 
@@ -503,7 +498,7 @@ namespace ZMachineLib.Operations
         {
             bool branch;
 
-            byte offset = Memory[Stack.Peek().PC++];
+            var offset = Memory[Stack.Peek().PC++];
             short newOffset;
 
             if ((offset & 0x80) == 0x80)
@@ -517,7 +512,7 @@ namespace ZMachineLib.Operations
                 branch = false;
             }
 
-            bool executeBranch = branch && flag || !branch && !flag;
+            var executeBranch = branch && flag || !branch && !flag;
 
             if ((offset & 0x40) == 0x40)
             {
@@ -543,8 +538,8 @@ namespace ZMachineLib.Operations
             }
             else
             {
-                byte offset2 = Memory[Stack.Peek().PC++];
-                ushort final = (ushort) ((offset & 0x3f) << 8 | offset2);
+                var offset2 = Memory[Stack.Peek().PC++];
+                var final = (ushort) ((offset & 0x3f) << 8 | offset2);
 
                 // this is a 14-bit number, so set the sign bit properly because we can jump backwards
                 if ((final & 0x2000) == 0x2000)
@@ -562,26 +557,26 @@ namespace ZMachineLib.Operations
         private void ArtShift(List<ushort> args)
         {
             // keep the sign bit, so make it a short
-            short val = (short) args[0];
+            var val = (short) args[0];
             if ((short) args[1] > 0)
                 val <<= args[1];
             else if ((short) args[1] < 0)
                 val >>= -args[1];
 
-            byte dest = Memory[Stack.Peek().PC++];
+            var dest = Memory[Stack.Peek().PC++];
             StoreWordInVariable(dest, (ushort) val);
         }
 
         private void LogShift(List<ushort> args)
         {
             // kill the sign bit, so make it a ushort
-            ushort val = args[0];
+            var val = args[0];
             if ((short) args[1] > 0)
                 val <<= args[1];
             else if ((short) args[1] < 0)
                 val >>= -args[1];
 
-            byte dest = Memory[Stack.Peek().PC++];
+            var dest = Memory[Stack.Peek().PC++];
             StoreWordInVariable(dest, (ushort) val);
         }
 
@@ -594,13 +589,13 @@ namespace ZMachineLib.Operations
             else
                 val = (ushort) (_random.Next(0, args[0]) + 1);
 
-            byte dest = Memory[Stack.Peek().PC++];
+            var dest = Memory[Stack.Peek().PC++];
             StoreWordInVariable(dest, val);
         }
 
         private void Not(List<ushort> args)
         {
-            byte dest = Memory[Stack.Peek().PC++];
+            var dest = Memory[Stack.Peek().PC++];
             StoreWordInVariable(dest, (ushort) ~args[0]);
         }
 
@@ -615,31 +610,31 @@ namespace ZMachineLib.Operations
             {
                 if (storeResult)
                 {
-                    byte dest = Memory[Stack.Peek().PC++];
+                    var dest = Memory[Stack.Peek().PC++];
                     StoreWordInVariable(dest, 0);
                 }
 
                 return;
             }
 
-            uint pc = GetPackedAddress(args[0]);
+            var pc = GetPackedAddress(args[0]);
             Log.Write($"New PC: {pc:X5}");
 
-            ZStackFrame zsf = new ZStackFrame {PC = pc, StoreResult = storeResult};
+            var zsf = new ZStackFrame {PC = pc, StoreResult = storeResult};
             Stack.Push(zsf);
 
-            byte count = Memory[Stack.Peek().PC++];
+            var count = Memory[Stack.Peek().PC++];
 
             if (Version <= 4)
             {
-                for (int i = 0; i < count; i++)
+                for (var i = 0; i < count; i++)
                 {
                     zsf.Variables[i] = GetWord(Stack.Peek().PC);
                     Stack.Peek().PC += 2;
                 }
             }
 
-            for (int i = 0; i < args.Count - 1; i++)
+            for (var i = 0; i < args.Count - 1; i++)
                 zsf.Variables[i] = args[i + 1];
 
             zsf.ArgumentCount = args.Count - 1;
@@ -672,19 +667,19 @@ namespace ZMachineLib.Operations
 
         private void Pull(List<ushort> args)
         {
-            ushort val = Stack.Peek().RoutineStack.Pop();
+            var val = Stack.Peek().RoutineStack.Pop();
             StoreWordInVariable((byte) args[0], val, false);
         }
 
         private List<ushort> GetOperands(byte opcode)
         {
-            List<ushort> args = new List<ushort>();
+            var args = new List<ushort>();
             ushort arg;
 
             // Variable
             if ((opcode & 0xc0) == 0xc0)
             {
-                byte types = Memory[Stack.Peek().PC++];
+                var types = Memory[Stack.Peek().PC++];
                 byte types2 = 0;
 
                 if (opcode == 0xec || opcode == 0xfa)
@@ -697,7 +692,7 @@ namespace ZMachineLib.Operations
             // Short
             else if ((opcode & 0x80) == 0x80)
             {
-                byte type = (byte) (opcode >> 4 & 0x03);
+                var type = (byte) (opcode >> 4 & 0x03);
                 arg = GetOperand((OperandType) type);
                 args.Add(arg);
             }
@@ -716,15 +711,15 @@ namespace ZMachineLib.Operations
 
         private void GetVariableOperands(byte types, List<ushort> args)
         {
-            for (int i = 6; i >= 0; i -= 2)
+            for (var i = 6; i >= 0; i -= 2)
             {
-                byte type = (byte) ((types >> i) & 0x03);
+                var type = (byte) ((types >> i) & 0x03);
 
                 // omitted
                 if (type == 0x03)
                     break;
 
-                ushort arg = GetOperand((OperandType) type);
+                var arg = GetOperand((OperandType) type);
                 args.Add(arg);
             }
         }
@@ -745,7 +740,7 @@ namespace ZMachineLib.Operations
                     Log.Write($"#{arg:X2}, ");
                     break;
                 case OperandType.Variable:
-                    byte b = Memory[Stack.Peek().PC++];
+                    var b = Memory[Stack.Peek().PC++];
                     arg = GetVariable(b);
                     break;
             }
@@ -844,25 +839,25 @@ namespace ZMachineLib.Operations
 
         private ushort GetObjectAddress(ushort obj)
         {
-            ushort objectAddr = (ushort) (ObjectTable + Offsets.PropertyDefaultTableSize + (obj - 1) * Offsets.ObjectSize);
+            var objectAddr = (ushort) (ObjectTable + VersionedOffsets.PropertyDefaultTableSize + (obj - 1) * VersionedOffsets.ObjectSize);
             return objectAddr;
         }
 
         private ushort GetPropertyHeaderAddress(ushort obj)
         {
-            ushort objectAddr = GetObjectAddress(obj);
-            ushort propAddr = (ushort) (objectAddr + Offsets.Property);
-            ushort prop = GetWord(propAddr);
+            var objectAddr = GetObjectAddress(obj);
+            var propAddr = (ushort) (objectAddr + VersionedOffsets.Property);
+            var prop = GetWord(propAddr);
             return prop;
         }
 
         private string GetObjectName(ushort obj)
         {
-            string s = string.Empty;
+            var s = string.Empty;
 
             if (obj != 0)
             {
-                ushort addr = GetPropertyHeaderAddress(obj);
+                var addr = GetPropertyHeaderAddress(obj);
                 if (Memory[addr] != 0)
                 {
                     s = ZsciiString.GetZsciiString((uint)(addr + 1));
@@ -874,27 +869,27 @@ namespace ZMachineLib.Operations
 
         private void ParseDictionary()
         {
-            ushort address = Dictionary;
+            var address = Dictionary;
 
-            byte len = Memory[address++];
+            var len = Memory[address++];
             address += len;
 
             _entryLength = Memory[address++];
-            ushort numEntries = GetWord(address);
+            var numEntries = GetWord(address);
             address += 2;
 
             _wordStart = address;
 
             _dictionaryWords = new string[numEntries];
 
-            for (int i = 0; i < numEntries; i++)
+            for (var i = 0; i < numEntries; i++)
             {
-                ushort wordAddress = (ushort) (address + i * _entryLength);
+                var wordAddress = (ushort) (address + i * _entryLength);
                 var chars = ZsciiString.GetZsciiChar(wordAddress);
                 chars.AddRange(ZsciiString.GetZsciiChar((uint) (wordAddress + 2)));
                 if (_entryLength == 9)
                     chars.AddRange(ZsciiString.GetZsciiChar((uint) (wordAddress + 4)));
-                string s = ZsciiString.DecodeZsciiChars(chars);
+                var s = ZsciiString.DecodeZsciiChars(chars);
                 _dictionaryWords[i] = s;
             }
         }

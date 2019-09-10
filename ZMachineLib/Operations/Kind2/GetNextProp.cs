@@ -13,19 +13,19 @@ namespace ZMachineLib.Operations.Kind2
         {
             Log.Write($"[{GetObjectName(args[0])}] ");
 
-            bool next = false;
+            var next = false;
 
-            byte dest = Memory[Stack.Peek().PC++];
+            var dest = Memory[Stack.Peek().PC++];
             if (args[1] == 0)
                 next = true;
 
-            ushort propHeaderAddr = GetPropertyHeaderAddress(args[0]);
-            byte size = Memory[propHeaderAddr];
+            var propHeaderAddr = GetPropertyHeaderAddress(args[0]);
+            var size = Memory[propHeaderAddr];
             propHeaderAddr += (ushort)(size * 2 + 1);
 
             while (Memory[propHeaderAddr] != 0x00)
             {
-                byte propInfo = Memory[propHeaderAddr];
+                var propInfo = Memory[propHeaderAddr];
                 byte len;
                 if (Version > 3 && (propInfo & 0x80) == 0x80)
                 {
@@ -36,7 +36,7 @@ namespace ZMachineLib.Operations.Kind2
                 else
                     len = (byte)((propInfo >> (Version <= 3 ? 5 : 6)) + 1);
 
-                byte propNum = (byte)(propInfo & (Version <= 3 ? 0x1f : 0x3f));
+                var propNum = (byte)(propInfo & (Version <= 3 ? 0x1f : 0x3f));
 
                 if (next)
                 {

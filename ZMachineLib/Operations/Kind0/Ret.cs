@@ -13,10 +13,10 @@ namespace ZMachineLib.Operations.Kind0
 
         public override void Execute(List<ushort> args)
         {
-            ZStackFrame sf = Stack.Pop();
+            var sf = Stack.Pop();
             if (sf.StoreResult)
             {
-                byte dest = Memory[Stack.Peek().PC++];
+                var dest = Memory[Stack.Peek().PC++];
                 StoreWordInVariable(dest, args[0]);
             }
         }

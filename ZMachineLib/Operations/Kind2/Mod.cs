@@ -11,8 +11,8 @@ namespace ZMachineLib.Operations.Kind2
 
         public override void Execute(List<ushort> args)
         {
-            short val = (short)((short)args[0] % (short)args[1]);
-            byte dest = Memory[Stack.Peek().PC++];
+            var val = (short)((short)args[0] % (short)args[1]);
+            var dest = Memory[Stack.Peek().PC++];
             StoreWordInVariable(dest, (ushort)val);
         }
     }

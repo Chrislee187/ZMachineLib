@@ -71,7 +71,7 @@ namespace ZMachineLib.Operations.Kind0
 
         public List<byte> GetZsciiChars(uint address)
         {
-            List<byte> chars = new List<byte>();
+            var chars = new List<byte>();
             ushort word;
             do
             {
@@ -86,11 +86,11 @@ namespace ZMachineLib.Operations.Kind0
 
         public List<byte> GetZsciiChar(uint address)
         {
-            List<byte> chars = new List<byte>();
+            var chars = new List<byte>();
 
             var word = GetWord(address);
 
-            byte c = (byte)(word >> 10 & 0x1f);
+            var c = (byte)(word >> 10 & 0x1f);
             chars.Add(c);
             c = (byte)(word >> 5 & 0x1f);
             chars.Add(c);

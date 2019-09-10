@@ -13,12 +13,12 @@ namespace ZMachineLib.Operations.Kind1
         {
             Log.Write($"[{GetObjectName(args[0])}] ");
 
-            ushort addr = GetObjectAddress(args[0]);
-            ushort parent = GetObjectNumber((ushort)(addr + Offsets.Parent));
+            var addr = GetObjectAddress(args[0]);
+            var parent = GetObjectNumber((ushort)(addr + Offsets.Parent));
 
             Log.Write($"[{GetObjectName(parent)}] ");
 
-            byte dest = Memory[Stack.Peek().PC++];
+            var dest = Memory[Stack.Peek().PC++];
 
             if (Version <= 3)
                 StoreByteInVariable(dest, (byte)parent);

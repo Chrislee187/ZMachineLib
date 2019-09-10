@@ -1,13 +1,13 @@
 ﻿namespace ZMachineLib.Operations
 {
-    public class VersionOffsets
+    public class VersionedOffsets
     {
-        public static VersionOffsets For(byte version)
+        public static VersionedOffsets For(byte version)
         {
-            VersionOffsets of = new V3VersionOffsets();
+            VersionedOffsets of = new V3VersionedOffsets();
             if (version > 4)
             {
-                of = new V5VersionOffsets();
+                of = new V5VersionedOffsets();
             }
 
             return of;
@@ -20,9 +20,9 @@
         public int PropertyDefaultTableSize { get; protected set; }
     }
 
-    public class V3VersionOffsets : VersionOffsets
+    public class V3VersionedOffsets : VersionedOffsets
     {
-        public V3VersionOffsets()
+        public V3VersionedOffsets()
         {
             Parent = 4;
             Sibling = 5;
@@ -33,9 +33,9 @@
         }
     }
 
-    public class V5VersionOffsets : VersionOffsets
+    public class V5VersionedOffsets : VersionedOffsets
     {
-        public V5VersionOffsets()
+        public V5VersionedOffsets()
         {
             Parent = 6;
             Sibling = 8;

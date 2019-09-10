@@ -35,8 +35,8 @@ namespace ZMachineLib.Operations
         }
 
         protected ushort ObjectTable => Machine.ObjectTable;
-        protected VersionOffsets Offsets => Machine.Offsets;
-        protected VersionOffsets VersionOffsets => Machine.VersionOffsets;
+        protected VersionedOffsets Offsets => Machine.VersionedOffsets;
+        protected VersionedOffsets VersionedOffsets => Machine.VersionedOffsets;
         protected ZsciiString ZsciiString => Machine.ZsciiString;
         protected ushort DynamicMemorySize => Machine.DynamicMemorySize;
 
@@ -50,16 +50,16 @@ namespace ZMachineLib.Operations
 
         protected ushort GetPropertyAddress(ushort obj, byte prop)
         {
-            ushort propHeaderAddr = GetPropertyHeaderAddress(obj);
+            var propHeaderAddr = GetPropertyHeaderAddress(obj);
 
             // skip past text
-            byte size = Memory[propHeaderAddr];
+            var size = Memory[propHeaderAddr];
             propHeaderAddr += (ushort)(size * 2 + 1);
 
             while (Memory[propHeaderAddr] != 0x00)
             {
-                byte propInfo = Memory[propHeaderAddr];
-                byte propNum = (byte)(propInfo & (Version <= 3 ? 0x1f : 0x3f));
+                var propInfo = Memory[propHeaderAddr];
+                var propNum = (byte)(propInfo & (Version <= 3 ? 0x1f : 0x3f));
 
                 if (propNum == prop)
                     return propHeaderAddr;
@@ -100,18 +100,18 @@ namespace ZMachineLib.Operations
             if (obj == 0)
                 return 0;
 
-            ushort startAddr = GetObjectAddress(obj);
+            var startAddr = GetObjectAddress(obj);
 
-            ulong attributes = (ulong)GetUint(startAddr) << 16 | GetWord((uint)(startAddr + 4));
-            ushort parent = GetObjectNumber((ushort)(startAddr + Offsets.Parent));
-            ushort sibling = GetObjectNumber((ushort)(startAddr + Offsets.Sibling));
-            ushort child = GetObjectNumber((ushort)(startAddr + Offsets.Child));
-            ushort propAddr = GetWord((uint)(startAddr + Offsets.Property));
+            var attributes = (ulong)GetUint(startAddr) << 16 | GetWord((uint)(startAddr + 4));
+            var parent = GetObjectNumber((ushort)(startAddr + Offsets.Parent));
+            var sibling = GetObjectNumber((ushort)(startAddr + Offsets.Sibling));
+            var child = GetObjectNumber((ushort)(startAddr + Offsets.Child));
+            var propAddr = GetWord((uint)(startAddr + Offsets.Property));
 
             Log.Write($"{obj} ({obj:X2}) at {propAddr:X5}: ");
 
-            byte size = Memory[propAddr++];
-            string s = string.Empty;
+            var size = Memory[propAddr++];
+            var s = string.Empty;
             if (size > 0)
             {
                 s = ZsciiString.GetZsciiString(propAddr);
@@ -124,8 +124,8 @@ namespace ZMachineLib.Operations
 
             if (properties)
             {
-                string ss = string.Empty;
-                for (int i = 47; i >= 0; i--)
+                var ss = string.Empty;
+                for (var i = 47; i >= 0; i--)
                 {
                     if (((attributes >> i) & 0x01) == 0x01)
                     {
@@ -137,16 +137,16 @@ namespace ZMachineLib.Operations
 
                 while (Memory[propAddr] != 0x00)
                 {
-                    byte propInfo = Memory[propAddr];
+                    var propInfo = Memory[propAddr];
                     byte len;
                     if (Version > 3 && (propInfo & 0x80) == 0x80)
                         len = (byte)(Memory[propAddr + 1] & 0x3f);
                     else
                         len = (byte)((propInfo >> (Version <= 3 ? 5 : 6)) + 1);
-                    byte propNum = (byte)(propInfo & (Version <= 3 ? 0x1f : 0x3f));
+                    var propNum = (byte)(propInfo & (Version <= 3 ? 0x1f : 0x3f));
 
                     Log.Write($"  P:{propNum:X2} at {propAddr:X4}: ");
-                    for (int i = 0; i < len; i++)
+                    for (var i = 0; i < len; i++)
                         Log.Write($"{Memory[propAddr++]:X2} ");
                     Log.WriteLine("");
                     propAddr++;
@@ -179,31 +179,31 @@ namespace ZMachineLib.Operations
             {
                 if (storeResult)
                 {
-                    byte dest = Memory[Stack.Peek().PC++];
+                    var dest = Memory[Stack.Peek().PC++];
                     StoreWordInVariable(dest, 0);
                 }
 
                 return;
             }
 
-            uint pc = GetPackedAddress(args[0]);
+            var pc = GetPackedAddress(args[0]);
             Log.Write($"New PC: {pc:X5}");
 
-            ZStackFrame zsf = new ZStackFrame { PC = pc, StoreResult = storeResult };
+            var zsf = new ZStackFrame { PC = pc, StoreResult = storeResult };
             Stack.Push(zsf);
 
-            byte count = Memory[Stack.Peek().PC++];
+            var count = Memory[Stack.Peek().PC++];
 
             if (Version <= 4)
             {
-                for (int i = 0; i < count; i++)
+                for (var i = 0; i < count; i++)
                 {
                     zsf.Variables[i] = GetWord(Stack.Peek().PC);
                     Stack.Peek().PC += 2;
                 }
             }
 
-            for (int i = 0; i < args.Count - 1; i++)
+            for (var i = 0; i < args.Count - 1; i++)
                 zsf.Variables[i] = args[i + 1];
 
             zsf.ArgumentCount = args.Count - 1;
@@ -259,17 +259,17 @@ namespace ZMachineLib.Operations
 
         protected ushort GetObjectAddress(ushort obj)
         {
-            ushort objectAddr = (ushort)(ObjectTable + Offsets.PropertyDefaultTableSize + (obj - 1) * Offsets.ObjectSize);
+            var objectAddr = (ushort)(ObjectTable + Offsets.PropertyDefaultTableSize + (obj - 1) * Offsets.ObjectSize);
             return objectAddr;
         }
 
         protected string GetObjectName(ushort obj)
         {
-            string s = string.Empty;
+            var s = string.Empty;
 
             if (obj != 0)
             {
-                ushort addr = GetPropertyHeaderAddress(obj);
+                var addr = GetPropertyHeaderAddress(obj);
                 if (Memory[addr] != 0)
                 {
                     s = ZsciiString.GetZsciiString((uint)(addr + 1));
@@ -281,9 +281,9 @@ namespace ZMachineLib.Operations
 
         protected ushort GetPropertyHeaderAddress(ushort obj)
         {
-            ushort objectAddr = GetObjectAddress(obj);
-            ushort propAddr = (ushort)(objectAddr + Offsets.Property);
-            ushort prop = GetWord(propAddr);
+            var objectAddr = GetObjectAddress(obj);
+            var propAddr = (ushort)(objectAddr + Offsets.Property);
+            var prop = GetWord(propAddr);
             return prop;
         }
 
@@ -382,7 +382,7 @@ namespace ZMachineLib.Operations
 
         protected List<byte> GetZsciiChars(uint address)
         {
-            List<byte> chars = new List<byte>();
+            var chars = new List<byte>();
             ushort word;
             do
             {
@@ -397,11 +397,11 @@ namespace ZMachineLib.Operations
 
         protected List<byte> GetZsciiChar(uint address)
         {
-            List<byte> chars = new List<byte>();
+            var chars = new List<byte>();
 
             var word = GetWord(address);
 
-            byte c = (byte)(word >> 10 & 0x1f);
+            var c = (byte)(word >> 10 & 0x1f);
             chars.Add(c);
             c = (byte)(word >> 5 & 0x1f);
             chars.Add(c);
