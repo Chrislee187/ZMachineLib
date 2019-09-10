@@ -142,7 +142,6 @@ namespace ZMachineLib.Operations
             {
                 Opcode? opcode = null;
                 IOperation operation = null;
-                var opKind = OpKinds.Unknown;
 
                 Log.Write($"PC: {Stack.Peek().PC:X5}");
                 var o = Memory[Stack.Peek().PC++];
@@ -156,27 +155,22 @@ namespace ZMachineLib.Operations
                 else if (o < 0x80)
                 {
                     _kind2Ops.TryGetValue((Kind2OpCodes)(o & 0x1f), out operation);
-                    opKind = OpKinds.Kind2;
                 }
                 else if (o < 0xb0)
                 {
                     _kind1Ops.TryGetValue((Kind1OpCodes)(o & 0x0f), out operation);
-                    opKind = OpKinds.Kind1;
                 }
                 else if (o < 0xc0)
                 {
                     _kind0Ops.TryGetValue((Kind0OpCodes) (o & 0x0f), out operation);
-                    opKind = OpKinds.Kind0;
                 }
                 else if (o < 0xe0)
                 {
                     _kind2Ops.TryGetValue((Kind2OpCodes)(o & 0x1f), out operation);
-                    opKind = OpKinds.Kind2;
                 }
                 else
                 {
                     _kindVarOps.TryGetValue((KindVarOpCodes)(o & 0x1f), out operation);
-                    opKind = OpKinds.KindVar;
                 }
 
                 Log.Write($" Op ({o:X2}): {opcode?.Name} ");
@@ -184,23 +178,7 @@ namespace ZMachineLib.Operations
 
                 if (operation != null)
                 {
-                    if (opKind == OpKinds.Kind0)
-                    {
-                        switch ((Kind0OpCodes)operation.Code)
-                        {
-                            case Kind0OpCodes.Quit:
-                                _running = false;
-                                _io.Quit();
-                                break;
-                            default:
-                                operation.Execute(args);
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        operation.Execute(args);
-                    }
+                    operation.Execute(args);
                 }
                 else
                 {

@@ -29,7 +29,7 @@ namespace ZMachineLib.Operations.Kind0
             _operations.Add(Kind0OpCodes.Restart, new Restart(machine));
             _operations.Add(Kind0OpCodes.RetPopped, new RetPopped(machine));
             _operations.Add(Kind0OpCodes.Pop, new Pop(machine));
-            _operations.Add(Kind0OpCodes.Quit, new Nop(Kind0OpCodes.Quit));
+            _operations.Add(Kind0OpCodes.Quit, new Quit(machine, io));
             _operations.Add(Kind0OpCodes.NewLine, new Newline(machine, io));
             _operations.Add(Kind0OpCodes.ShowStatus, new ShowStatus(machine, io));
             _operations.Add(Kind0OpCodes.Verify, new Verify(machine));
