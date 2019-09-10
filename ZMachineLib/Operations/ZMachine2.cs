@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using ZMachineLib.Operations.Kind0;
 using ZMachineLib.Operations.Kind1;
 using ZMachineLib.Operations.Kind2;
@@ -11,7 +10,7 @@ namespace ZMachineLib.Operations
     public class ZMachine2
     {
         public ZsciiString ZsciiString { get; }
-        private readonly IZMachineIO _io;
+        private readonly IZMachineIo _io;
 
         internal VersionedOffsets VersionedOffsets;
 
@@ -37,13 +36,15 @@ namespace ZMachineLib.Operations
 
 
         private Kind0Operations _kind0Ops;
+        // ReSharper disable once CollectionNeverUpdated.Local
         private Kind1Operations _kind1Ops;
+        // ReSharper disable once CollectionNeverUpdated.Local
         private Kind2Operations _kind2Ops;
 
         private readonly Opcode[] _varOpcodes = new Opcode[0x20];
         private readonly Opcode[] _extOpcodes = new Opcode[0x20];
 
-        private readonly Opcode UnknownOpcode = new Opcode
+        private readonly Opcode _unknownOpcode = new Opcode
         {
             Handler = delegate
             {
@@ -56,7 +57,7 @@ namespace ZMachineLib.Operations
         private byte _entryLength;
         private ushort _wordStart;
 
-        public ZMachine2(IZMachineIO io)
+        public ZMachine2(IZMachineIo io)
         {
             _io = io;
             ZsciiString = new ZsciiString(this);
@@ -67,7 +68,7 @@ namespace ZMachineLib.Operations
         private void InitOpcodes(Opcode[] opcodes)
         {
             for (var i = 0; i < opcodes.Length; i++)
-                opcodes[i] = UnknownOpcode;
+                opcodes[i] = _unknownOpcode;
         }
 
         private void SetupOpcodes()
@@ -84,7 +85,7 @@ namespace ZMachineLib.Operations
             _varOpcodes[0x09] = new Opcode {Handler = Pull, Name = "PULL"};
             _varOpcodes[0x0a] = new Opcode {Handler = SplitWindow, Name = "SPLIT_WINDOW"};
             _varOpcodes[0x0b] = new Opcode {Handler = SetWindow, Name = "SET_WINDOW"};
-            _varOpcodes[0x0c] = new Opcode {Handler = CallVS2, Name = "CALL_VS2"};
+            _varOpcodes[0x0c] = new Opcode {Handler = CallVs2, Name = "CALL_VS2"};
             _varOpcodes[0x0d] = new Opcode {Handler = EraseWindow, Name = "ERASE_WINDOW"};
             _varOpcodes[0x0f] = new Opcode {Handler = SetCursor, Name = "SET_CURSOR"};
             _varOpcodes[0x11] = new Opcode {Handler = SetTextStyle, Name = "SET_TEXT_STYLE"};
@@ -94,8 +95,8 @@ namespace ZMachineLib.Operations
             _varOpcodes[0x16] = new Opcode {Handler = ReadChar, Name = "READ_CHAR"};
             _varOpcodes[0x17] = new Opcode {Handler = ScanTable, Name = "SCAN_TABLE"};
             _varOpcodes[0x18] = new Opcode {Handler = Not, Name = "NOT"};
-            _varOpcodes[0x19] = new Opcode {Handler = CallVN, Name = "CALL_VN"};
-            _varOpcodes[0x1a] = new Opcode {Handler = CallVN2, Name = "CALL_VN2"};
+            _varOpcodes[0x19] = new Opcode {Handler = CallVn, Name = "CALL_VN"};
+            _varOpcodes[0x1a] = new Opcode {Handler = CallVn2, Name = "CALL_VN2"};
             _varOpcodes[0x1d] = new Opcode {Handler = CopyTable, Name = "COPY_TABLE"};
             _varOpcodes[0x1e] = new Opcode {Handler = PrintTable, Name = "PRINT_TABLE"};
             _varOpcodes[0x1f] = new Opcode {Handler = CheckArgCount, Name = "CHECK_ARG_COUNT"};
@@ -152,7 +153,7 @@ namespace ZMachineLib.Operations
         private void ReadHeaderInfo()
         {
             Version = Memory[HeaderOffsets.VersionOffset];
-            Pc = GetWord(HeaderOffsets.InitialPCOffset);
+            Pc = GetWord(HeaderOffsets.InitialPcOffset);
             Dictionary = GetWord(HeaderOffsets.DictionaryOffset);
             ObjectTable = GetWord(HeaderOffsets.ObjectTableOffset);
             Globals = GetWord(HeaderOffsets.GlobalVarOffset);
@@ -577,7 +578,7 @@ namespace ZMachineLib.Operations
                 val >>= -args[1];
 
             var dest = Memory[Stack.Peek().PC++];
-            StoreWordInVariable(dest, (ushort) val);
+            StoreWordInVariable(dest, val);
         }
 
         private void Random(List<ushort> args)
@@ -640,17 +641,17 @@ namespace ZMachineLib.Operations
             zsf.ArgumentCount = args.Count - 1;
         }
 
-        private void CallVN(List<ushort> args)
+        private void CallVn(List<ushort> args)
         {
             Call(args, false);
         }
 
-        private void CallVN2(List<ushort> args)
+        private void CallVn2(List<ushort> args)
         {
             Call(args, false);
         }
 
-        private void CallVS2(List<ushort> args)
+        private void CallVs2(List<ushort> args)
         {
             Call(args, true);
         }

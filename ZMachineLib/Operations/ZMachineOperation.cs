@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ZMachineLib.Operations.Kind0;
 
 namespace ZMachineLib.Operations
@@ -8,9 +7,6 @@ namespace ZMachineLib.Operations
     {
         public ushort Code { get; }
         
-        protected const ushort ZFalse = 0;
-        protected const ushort ZTrue = 1;
-
         protected readonly ZMachine2 Machine;
 
         protected byte[] Memory => Machine.Memory;

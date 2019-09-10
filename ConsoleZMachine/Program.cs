@@ -1,14 +1,14 @@
 ﻿using System.IO;
-using ZMachineLib;
 using ZMachineLib.Operations;
 
 namespace ConsoleZMachine
 {
 	class Program
 	{
-		static void Main(string[] args)
+        // ReSharper disable once UnusedParameter.Local
+        static void Main(string[] args)
 		{
-			var zMachine = new ZMachine2(new ConsoleIO());
+			var zMachine = new ZMachine2(new ConsoleIo());
 
 			FileStream fs = File.OpenRead(@"zork1.dat");
 			zMachine.RunFile(fs);

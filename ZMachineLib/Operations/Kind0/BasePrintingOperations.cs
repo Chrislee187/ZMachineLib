@@ -2,16 +2,14 @@
 {
     public abstract class BasePrintingOperations : ZMachineOperation
     {
-        protected readonly IZMachineIO Io;
+        protected readonly IZMachineIo Io;
 
-        protected readonly ZsciiString ZsciiString;
         protected BasePrintingOperations(ushort code,
             ZMachine2 machine,
-            IZMachineIO io) 
-            : base((ushort) code, machine)
+            IZMachineIo io) 
+            : base(code, machine)
         {
             Io = io;
-            ZsciiString = new ZsciiString(machine);
         }
     }
 }

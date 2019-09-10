@@ -1,26 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 using Moq;
 using NUnit.Framework;
 using Shouldly;
-using ZMachineLib;
 using ZMachineLib.Operations;
 
-namespace Tests
+namespace ZMachineLib.Feature.Tests
 {
     [Explicit]
     public class FullZorkITest
     {
-        private Mock<IZMachineIO> _zMachineIo;
-        private List<string> _outputs;
+        private Mock<IZMachineIo> _zMachineIo;
 
-        [SetUpAttribute]
+        [SetUp]
         public void Setup()
         {
-            _zMachineIo = new Mock<IZMachineIO>();
-            _outputs = new List<string>();
+            _zMachineIo = new Mock<IZMachineIo>();
         }
 
         [Test]

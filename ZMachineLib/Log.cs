@@ -5,17 +5,18 @@ namespace ZMachineLib
 {
 	internal static class Log
     {
+        // ReSharper disable once MemberCanBePrivate.Global
         public static bool Enabled = false;
-		private static readonly StringBuilder _output = new StringBuilder();
+		private static readonly StringBuilder Output = new StringBuilder();
 
 		public static void Write(string s)
 		{
-            if(Enabled) _output.Append(s);
+            if(Enabled) Output.Append(s);
 		}
 
 		public static void WriteLine(string s)
 		{
-            if (Enabled) _output.AppendLine(s);
+            if (Enabled) Output.AppendLine(s);
 		}
 
 		public static void Flush()
@@ -23,13 +24,13 @@ namespace ZMachineLib
             if (Enabled)
             {
                 Print();
-                _output.Clear();
+                Output.Clear();
             }
         }
 
 		public static void Print()
 		{
-            if (Enabled) Debug.WriteLine(_output.ToString());
+            if (Enabled) Debug.WriteLine(Output.ToString());
 		}
 	}
 }

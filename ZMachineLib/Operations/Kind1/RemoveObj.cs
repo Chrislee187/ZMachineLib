@@ -4,8 +4,6 @@ namespace ZMachineLib.Operations.Kind1
 {
     public sealed class RemoveObj : ZMachineOperation
     {
-        private readonly IZMachineIO _io;
-
         public RemoveObj(ZMachine2 machine)
             : base((ushort)Kind1OpCodes.RemoveObj, machine)
         {

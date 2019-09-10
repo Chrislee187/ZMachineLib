@@ -2,7 +2,6 @@ using System.IO;
 using Moq;
 using NUnit.Framework;
 using Shouldly;
-using Tests;
 using ZMachineLib.Operations;
 
 namespace ZMachineLib.Feature.Tests
@@ -10,14 +9,14 @@ namespace ZMachineLib.Feature.Tests
     [Timeout(5000)]
     public class Zork1BasedSanityTests
     {
-        private Mock<IZMachineIO> _zMachineIo;
+        private Mock<IZMachineIo> _zMachineIo;
         private ZMachineFeatureTester _zMachineFeature;
         private ZMachine2 _machine;
 
         [SetUp]
         public void Setup()
         {
-            _zMachineIo = new Mock<IZMachineIO>();
+            _zMachineIo = new Mock<IZMachineIo>();
 
             _zMachineFeature = new ZMachineFeatureTester(_zMachineIo);
             _machine = new ZMachine2(_zMachineIo.Object);

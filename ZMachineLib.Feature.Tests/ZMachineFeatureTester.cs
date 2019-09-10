@@ -1,18 +1,16 @@
 using System.Collections.Generic;
-using System.IO;
 using Moq;
 using Moq.Language;
-using ZMachineLib;
 
-namespace Tests
+namespace ZMachineLib.Feature.Tests
 {
     public class ZMachineFeatureTester
     {
         private readonly ISetupSequentialResult<string> _inputSequence;
         private readonly List<string> _outputSequence;
-        private readonly Mock<IZMachineIO> _zMachineIo;
+        private readonly Mock<IZMachineIo> _zMachineIo;
 
-        public ZMachineFeatureTester(Mock<IZMachineIO> zMachineIo)
+        public ZMachineFeatureTester(Mock<IZMachineIo> zMachineIo)
         {
             _zMachineIo = zMachineIo;
 

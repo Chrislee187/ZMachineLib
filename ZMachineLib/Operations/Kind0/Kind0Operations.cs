@@ -9,7 +9,7 @@ namespace ZMachineLib.Operations.Kind0
         public Save Save { get; }
         public Restore Restore { get; }
         public Kind0Operations(ZMachine2 machine,
-            IZMachineIO io)
+            IZMachineIo io)
         {
             RTrue = new RTrue(machine);
             RFalse = new RFalse(machine);
@@ -27,10 +27,10 @@ namespace ZMachineLib.Operations.Kind0
             Add(Kind0OpCodes.RetPopped, new RetPopped(machine));
             Add(Kind0OpCodes.Pop, new Pop(machine));
             Add(Kind0OpCodes.Quit, new Nop(Kind0OpCodes.Quit));
-            Add(Kind0OpCodes.NewLine, new Newline(machine, io));;
-            Add(Kind0OpCodes.ShowStatus, new ShowStatus(machine, io));;
-            Add(Kind0OpCodes.Verify, new Verify(machine));;
-            Add(Kind0OpCodes.Piracy, new Piracy(machine));;
+            Add(Kind0OpCodes.NewLine, new Newline(machine, io));
+            Add(Kind0OpCodes.ShowStatus, new ShowStatus(machine, io));
+            Add(Kind0OpCodes.Verify, new Verify(machine));
+            Add(Kind0OpCodes.Piracy, new Piracy(machine));
         }
     }
 }

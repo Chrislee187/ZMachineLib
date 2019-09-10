@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Text;
+// ReSharper disable All
 
 namespace ZMachineLib
 {
@@ -37,7 +38,7 @@ namespace ZMachineLib
 		private const int StaticMemoryOffset = 0x0e;
 		private const int AbbreviationTableOffset = 0x18;
 
-		private readonly IZMachineIO _io;
+		private readonly IZMachineIo _io;
 		private byte[] _memory;
 		private Stream _file;
 		private bool _running;
@@ -68,7 +69,7 @@ namespace ZMachineLib
 		private byte _entryLength;
 		private ushort _wordStart;
 
-		public ZMachine(IZMachineIO io)
+		public ZMachine(IZMachineIo io)
 		{
 			_io = io;
 

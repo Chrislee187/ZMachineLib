@@ -7,7 +7,7 @@ namespace ZMachineLib.Operations.Kind0
     public class Restore : GameStateBase
     {
         public Restore(ZMachine2 machine,
-            IZMachineIO io)
+            IZMachineIo io)
             : base(Kind0OpCodes.Restore, machine, io, 
                 null, null)
         {

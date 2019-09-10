@@ -6,7 +6,7 @@ namespace ZMachineLib.Operations.Kind1
     public class Kind1Operations : Dictionary<Kind1OpCodes, IOperation>
     {
         public Kind1Operations(ZMachine2 machine,
-            IZMachineIO io)
+            IZMachineIo io)
         {
             Add(Kind1OpCodes.Jz, new Jz(machine));
             Add(Kind1OpCodes.GetSibling, new GetSibling(machine));

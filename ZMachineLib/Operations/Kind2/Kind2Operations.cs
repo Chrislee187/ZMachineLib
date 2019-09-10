@@ -5,7 +5,7 @@ namespace ZMachineLib.Operations.Kind2
     public class Kind2Operations : Dictionary<Kind2OpCodes, IOperation>
     {
         public Kind2Operations(ZMachine2 machine,
-            IZMachineIO io)
+            IZMachineIo io)
         {
             Add(Kind2OpCodes.Je, new Je(machine));
             Add(Kind2OpCodes.Jl, new Jl(machine));

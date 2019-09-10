@@ -7,7 +7,7 @@ namespace ZMachineLib.Operations.Kind0
     public class Save : GameStateBase
     {
         public Save(ZMachine2 machine, 
-            IZMachineIO io,
+            IZMachineIo io,
             RTrue rTrue, RFalse rFalse) 
             : base(Kind0OpCodes.Save, machine, io, rTrue, rFalse)
         {

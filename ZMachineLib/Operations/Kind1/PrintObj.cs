@@ -4,10 +4,10 @@ namespace ZMachineLib.Operations.Kind1
 {
     public sealed class PrintObj : ZMachineOperation
     {
-        private readonly IZMachineIO _io;
+        private readonly IZMachineIo _io;
 
         public PrintObj(ZMachine2 machine,
-            IZMachineIO io)
+            IZMachineIo io)
             : base((ushort)Kind1OpCodes.PrintObj, machine)
         {
             _io = io;
