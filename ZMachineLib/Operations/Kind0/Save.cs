@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Json;
 
@@ -16,19 +17,26 @@ namespace ZMachineLib.Operations.Kind0
         public override void Execute(List<ushort> args)
         {
             var state = CreateState();
-            var val = Io.Save(state);
-
-            if (Version < 5)
+            try
             {
-                Jump(val);
-            }
-            else
-            {
-                StoreWordInVariable(
-                    Memory[Stack.Peek().PC++], 
-                    (ushort)(val ? 1 : 0)
+                var val = Io.Save(state);
+                if (Version < 5)
+                {
+                    Jump(val);
+                }
+                else
+                {
+                    StoreWordInVariable(
+                        Memory[Stack.Peek().PC++],
+                        (ushort)(val ? 1 : 0)
                     );
+                }
             }
+            catch 
+            {
+                return;
+            }
+
         }
 
 

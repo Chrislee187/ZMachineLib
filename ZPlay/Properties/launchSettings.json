@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ZPlay": {
+      "commandName": "Project",
+      "commandLineArgs": "D:\\ZFiles\\zork3.z3"
+    }
+  }
+}

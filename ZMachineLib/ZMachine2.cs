@@ -57,6 +57,13 @@ namespace ZMachineLib
             Run();
         }
 
+        public void RunFile(string filename)
+        {
+            var fileStream = File.OpenRead(filename);
+            RunFile(fileStream);
+
+        }
+
         internal void ReloadFile()
         {
             LoadFile(_gameFileStream);
@@ -320,9 +327,6 @@ namespace ZMachineLib
                 DynamicMemorySize = GetWord(memory, HeaderOffsets.StaticMemoryOffset);
                 AbbreviationsTable = GetWord(memory, HeaderOffsets.AbbreviationTableOffset);
             }
-
-
-
         }
     }
 }

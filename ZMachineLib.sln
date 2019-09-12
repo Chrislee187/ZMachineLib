@@ -5,14 +5,14 @@ VisualStudioVersion = 16.0.29230.47
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZMachineLib", "ZMachineLib\ZMachineLib.csproj", "{8130AB87-4AD2-4025-BBE8-FA1D06F6DF9E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleZMachine", "ConsoleZMachine\ConsoleZMachine.csproj", "{D85E0558-A1C2-4B81-9718-7F371F844DD4}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZMachineLib.Feature.Tests", "ZMachineLib.Feature.Tests\ZMachineLib.Feature.Tests.csproj", "{3E1FD741-81E8-4A5D-BC53-A4A4D24DE823}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZMachineLib.Feature.Tests", "ZMachineLib.Feature.Tests\ZMachineLib.Feature.Tests.csproj", "{3E1FD741-81E8-4A5D-BC53-A4A4D24DE823}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{66A90C02-2756-434C-9EA3-10021CA8513C}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZPlay", "ZPlay\ZPlay.csproj", "{713D9D38-21F0-4AF1-94DF-4F0DCA3551D3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,14 +24,14 @@ Global
 		{8130AB87-4AD2-4025-BBE8-FA1D06F6DF9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8130AB87-4AD2-4025-BBE8-FA1D06F6DF9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8130AB87-4AD2-4025-BBE8-FA1D06F6DF9E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D85E0558-A1C2-4B81-9718-7F371F844DD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D85E0558-A1C2-4B81-9718-7F371F844DD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D85E0558-A1C2-4B81-9718-7F371F844DD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D85E0558-A1C2-4B81-9718-7F371F844DD4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3E1FD741-81E8-4A5D-BC53-A4A4D24DE823}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3E1FD741-81E8-4A5D-BC53-A4A4D24DE823}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E1FD741-81E8-4A5D-BC53-A4A4D24DE823}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E1FD741-81E8-4A5D-BC53-A4A4D24DE823}.Release|Any CPU.Build.0 = Release|Any CPU
+		{713D9D38-21F0-4AF1-94DF-4F0DCA3551D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{713D9D38-21F0-4AF1-94DF-4F0DCA3551D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{713D9D38-21F0-4AF1-94DF-4F0DCA3551D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{713D9D38-21F0-4AF1-94DF-4F0DCA3551D3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

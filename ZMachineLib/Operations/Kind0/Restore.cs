@@ -17,17 +17,20 @@ namespace ZMachineLib.Operations.Kind0
         {
             var stream = Io.Restore();
             if (stream != null)
+            {
                 RestoreState(stream);
+            }
+
 
             if (Version < 5)
             {
-                Jump(stream != null);
+                Jump(true);
             }
             else
             {
                 StoreWordInVariable(
                     Memory[Stack.Peek().PC++], 
-                    (ushort)(stream != null ? 1 : 0));
+                    1);
             }
         }
 
