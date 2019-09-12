@@ -78,6 +78,10 @@ namespace ZMachineLib
             Header = ReadHeaderInfo();
             // NOTE: Need header to be read (mainly for the Version) before we can setup the Ops as few of them have header value dependencies
             SetupNewOperations();
+#if DEBUG
+            Console.WriteLine($"File version: {Header.Version}");
+#endif
+
 
             // TODO: set these via IZMachineIO
             Memory[0x01] = 0x01;

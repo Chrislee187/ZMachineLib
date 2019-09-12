@@ -2,7 +2,7 @@
   "profiles": {
     "ZPlay": {
       "commandName": "Project",
-      "commandLineArgs": "D:\\ZFiles\\zork3.z3"
+      "commandLineArgs": "\"N:\\Vault\\Infocom Files\\zFiles\\bureaucracy.z4\""
     }
   }
 }

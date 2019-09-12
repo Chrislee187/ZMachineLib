@@ -16,8 +16,8 @@ namespace ZPlay
 		{
             Console.SetBufferSize(Console.WindowWidth, Console.WindowHeight);
 			Console.SetCursorPosition(0, Console.WindowHeight-1);
-			_defaultFore = Console.ForegroundColor;
-			_defaultBack = Console.BackgroundColor;
+            _defaultFore = ConsoleColor.White; //Console.ForegroundColor;
+            _defaultBack = ConsoleColor.Black; //Console.BackgroundColor;
 		}
 
 		public void Print(string s)
@@ -112,6 +112,7 @@ namespace ZPlay
 			Console.BackgroundColor = _defaultBack;
 			Console.Clear();
 			Console.BackgroundColor = c;
+			Console.ForegroundColor = _defaultFore;
 		}
 
 		public void BufferMode(bool buffer)
@@ -198,16 +199,16 @@ namespace ZPlay
 					return ConsoleColor.Cyan;
 				case ZColor.White:
 					return ConsoleColor.White;
-				case ZColor.DarkishGrey:
+                case ZColor.LightGrey:
+                    return ConsoleColor.Gray;
+                case ZColor.MediumGrey:
+                    return ConsoleColor.Gray;
+                case ZColor.DarkishGrey:
 					return ConsoleColor.DarkGray;
-				case ZColor.LightGrey:
-					return ConsoleColor.Gray;
-				case ZColor.MediumGrey:
-					return ConsoleColor.Gray;
-				case ZColor.DarkGrey:
+                case ZColor.DarkGrey:
 					return ConsoleColor.DarkGray;
 			}
-			return Console.ForegroundColor;
+			return fore ? _defaultFore : _defaultBack;
 		}
 
         public void Log(string text)

@@ -19,7 +19,7 @@ namespace ZPlay
 
             var filename = args[0];
             var gameName = Path.GetFileNameWithoutExtension(filename);
-            var machine = new ZMachine2(new UserIo(), new FileIo(gameName));
+                var machine = new ZMachine2(new UserIo(), new FileIo(gameName));
             machine.RunFile(args[0]);
         }
 
