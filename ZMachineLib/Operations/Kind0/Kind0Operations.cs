@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace ZMachineLib.Operations.Kind0
 {
@@ -9,15 +8,16 @@ namespace ZMachineLib.Operations.Kind0
         private readonly IDictionary<Kind0OpCodes, IOperation> _operations = new Dictionary<Kind0OpCodes, IOperation>();
 
         public Kind0Operations(ZMachine2 machine,
-            IZMachineIo io)
+            IZMachineIo io,
+            IFileIo fileIo)
         {
             _operations.Add(Kind0OpCodes.RTrue, new RTrue(machine));
             _operations.Add(Kind0OpCodes.RFalse, new RFalse(machine));
             _operations.Add(Kind0OpCodes.Print, new Print(machine, io));
             _operations.Add(Kind0OpCodes.PrintRet, new PrintRet(machine, io, (RTrue) _operations[Kind0OpCodes.RTrue]));
             _operations.Add(Kind0OpCodes.Nop, new Nop());
-            _operations.Add(Kind0OpCodes.Save, new Save(machine, io, (RTrue)_operations[Kind0OpCodes.RTrue], (RFalse)_operations[Kind0OpCodes.RFalse]));
-            _operations.Add(Kind0OpCodes.Restore, new Restore(machine, io));
+            _operations.Add(Kind0OpCodes.Save, new Save(machine, fileIo));
+            _operations.Add(Kind0OpCodes.Restore, new Restore(machine, fileIo));
             _operations.Add(Kind0OpCodes.Restart, new Restart(machine));
             _operations.Add(Kind0OpCodes.RetPopped, new RetPopped(machine));
             _operations.Add(Kind0OpCodes.Pop, new Pop(machine));

@@ -2,7 +2,6 @@
 using Moq;
 using NUnit.Framework;
 using Shouldly;
-using ZMachineLib.Operations;
 
 namespace ZMachineLib.Feature.Tests
 {
@@ -21,7 +20,7 @@ namespace ZMachineLib.Feature.Tests
 
         public void Should_complete_zork_1_with_349_points()
         {
-            var machine = new ZMachine2(_zMachineIo.Object);
+            var machine = new ZMachine2(_zMachineIo.Object, null);
 
             SetupInputs("zork1.349.txt");
 

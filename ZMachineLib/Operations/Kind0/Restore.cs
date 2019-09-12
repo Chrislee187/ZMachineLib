@@ -4,12 +4,11 @@ using System.Runtime.Serialization.Json;
 
 namespace ZMachineLib.Operations.Kind0
 {
-    public class Restore : GameStateBase
+    public class Restore : GameSaveBase
     {
         public Restore(ZMachine2 machine,
-            IZMachineIo io)
-            : base(Kind0OpCodes.Restore, machine, io, 
-                null, null)
+            IFileIo io)
+            : base(Kind0OpCodes.Restore, machine, io)
         {
         }
 

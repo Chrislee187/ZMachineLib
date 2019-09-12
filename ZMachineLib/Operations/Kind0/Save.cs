@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Json;
 
 namespace ZMachineLib.Operations.Kind0
 {
-    public class Save : GameStateBase
+    public class Save : GameSaveBase
     {
         public Save(ZMachine2 machine, 
-            IZMachineIo io,
-            RTrue rTrue, RFalse rFalse) 
-            : base(Kind0OpCodes.Save, machine, io, rTrue, rFalse)
+            IFileIo io) 
+            : base(Kind0OpCodes.Save, machine, io)
         {
         }
 
@@ -32,15 +30,14 @@ namespace ZMachineLib.Operations.Kind0
                     );
                 }
             }
-            catch 
+            catch
             {
-                return;
+                // ignored: we don't want to crash the machine so ignore any IO errors
             }
-
         }
 
 
-        public Stream CreateState()
+        private Stream CreateState()
         {
             var ms = new MemoryStream();
             var bw = new BinaryWriter(ms);

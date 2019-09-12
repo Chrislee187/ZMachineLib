@@ -43,9 +43,11 @@ namespace ZMachineLib
         private KindVarOperations _kindVarOps;
         // ReSharper disable once CollectionNeverUpdated.Local
         private KindExtOperations _kindExtOps;
+        private readonly IFileIo _fileIo;
 
-        public ZMachine2(IZMachineIo io)
+        public ZMachine2(IZMachineIo io, IFileIo fileIo)
         {
+            _fileIo = fileIo;
             _io = io;
             ZsciiString = new ZsciiString(this);
         }
@@ -103,7 +105,7 @@ namespace ZMachineLib
 
         private void SetupNewOperations()
         {
-            _kind0Ops = new Kind0Operations(this, _io);
+            _kind0Ops = new Kind0Operations(this, _io, _fileIo);
             RTrue = _kind0Ops[Kind0OpCodes.RTrue];
             RFalse = _kind0Ops[Kind0OpCodes.RFalse];
 

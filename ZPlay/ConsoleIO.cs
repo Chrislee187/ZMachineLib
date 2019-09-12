@@ -1,19 +1,17 @@
-﻿using System;
-using System.IO;
+﻿#define SIMPLE_IO
+using System;
 using ZMachineLib;
 
 namespace ZPlay
 {
-	public class ConsoleIo : IZMachineIo
+    public class ConsoleIo : IZMachineIo
 	{
 		private int _lines;
 		private readonly ConsoleColor _defaultFore;
 		private readonly ConsoleColor _defaultBack;
 
-        private readonly IFileIo _fileIo;
-        public ConsoleIo(string zFileName)
+        public ConsoleIo()
 		{
-            _fileIo = new FileIo(zFileName);
             Console.SetBufferSize(Console.WindowWidth, Console.WindowHeight);
 			Console.SetCursorPosition(0, Console.WindowHeight-1);
 			_defaultFore = Console.ForegroundColor;
@@ -206,8 +204,5 @@ namespace ZPlay
 			return Console.ForegroundColor;
 		}
 
-        public bool Save(Stream s) => _fileIo.Save(s);
-
-        public Stream Restore() => _fileIo.Restore();
     }
 }

@@ -25,8 +25,6 @@ namespace ZMachineLib
 		void SplitWindow(ushort lines);
 		void ShowStatus();
 		void SetTextStyle(TextStyle textStyle);
-		bool Save(Stream stream);
-		Stream Restore();
 		void SetColor(ZColor foreground, ZColor background);
 		void SoundEffect(ushort number);
 		void Quit();
