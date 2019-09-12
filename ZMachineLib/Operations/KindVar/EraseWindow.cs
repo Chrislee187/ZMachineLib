@@ -4,9 +4,9 @@ namespace ZMachineLib.Operations.KindVar
 {
     public sealed class EraseWindow : ZMachineOperation
     {
-        private readonly IZMachineIo _io;
+        private readonly IUserIo _io;
 
-        public EraseWindow(ZMachine2 machine, IZMachineIo io)
+        public EraseWindow(ZMachine2 machine, IUserIo io)
             : base((ushort)KindVarOpCodes.EraseWindow, machine)
         {
             _io = io;

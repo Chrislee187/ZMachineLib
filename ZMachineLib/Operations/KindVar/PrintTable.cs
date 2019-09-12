@@ -4,9 +4,9 @@ namespace ZMachineLib.Operations.KindVar
 {
     public sealed class PrintTable : ZMachineOperation
     {
-        private readonly IZMachineIo _io;
+        private readonly IUserIo _io;
 
-        public PrintTable(ZMachine2 machine, IZMachineIo io)
+        public PrintTable(ZMachine2 machine, IUserIo io)
             : base((ushort)KindVarOpCodes.PrintTable, machine)
         {
             _io = io;

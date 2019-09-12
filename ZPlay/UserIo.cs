@@ -1,16 +1,18 @@
 ﻿#define SIMPLE_IO
 using System;
+using System.Diagnostics;
 using ZMachineLib;
+using ZMachineLib.Operations.KindExt;
 
 namespace ZPlay
 {
-    public class ConsoleIo : IZMachineIo
+    public class UserIo : IUserIo
 	{
 		private int _lines;
 		private readonly ConsoleColor _defaultFore;
 		private readonly ConsoleColor _defaultBack;
 
-        public ConsoleIo()
+        public UserIo()
 		{
             Console.SetBufferSize(Console.WindowWidth, Console.WindowHeight);
 			Console.SetCursorPosition(0, Console.WindowHeight-1);
@@ -114,6 +116,7 @@ namespace ZPlay
 
 		public void BufferMode(bool buffer)
 		{
+            Log("BufferMode not implemented");
 		}
 
 		public void SplitWindow(ushort lines)
@@ -123,9 +126,10 @@ namespace ZPlay
 
 		public void ShowStatus()
 		{
+            Log("ShowStatus not implemented");
 		}
 
-		public void SetTextStyle(TextStyle textStyle)
+        public void SetTextStyle(TextStyle textStyle)
 		{
 			switch(textStyle)
 			{
@@ -138,8 +142,10 @@ namespace ZPlay
 					Console.ForegroundColor = temp;
 					break;
 				case TextStyle.Bold:
+                    Console.ForegroundColor = ConsoleColor.Blue;
 					break;
 				case TextStyle.Italic:
+                    Console.ForegroundColor = ConsoleColor.Yellow;
 					break;
 				case TextStyle.FixedPitch:
 					break;
@@ -161,8 +167,8 @@ namespace ZPlay
 			else if(number == 2)
 				Console.Beep(250, 300);
 			else
-				throw new Exception("Sound > 2");
-		}
+                Log("SoundEffect number > 2");
+        }
 
 		public void Quit()
 		{}
@@ -204,5 +210,10 @@ namespace ZPlay
 			return Console.ForegroundColor;
 		}
 
+        public void Log(string text)
+        {
+            // TODO: Hook up Core logging
+            Debug.Print(text);
+        }
     }
 }

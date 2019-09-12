@@ -4,10 +4,10 @@ namespace ZMachineLib.Operations.Kind2
 {
     public sealed class SetColor : ZMachineOperation
     {
-        private IZMachineIo _io;
+        private IUserIo _io;
 
         public SetColor(ZMachine2 machine,
-            IZMachineIo io)
+            IUserIo io)
             : base((ushort)Kind2OpCodes.SetColor, machine)
         {
             _io = io;

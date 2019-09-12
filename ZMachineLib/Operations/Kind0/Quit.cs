@@ -4,9 +4,9 @@ namespace ZMachineLib.Operations.Kind0
 {
     public sealed class Quit : ZMachineOperation
     {
-        private readonly IZMachineIo _io;
+        private readonly IUserIo _io;
 
-        public Quit(ZMachine2 machine, IZMachineIo io)
+        public Quit(ZMachine2 machine, IUserIo io)
             : base((ushort)Kind0OpCodes.Quit, machine)
         {
             _io = io;

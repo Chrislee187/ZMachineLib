@@ -4,9 +4,9 @@ namespace ZMachineLib.Operations.KindVar
 {
     public sealed class SetCursor : ZMachineOperation
     {
-        private readonly IZMachineIo _io;
+        private readonly IUserIo _io;
 
-        public SetCursor(ZMachine2 machine, IZMachineIo io)
+        public SetCursor(ZMachine2 machine, IUserIo io)
             : base((ushort)KindVarOpCodes.SetCursor, machine)
         {
             _io = io;

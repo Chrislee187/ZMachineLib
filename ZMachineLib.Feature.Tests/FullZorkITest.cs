@@ -8,12 +8,12 @@ namespace ZMachineLib.Feature.Tests
     [Explicit]
     public class FullZorkITest
     {
-        private Mock<IZMachineIo> _zMachineIo;
+        private Mock<IUserIo> _zMachineIo;
 
         [SetUp]
         public void Setup()
         {
-            _zMachineIo = new Mock<IZMachineIo>();
+            _zMachineIo = new Mock<IUserIo>();
         }
 
         [Test]

@@ -31,7 +31,7 @@ namespace ZMachineLib
 
         private Stream _gameFileStream;
         private System.Random _random = new System.Random();
-        private readonly IZMachineIo _io;
+        private readonly IUserIo _io;
 
         // ReSharper disable once CollectionNeverUpdated.Local
         private Kind0Operations _kind0Ops;
@@ -45,7 +45,7 @@ namespace ZMachineLib
         private KindExtOperations _kindExtOps;
         private readonly IFileIo _fileIo;
 
-        public ZMachine2(IZMachineIo io, IFileIo fileIo)
+        public ZMachine2(IUserIo io, IFileIo fileIo)
         {
             _fileIo = fileIo;
             _io = io;

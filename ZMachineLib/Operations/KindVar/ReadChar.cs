@@ -4,9 +4,9 @@ namespace ZMachineLib.Operations.KindVar
 {
     public sealed class ReadChar : ZMachineOperation
     {
-        private readonly IZMachineIo _io;
+        private readonly IUserIo _io;
 
-        public ReadChar(ZMachine2 machine, IZMachineIo io)
+        public ReadChar(ZMachine2 machine, IUserIo io)
             : base((ushort)KindVarOpCodes.ReadChar, machine)
         {
             _io = io;

@@ -5,9 +5,9 @@ namespace ZMachineLib.Operations.KindVar
 {
     public sealed class PrintChar : ZMachineOperation
     {
-        private readonly IZMachineIo _io;
+        private readonly IUserIo _io;
 
-        public PrintChar(ZMachine2 machine, IZMachineIo io)
+        public PrintChar(ZMachine2 machine, IUserIo io)
             : base((ushort)KindVarOpCodes.PrintChar, machine)
         {
             _io = io;

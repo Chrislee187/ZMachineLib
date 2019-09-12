@@ -5,9 +5,9 @@ namespace ZMachineLib.Operations.Kind0
 {
     public sealed class Newline : ZMachineOperation
     {
-        private readonly IZMachineIo _io;
+        private readonly IUserIo _io;
 
-        public Newline(ZMachine2 machine, IZMachineIo io)
+        public Newline(ZMachine2 machine, IUserIo io)
             : base((ushort)Kind0OpCodes.NewLine, machine)
         {
             _io = io;

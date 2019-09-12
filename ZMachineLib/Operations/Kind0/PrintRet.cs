@@ -8,7 +8,7 @@ namespace ZMachineLib.Operations.Kind0
         private readonly RTrue _rTrue;
 
         public PrintRet(ZMachine2 machine,
-            IZMachineIo io,
+            IUserIo io,
             RTrue rTrue)
             : base((ushort) Kind0OpCodes.PrintRet, machine, io)
         {

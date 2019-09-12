@@ -8,9 +8,9 @@ namespace ZMachineLib.Feature.Tests
     {
         private readonly ISetupSequentialResult<string> _inputSequence;
         private readonly List<string> _outputSequence;
-        private readonly Mock<IZMachineIo> _zMachineIo;
+        private readonly Mock<IUserIo> _zMachineIo;
 
-        public ZMachineFeatureTester(Mock<IZMachineIo> zMachineIo)
+        public ZMachineFeatureTester(Mock<IUserIo> zMachineIo)
         {
             _zMachineIo = zMachineIo;
 

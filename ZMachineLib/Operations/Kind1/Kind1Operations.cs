@@ -8,7 +8,7 @@ namespace ZMachineLib.Operations.Kind1
         private readonly IDictionary<Kind1OpCodes, IOperation> _operations = new Dictionary<Kind1OpCodes, IOperation>();
 
         public Kind1Operations(ZMachine2 machine,
-            IZMachineIo io)
+            IUserIo io)
         {
             _operations.Add(Kind1OpCodes.Jz, new Jz(machine));
             _operations.Add(Kind1OpCodes.GetSibling, new GetSibling(machine));

@@ -8,7 +8,7 @@ namespace ZMachineLib.Operations.KindVar
         private readonly IDictionary<KindVarOpCodes, IOperation> _operations = new Dictionary<KindVarOpCodes, IOperation>();
 
         public KindVarOperations(ZMachine2 machine,
-            IZMachineIo io)
+            IUserIo io)
         {
             _operations.Add(KindVarOpCodes.Call, new Call(machine));
             _operations.Add(KindVarOpCodes.StoreB, new StoreB(machine));

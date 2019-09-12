@@ -4,9 +4,9 @@ namespace ZMachineLib.Operations.KindVar
 {
     public sealed class SplitWindow : ZMachineOperation
     {
-        private readonly IZMachineIo _io;
+        private readonly IUserIo _io;
 
-        public SplitWindow(ZMachine2 machine, IZMachineIo io)
+        public SplitWindow(ZMachine2 machine, IUserIo io)
             : base((ushort)KindVarOpCodes.SplitWindow, machine)
         {
             _io = io;

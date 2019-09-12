@@ -8,7 +8,7 @@ namespace ZMachineLib.Operations.Kind0
         private readonly IDictionary<Kind0OpCodes, IOperation> _operations = new Dictionary<Kind0OpCodes, IOperation>();
 
         public Kind0Operations(ZMachine2 machine,
-            IZMachineIo io,
+            IUserIo io,
             IFileIo fileIo)
         {
             _operations.Add(Kind0OpCodes.RTrue, new RTrue(machine));

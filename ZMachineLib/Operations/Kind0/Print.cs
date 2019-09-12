@@ -5,7 +5,7 @@ namespace ZMachineLib.Operations.Kind0
     public sealed class Print : BasePrintingOperations
     {
         public Print(ZMachine2 machine,
-            IZMachineIo io)
+            IUserIo io)
             : base((ushort) Kind0OpCodes.Print, machine, io)
         {
         }

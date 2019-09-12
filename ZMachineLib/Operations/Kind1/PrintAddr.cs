@@ -4,10 +4,10 @@ namespace ZMachineLib.Operations.Kind1
 {
     public sealed class PrintAddr : ZMachineOperation
     {
-        private readonly IZMachineIo _io;
+        private readonly IUserIo _io;
 
         public PrintAddr(ZMachine2 machine,
-            IZMachineIo io)
+            IUserIo io)
             : base((ushort)Kind1OpCodes.PrintAddr, machine)
         {
             _io = io;

@@ -4,9 +4,9 @@ namespace ZMachineLib.Operations.KindVar
 {
     public sealed class SoundEffect : ZMachineOperation
     {
-        private readonly IZMachineIo _io;
+        private readonly IUserIo _io;
 
-        public SoundEffect(ZMachine2 machine, IZMachineIo io)
+        public SoundEffect(ZMachine2 machine, IUserIo io)
             : base((ushort)KindVarOpCodes.SoundEffect, machine)
         {
             _io = io;

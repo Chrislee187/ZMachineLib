@@ -4,9 +4,9 @@ namespace ZMachineLib.Operations.KindVar
 {
     public sealed class PrintNum : ZMachineOperation
     {
-        private readonly IZMachineIo _io;
+        private readonly IUserIo _io;
 
-        public PrintNum(ZMachine2 machine, IZMachineIo io)
+        public PrintNum(ZMachine2 machine, IUserIo io)
             : base((ushort)KindVarOpCodes.PrintNum, machine)
         {
             _io = io;

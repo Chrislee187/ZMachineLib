@@ -13,7 +13,7 @@ namespace ZMachineLib
 		FixedPitch = 8
 	}
 
-	public interface IZMachineIo
+	public interface IUserIo
 	{
 		void Print(string s);
 		string Read(int max);

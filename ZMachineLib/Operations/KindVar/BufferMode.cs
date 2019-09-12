@@ -4,9 +4,9 @@ namespace ZMachineLib.Operations.KindVar
 {
     public sealed class BufferMode : ZMachineOperation
     {
-        private readonly IZMachineIo _io;
+        private readonly IUserIo _io;
 
-        public BufferMode(ZMachine2 machine, IZMachineIo io)
+        public BufferMode(ZMachine2 machine, IUserIo io)
             : base((ushort)KindVarOpCodes.BufferMode, machine)
         {
             _io = io;
