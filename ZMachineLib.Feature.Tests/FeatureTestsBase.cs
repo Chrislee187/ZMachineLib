@@ -1,8 +1,6 @@
-using System;
 using System.IO;
 using Moq;
 using Shouldly;
-using ZMachineLib.Operations;
 
 namespace ZMachineLib.Feature.Tests
 {
@@ -10,12 +8,12 @@ namespace ZMachineLib.Feature.Tests
     {
         private Mock<IUserIo> _zMachineIo;
         private Mock<IFileIo> _fileIo;
-        private ZMachine2 Machine;
+        private ZMachine2 _machine;
         protected ZMachineFeatureTester Feature;
 
         protected void ShouldRunToCompletion(string zMachineDataFile)
         {
-            Should.NotThrow((Action) (() => Machine.RunFile(File.OpenRead(zMachineDataFile))));
+            Should.NotThrow(() => _machine.RunFile(File.OpenRead(zMachineDataFile)));
             Feature.Verify();
         }
 
@@ -24,7 +22,7 @@ namespace ZMachineLib.Feature.Tests
             _zMachineIo = new Mock<IUserIo>();
             _fileIo = new Mock<IFileIo>();
             Feature = new ZMachineFeatureTester(_zMachineIo);
-            Machine = new ZMachine2(_zMachineIo.Object, _fileIo.Object);
+            _machine = new ZMachine2(_zMachineIo.Object, _fileIo.Object);
         }
     }
 }

@@ -6,11 +6,11 @@ namespace ZPlay
 {
     public class FileIo : IFileIo
     {
-        private readonly string _zFileName;
+        private readonly string _saveFileId;
 
-        public FileIo(string zFileName)
+        public FileIo(string saveFileId)
         {
-            _zFileName = zFileName;
+            _saveFileId = saveFileId;
         }
         public bool Save(Stream s)
         {
@@ -40,7 +40,7 @@ namespace ZPlay
 
         private string BuildSavePath()
         {
-            var saveFilename = $"{_zFileName}.save";
+            var saveFilename = $"{_saveFileId}.save";
             var docs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             var saveDirname = "ZFileSaves";
             var savePath = Path.Combine(docs, saveDirname);

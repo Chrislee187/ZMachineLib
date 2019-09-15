@@ -9,7 +9,6 @@ namespace ZMachineLib.Operations.KindExt
         private readonly IDictionary<KindExtOpCodes, IOperation> _operations = new Dictionary<KindExtOpCodes, IOperation>();
 
         public KindExtOperations(ZMachine2 machine,
-            IUserIo io,
             Kind0Operations kind0Operations)
         {
             _operations.Add(KindExtOpCodes.Save, kind0Operations[Kind0OpCodes.Save]);

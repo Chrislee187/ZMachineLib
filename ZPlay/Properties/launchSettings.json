@@ -1,8 +1,7 @@
 {
   "profiles": {
     "ZPlay": {
-      "commandName": "Project",
-      "commandLineArgs": "\"N:\\Vault\\Infocom Files\\zFiles\\bureaucracy.z4\""
+      "commandName": "Project"
     }
   }
 }

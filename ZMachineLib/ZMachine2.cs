@@ -30,7 +30,6 @@ namespace ZMachineLib
         internal ushort WordStart;
 
         private Stream _gameFileStream;
-        private System.Random _random = new System.Random();
         private readonly IUserIo _io;
 
         // ReSharper disable once CollectionNeverUpdated.Local
@@ -75,6 +74,7 @@ namespace ZMachineLib
         {
             Memory = ReadToMemory(stream);
 
+//            Header = ReadHeaderInfo();
             Header = ReadHeaderInfo();
             // NOTE: Need header to be read (mainly for the Version) before we can setup the Ops as few of them have header value dependencies
             SetupNewOperations();
@@ -116,7 +116,7 @@ namespace ZMachineLib
             _kind1Ops = new Kind1Operations(this, _io);
             _kind2Ops = new Kind2Operations(this, _io);
             _kindVarOps = new KindVarOperations(this, _io);
-            _kindExtOps = new KindExtOperations(this, _io, _kind0Ops);
+            _kindExtOps = new KindExtOperations(this, _kind0Ops);
         }
 
         public void Run(bool terminateOnInput = false)
@@ -127,10 +127,9 @@ namespace ZMachineLib
 
             while (Running)
             {
-                IOperation operation = null;
-
                 Log.Write($"PC: {Stack.Peek().PC:X5}");
                 var o = Memory[Stack.Peek().PC++];
+                IOperation operation;
                 if (o == 0xbe)
                 {
                     o = Memory[Stack.Peek().PC++];
@@ -153,7 +152,7 @@ namespace ZMachineLib
                 }
                 else if (o < 0xc0)
                 {
-                    _kind0Ops.TryGetValue((Kind0OpCodes) (o & 0x0f), out operation);
+                    _kind0Ops.TryGetValue((Kind0OpCodes)(o & 0x0f), out operation);
                     Log.Write($" 0Op ");
                 }
                 else if (o < 0xe0)
@@ -172,7 +171,7 @@ namespace ZMachineLib
 
                 if (operation == null) throw new Exception($"No operation found!");
 
-                operation?.Execute(args);
+                operation.Execute(args);
 
                 Log.Flush();
             }
@@ -312,27 +311,51 @@ namespace ZMachineLib
         }
 
         private FileHeader ReadHeaderInfo() => new FileHeader(Memory);
-
         public class FileHeader
         {
-            public byte Version { get; private set; }
-            public ushort Pc { get; private set; }
-            public ushort Dictionary { get; private set; }
-            public ushort ObjectTable { get; private set; }
-            public ushort Globals { get; private set; }
-            public ushort DynamicMemorySize { get; private set; }
-            public ushort AbbreviationsTable { get; private set; }
+            public byte Version { get; }
+            public ushort Pc { get; }
+            public ushort Dictionary { get; }
+            public ushort ObjectTable { get; }
+            public ushort Globals { get; }
+            public ushort DynamicMemorySize { get; }
+            public ushort AbbreviationsTable { get; }
 
             public FileHeader(byte[] memory)
             {
-                Version = memory[HeaderOffsets.VersionOffset];
-                Pc = ZMachine2.GetWord(memory, HeaderOffsets.InitialPcOffset);
-                Dictionary = GetWord(memory, HeaderOffsets.DictionaryOffset);
-                ObjectTable = GetWord(memory, HeaderOffsets.ObjectTableOffset);
-                Globals = GetWord(memory, HeaderOffsets.GlobalVarOffset);
-                DynamicMemorySize = GetWord(memory, HeaderOffsets.StaticMemoryOffset);
-                AbbreviationsTable = GetWord(memory, HeaderOffsets.AbbreviationTableOffset);
+                Version = memory[HeaderOffsets.Version];
+                Pc = GetWord(memory, HeaderOffsets.InitialPc);
+                Dictionary = GetWord(memory, HeaderOffsets.Dictionary);
+                ObjectTable = GetWord(memory, HeaderOffsets.ObjectTable);
+                Globals = GetWord(memory, HeaderOffsets.GlobalVar);
+                DynamicMemorySize = GetWord(memory, HeaderOffsets.StaticMemory);
+                AbbreviationsTable = GetWord(memory, HeaderOffsets.AbbreviationTable);
             }
+        }
+        // https://inform-fiction.org/zmachine/standards/z1point0/sect11.html
+        public struct FileHeader2
+        {
+            public byte Version;                            // 0x00
+            public ushort Flags1;                           // 0x01
+            public byte Unknown1;                           // 0x03
+            public ushort HighMemoryBaseAddress;            // 0x04
+            public ushort ProgramCounter;                   // 0x06 (NB. Packed address of initial main routine in >= V6)
+            public ushort Dictionary;                  // 0x08
+            public ushort ObjectTable;                      // 0x0a
+            public ushort Globals;                          // 0x0c
+            public ushort StaticMemoryBaseAddress;          // 0x0e
+            public ushort Flags2;                           // 0x10
+            public ushort Unknown2;                         // 0x12
+            public ushort Unknown3;                         // 0x14
+            public ushort Unknown4;                         // 0x16
+            public ushort AbbreviationsTable;               // 0x18
+            public ushort LengthOfFile;                     // 0x1A
+            public ushort ChecksumOfFile;                   // 0x1C
+            public byte InterpreterNumber;                  // 0x1E
+            public byte InterpreterNumberVersion;           // 0x1F
+
+            public ushort Pc => ProgramCounter;
+            public ushort DynamicMemorySize => StaticMemoryBaseAddress;
         }
     }
 }
