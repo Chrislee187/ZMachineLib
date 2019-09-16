@@ -5,22 +5,22 @@ namespace ZMachineLib
 {
     public class VarHandler
     {
+        private readonly ZMachine2 _machine;
         private byte[] Memory => _machine.Memory;
         private ushort GlobalsTable => _machine.Header.Globals;
-        protected Stack<ZStackFrame> Stack => _machine.Stack;
-        private readonly ZMachine2 _machine;
+        private Stack<ZStackFrame> Stack => _machine.Stack;
 
         public VarHandler(ZMachine2 machine)
         {
             _machine = machine;
         }
-        public ushort GetWord(byte variable, bool pop = true)
+        public ushort GetWord(byte variable, bool andRemove = true)
         {
             ushort val;
 
             if (DestinationIsStack(variable))
             {
-                val = GetWordFromStack(pop);
+                val = GetWordFromStack(andRemove);
             }
             else if (DestinationIsVariable(variable))
             {
@@ -44,29 +44,27 @@ namespace ZMachineLib
 
         private ushort GetWordFromVariables(byte variable)
         {
-            ushort val;
-            val = Stack.Peek().Variables[variable - 1];
+            var val = Stack.Peek().Variables[variable - 1];
             Log.Write($"L{variable - 1:X2} ({val:X4}), ");
             return val;
         }
 
-        private ushort GetWordFromStack(bool pop)
+        private ushort GetWordFromStack(bool andRemove)
         {
             ushort val;
-            if (pop)
-                val = Stack.Peek().RoutineStack.Pop();
-            else
-                val = Stack.Peek().RoutineStack.Peek();
+            val = andRemove 
+                ? Stack.Peek().RoutineStack.Pop() 
+                : Stack.Peek().RoutineStack.Peek();
+
             Log.Write($"SP ({val:X4}), ");
             return val;
         }
-
-
-        public void StoreWord(byte dest, ushort value, bool push = true)
+        
+        public void StoreWord(byte dest, ushort value, bool newEntry = true)
         {
             if (DestinationIsStack(dest))
             {
-                StoreWordOnStack(value, push);
+                StoreWordOnStack(value, newEntry);
             }
             else if (DestinationIsVariable(dest))
             {
@@ -92,9 +90,9 @@ namespace ZMachineLib
             Stack.Peek().Variables[variablesIdx] = value;
         }
 
-        private void StoreWordOnStack(ushort value, bool replaceLastEntry)
+        private void StoreWordOnStack(ushort value, bool newEntry)
         {
-            if (!replaceLastEntry)
+            if (!newEntry)
             {
                 Log.Write($"-> STK POP BEFORE... ");
                 Stack.Peek().RoutineStack.Pop();

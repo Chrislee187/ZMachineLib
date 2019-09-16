@@ -33,12 +33,14 @@ namespace ZMachineLib
         private readonly IFileIo _fileIo;
         private KindExtOperations _extendedOperations;
         private Operations.Operations _operations;
+        private VarHandler _varHandler;
 
         public ZMachine2(IUserIo io, IFileIo fileIo)
         {
             _fileIo = fileIo;
             _io = io;
             ZsciiString = new ZsciiString(this);
+            _varHandler = new VarHandler(this);
         }
 
         public void RunFile(Stream stream, bool terminateOnInput = false)
@@ -114,6 +116,7 @@ namespace ZMachineLib
             RTrue = _operations[OpCodes.RTrue];
             RFalse = _operations[OpCodes.RFalse];
             _extendedOperations = new KindExtOperations(this, _operations);
+
         }
 
         public void Run(bool terminateOnInput = false)
@@ -234,37 +237,11 @@ namespace ZMachineLib
                     break;
                 case OperandType.Variable:
                     var b = Memory[Stack.Peek().PC++];
-                    arg = GetVariable(b);
+                    arg = _varHandler.GetWord(b);
                     break;
             }
 
             return arg;
-        }
-
-        private ushort GetVariable(byte variable, bool pop = true)
-        {
-            ushort val;
-
-            if (variable == 0)
-            {
-                if (pop)
-                    val = Stack.Peek().RoutineStack.Pop();
-                else
-                    val = Stack.Peek().RoutineStack.Peek();
-                Log.Write($"SP ({val:X4}), ");
-            }
-            else if (variable < 0x10)
-            {
-                val = Stack.Peek().Variables[variable - 1];
-                Log.Write($"L{variable - 1:X2} ({val:X4}), ");
-            }
-            else
-            {
-                val = Memory.GetUshort((ushort) (Header.Globals + 2 * (variable - 0x10)));
-                Log.Write($"G{variable - 0x10:X2} ({val:X4}), ");
-            }
-
-            return val;
         }
 
         private void ParseDictionary()
