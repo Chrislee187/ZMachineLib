@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Extensions;
 
 namespace ZMachineLib.Operations.Kind2
 {
@@ -12,7 +13,7 @@ namespace ZMachineLib.Operations.Kind2
         public override void Execute(List<ushort> args)
         {
             var addr = (ushort)(args[0] + 2 * args[1]);
-            var word = Machine.GetWord(addr);
+            var word = Machine.Memory.GetUshort(addr);
             var dest = Memory[Stack.Peek().PC++];
             StoreWordInVariable(dest, word);
         }

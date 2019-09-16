@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ZMachineLib.Extensions;
 
 namespace ZMachineLib.Operations.KindVar
 {
@@ -64,7 +65,7 @@ namespace ZMachineLib.Operations.KindVar
 
                     var wordIndex = (ushort)(Array.IndexOf(Machine.DictionaryWords, tokenised[i]));
                     var addr = (ushort)(wordIndex == 0xffff ? 0 : Machine.WordStart + wordIndex * Machine.EntryLength);
-                    StoreWord((ushort)(ReadParseAddr + 2 + i * 4), addr);
+                    Memory.StoreAt((ushort)(ReadParseAddr + 2 + i * 4), addr);
                     Memory[ReadParseAddr + 4 + i * 4] = (byte)tokenised[i].Length;
                     var index = input.IndexOf(tokenised[i], last, StringComparison.Ordinal);
                     Memory[ReadParseAddr + 5 + i * 4] = (byte)(index + (Version < 5 ? 1 : 2));

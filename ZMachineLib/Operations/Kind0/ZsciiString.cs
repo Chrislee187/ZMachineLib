@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ZMachineLib.Extensions;
 
 namespace ZMachineLib.Operations.Kind0
 {
@@ -37,7 +38,7 @@ namespace ZMachineLib.Operations.Kind0
                 {
                     var offset = (ushort)(32 * (chars[i] - 1) + chars[++i]);
                     var lookup = (ushort)(Machine.Header.AbbreviationsTable + (offset * 2));
-                    var wordAddr = Machine.GetWord(lookup);
+                    var wordAddr = Machine.Memory.GetUshort(lookup);
                     var abbrev = GetZsciiChars((ushort)(wordAddr * 2));
                     sb.Append(DecodeZsciiChars(abbrev));
                 }
@@ -75,7 +76,7 @@ namespace ZMachineLib.Operations.Kind0
             ushort word;
             do
             {
-                word = Machine.GetWord(address);
+                word = Machine.Memory.GetUshort(address);
                 chars.AddRange(GetZsciiChar(address));
                 address += 2;
             }
@@ -88,7 +89,7 @@ namespace ZMachineLib.Operations.Kind0
         {
             var chars = new List<byte>();
 
-            var word = Machine.GetWord(address);
+            var word = Machine.Memory.GetUshort(address);
 
             var c = (byte)(word >> 10 & 0x1f);
             chars.Add(c);

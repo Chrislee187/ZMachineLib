@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Extensions;
 
 namespace ZMachineLib.Operations.KindVar
 {
@@ -12,7 +13,8 @@ namespace ZMachineLib.Operations.KindVar
         public override void Execute(List<ushort> args)
         {
             var addr = (ushort)(args[0] + 2 * args[1]);
-            StoreWord(addr, args[2]);
+            ushort value = args[2];
+            Memory.StoreAt(addr, value);
         }
     }
 }

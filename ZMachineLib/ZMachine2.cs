@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.Json;
+using ZMachineLib.Extensions;
 using ZMachineLib.Operations;
 using ZMachineLib.Operations.Kind0;
 using ZMachineLib.Operations.Kind1;
@@ -246,7 +247,7 @@ namespace ZMachineLib
             switch (type)
             {
                 case OperandType.LargeConstant:
-                    arg = GetWord(Stack.Peek().PC);
+                    arg = Memory.GetUshort(Stack.Peek().PC);
                     Stack.Peek().PC += 2;
                     Log.Write($"#{arg:X4}, ");
                     break;
@@ -282,15 +283,12 @@ namespace ZMachineLib
             }
             else
             {
-                val = GetWord((ushort) (Header.Globals + 2 * (variable - 0x10)));
+                val = Memory.GetUshort((ushort) (Header.Globals + 2 * (variable - 0x10)));
                 Log.Write($"G{variable - 0x10:X2} ({val:X4}), ");
             }
 
             return val;
         }
-
-        public ushort GetWord(uint address) => GetWord(Memory, address);
-        public static ushort GetWord(byte[] memory, uint address) => (ushort)(memory[address] << 8 | memory[address + 1]);
 
         private void ParseDictionary()
         {
@@ -300,7 +298,7 @@ namespace ZMachineLib
             address += len;
 
             EntryLength = Memory[address++];
-            var numEntries = GetWord(address);
+            var numEntries = Memory.GetUshort(address);
             address += 2;
 
             WordStart = address;
@@ -332,41 +330,36 @@ namespace ZMachineLib
         [StructLayout(LayoutKind.Explicit)]
         public struct FileHeader2
         {
-            [FieldOffset(0x00)] public byte Version;                            
-            [FieldOffset(0x01)] [MarshalAs(UnmanagedType.U2)] public ushort Flags1Raw;                   
-            [FieldOffset(0x03)] public byte Unknown1;                   
-            [FieldOffset(0x04)] [MarshalAs(UnmanagedType.U2)] public ushort HighMemoryBaseAddressRaw;    
-            [FieldOffset(0x06)] [MarshalAs(UnmanagedType.U2)] public ushort ProgramCounterRaw;     // 0x06 (NB. Packed address of initial main routine in >= V6)
-            [FieldOffset(0x08)] [MarshalAs(UnmanagedType.U2)] public ushort DictionaryRaw;               
-            [FieldOffset(0x0a)] [MarshalAs(UnmanagedType.U2)] public ushort ObjectTableRaw;              
-            [FieldOffset(0x0c)] [MarshalAs(UnmanagedType.U2)] public ushort GlobalsRaw;                  
-            [FieldOffset(0x0e)] [MarshalAs(UnmanagedType.U2)] public ushort StaticMemoryBaseAddressRaw;  
-            [FieldOffset(0x10)] [MarshalAs(UnmanagedType.U2)] public ushort Flags2Raw;                   
-            [FieldOffset(0x12)] [MarshalAs(UnmanagedType.U2)] public ushort Unknown2;                 
-            [FieldOffset(0x14)] [MarshalAs(UnmanagedType.U2)] public ushort Unknown3;                 
-            [FieldOffset(0x16)] [MarshalAs(UnmanagedType.U2)] public ushort Unknown4;                 
-            [FieldOffset(0x18)] [MarshalAs(UnmanagedType.U2)] public ushort AbbreviationsTableRaw;       
-            [FieldOffset(0x1a)] [MarshalAs(UnmanagedType.U2)] public ushort LengthOfFileRaw;             
-            [FieldOffset(0x1c)] [MarshalAs(UnmanagedType.U2)] public ushort ChecksumOfFileRaw;           
-            [FieldOffset(0x1e)] public byte InterpreterNumber;          
-            [FieldOffset(0x1f)] public byte InterpreterNumberVersion;   
+            [FieldOffset(0x00)] public readonly byte Version;                            
+            [FieldOffset(0x01)] [MarshalAs(UnmanagedType.U2)] private readonly ushort Flags1Raw;
+            [FieldOffset(0x03)] private readonly byte Unknown1;
+            [FieldOffset(0x04)] private readonly ushort HighMemoryBaseAddressRaw;    
+            [FieldOffset(0x06)] private readonly ushort ProgramCounterRaw;     // 0x06 (NB. Packed address of initial main routine in >= V6)
+            [FieldOffset(0x08)] private readonly ushort DictionaryRaw;               
+            [FieldOffset(0x0a)] private readonly ushort ObjectTableRaw;              
+            [FieldOffset(0x0c)] private readonly ushort GlobalsRaw;                  
+            [FieldOffset(0x0e)] private readonly ushort StaticMemoryBaseAddressRaw;  
+            [FieldOffset(0x10)] private readonly ushort Flags2Raw;                   
+            [FieldOffset(0x12)] private readonly ushort Unknown2;                 
+            [FieldOffset(0x14)] private readonly ushort Unknown3;                 
+            [FieldOffset(0x16)] private readonly ushort Unknown4;                 
+            [FieldOffset(0x18)] private readonly ushort AbbreviationsTableRaw;       
+            [FieldOffset(0x1a)] private readonly ushort LengthOfFileRaw;             
+            [FieldOffset(0x1c)] private readonly ushort ChecksumOfFileRaw;           
+            [FieldOffset(0x1e)] private readonly byte InterpreterNumber;          
+            [FieldOffset(0x1f)] private readonly byte InterpreterNumberVersion;   
 
-            public ushort Flags1 => FlipEndianness(Flags1Raw);
-            public ushort HighMemoryBaseAddress => FlipEndianness(HighMemoryBaseAddressRaw);
-            public ushort ProgramCounter => FlipEndianness(ProgramCounterRaw);
-            public ushort Dictionary => FlipEndianness(DictionaryRaw);
-            public ushort ObjectTable => FlipEndianness(ObjectTableRaw);
-            public ushort Globals => FlipEndianness(GlobalsRaw);
-            public ushort StaticMemoryBaseAddress => FlipEndianness(StaticMemoryBaseAddressRaw);
-            public ushort Flags2 => FlipEndianness(Flags2Raw);
-            public ushort AbbreviationsTable => FlipEndianness(AbbreviationsTableRaw);
-            public ushort LengthOfFile => FlipEndianness(LengthOfFileRaw);
-            public ushort ChecksumOfFile => FlipEndianness(ChecksumOfFileRaw);
-
-            private ushort FlipEndianness(ushort value)
-            {
-                return (ushort)((value >> 8) | ((value & 0xFF) << 8));
-            }
+            public ushort Flags1 => Flags1Raw.SwapBytes();
+            public ushort HighMemoryBaseAddress => HighMemoryBaseAddressRaw.SwapBytes();
+            public ushort ProgramCounter => ProgramCounterRaw.SwapBytes();
+            public ushort Dictionary => DictionaryRaw.SwapBytes();
+            public ushort ObjectTable => ObjectTableRaw.SwapBytes();
+            public ushort Globals => GlobalsRaw.SwapBytes();
+            public ushort StaticMemoryBaseAddress => StaticMemoryBaseAddressRaw.SwapBytes();
+            public ushort Flags2 => Flags2Raw.SwapBytes();
+            public ushort AbbreviationsTable => AbbreviationsTableRaw.SwapBytes();
+            public ushort LengthOfFile => LengthOfFileRaw.SwapBytes();
+            public ushort ChecksumOfFile => ChecksumOfFileRaw.SwapBytes();
 
             public ushort Pc => ProgramCounter;
             public ushort DynamicMemorySize => StaticMemoryBaseAddress;

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Extensions;
 
 namespace ZMachineLib.Operations.KindVar
 {
@@ -36,7 +37,10 @@ namespace ZMachineLib.Operations.KindVar
                     if (len == 1)
                         Memory[prop + 1] = (byte)args[2];
                     else
-                        StoreWord(prop, args[2]);
+                    {
+                        ushort value = args[2];
+                        Memory.StoreAt(prop, value);
+                    }
 
                     break;
                 }

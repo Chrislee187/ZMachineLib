@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Extensions;
 
 namespace ZMachineLib.Operations.Kind2
 {
@@ -23,12 +24,12 @@ namespace ZMachineLib.Operations.Kind2
 
             if (Version <= 3)
             {
-                attributes = GetUint(objectAddr);
+                attributes = Memory.GetUInt(objectAddr);
                 flag = 0x80000000 >> attr;
             }
             else
             {
-                attributes = (ulong)GetUint(objectAddr) << 16 | Machine.GetWord((uint)(objectAddr + 4));
+                attributes = (ulong)Memory.GetUInt(objectAddr) << 16 | Machine.Memory.GetUshort((uint)(objectAddr + 4));
                 flag = (ulong)(0x800000000000 >> attr);
             }
 

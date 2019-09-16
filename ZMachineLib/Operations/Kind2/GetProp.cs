@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Extensions;
 
 namespace ZMachineLib.Operations.Kind2
 {
@@ -31,7 +32,7 @@ namespace ZMachineLib.Operations.Kind2
                     val |= (ushort)(Memory[addr + i] << (len - 1 - i) * 8);
             }
             else
-                val = Machine.GetWord((ushort)(ObjectTable + (args[1] - 1) * 2));
+                val = Machine.Memory.GetUshort((ushort)(ObjectTable + (args[1] - 1) * 2));
 
             StoreWordInVariable(dest, val);
         }

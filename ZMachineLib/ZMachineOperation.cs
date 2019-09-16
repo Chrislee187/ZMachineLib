@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Extensions;
 using ZMachineLib.Operations;
 using ZMachineLib.Operations.Kind0;
 
@@ -78,20 +79,6 @@ namespace ZMachineLib
             return 0;
         }
 
-        protected void StoreUint(uint address, uint val)
-        {
-            Memory[address + 0] = (byte)(val >> 24);
-            Memory[address + 1] = (byte)(val >> 16);
-            Memory[address + 2] = (byte)(val >> 8);
-            Memory[address + 3] = (byte)(val >> 0);
-        }
-
-        protected uint GetUint(uint address)
-        {
-            return (uint)(Memory[address] << 24 | Memory[address + 1] << 16 | Memory[address + 2] << 8 |
-                          Memory[address + 3]);
-        }
-
         protected ushort PrintObjectInfo(ushort obj, bool properties)
         {
             if (obj == 0)
@@ -99,11 +86,11 @@ namespace ZMachineLib
 
             var startAddr = GetObjectAddress(obj);
 
-            var attributes = (ulong)GetUint(startAddr) << 16 | Machine.GetWord((uint)(startAddr + 4));
+            var attributes = (ulong)Memory.GetUInt(startAddr) << 16 | Machine.Memory.GetUshort((uint)(startAddr + 4));
             var parent = GetObjectNumber((ushort)(startAddr + Offsets.Parent));
             var sibling = GetObjectNumber((ushort)(startAddr + Offsets.Sibling));
             var child = GetObjectNumber((ushort)(startAddr + Offsets.Child));
-            var propAddr = Machine.GetWord((uint)(startAddr + Offsets.Property));
+            var propAddr = Machine.Memory.GetUshort((uint)(startAddr + Offsets.Property));
 
             Log.Write($"{obj} ({obj:X2}) at {propAddr:X5}: ");
 
@@ -168,7 +155,7 @@ namespace ZMachineLib
             if (Version <= 3)
                 Memory[objectAddr] = (byte)obj;
             else
-                StoreWord(objectAddr, obj);
+                Memory.StoreAt(objectAddr, obj);
         }
 
         protected void Call(List<ushort> args, bool storeResult)
@@ -197,7 +184,7 @@ namespace ZMachineLib
                 for (var i = 0; i < count; i++)
                 {
                     uint address = Stack.Peek().PC;
-                    zsf.Variables[i] = Machine.GetWord(address);
+                    zsf.Variables[i] = Machine.Memory.GetUshort(address);
                     Stack.Peek().PC += 2;
                 }
             }
@@ -227,7 +214,7 @@ namespace ZMachineLib
             }
             else
             {
-                val = Machine.GetWord((ushort)(Globals + 2 * (variable - 0x10)));
+                val = Machine.Memory.GetUshort((ushort)(Globals + 2 * (variable - 0x10)));
                 Log.Write($"G{variable - 0x10:X2} ({val:X4}), ");
             }
 
@@ -261,7 +248,7 @@ namespace ZMachineLib
         {
             var objectAddr = GetObjectAddress(obj);
             var propAddr = (ushort)(objectAddr + Offsets.Property);
-            var prop = Machine.GetWord(propAddr);
+            var prop = Machine.Memory.GetUshort(propAddr);
             return prop;
         }
 
@@ -269,7 +256,7 @@ namespace ZMachineLib
         {
             if (Version <= 3)
                 return Memory[objectAddr];
-            return Machine.GetWord(objectAddr);
+            return Machine.Memory.GetUshort(objectAddr);
         }
 
         private protected void StoreWordInVariable(byte dest, ushort value, bool push = true)
@@ -289,7 +276,7 @@ namespace ZMachineLib
             else
             {
                 Log.Write($"-> G{dest - 0x10:X2} ({value:X4}), ");
-                StoreWord((ushort)(Globals + 2 * (dest - 0x10)), value);
+                Memory.StoreAt((ushort)(Globals + 2 * (dest - 0x10)), value);
             }
         }
 
@@ -309,15 +296,9 @@ namespace ZMachineLib
             {
                 // this still gets written as a word...write the byte to addr+1
                 Log.Write($"-> G{dest - 0x10:X2} ({value:X4}), ");
-                Memory[Globals + 2 * (dest - 0x10)] = 0;
-                Memory[Globals + 2 * (dest - 0x10) + 1] = value;
+                var addr = Globals + 2 * (dest - 0x10);
+                Memory.StoreAt(addr, 0, value);
             }
-        }
-
-        protected void StoreWord(ushort address, ushort value)
-        {
-            Memory[address + 0] = (byte)(value >> 8);
-            Memory[address + 1] = (byte)value;
         }
 
         protected void Jump(bool flag)

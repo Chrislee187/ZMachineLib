@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Extensions;
 
 namespace ZMachineLib.Operations.KindVar
 {
@@ -23,7 +24,7 @@ namespace ZMachineLib.Operations.KindVar
                 ushort val;
 
                 if (args.Count == 3 || (args[3] & 0x80) == 0x80)
-                    val = Machine.GetWord(addr);
+                    val = Machine.Memory.GetUshort(addr);
                 else
                     val = Memory[addr];
 
