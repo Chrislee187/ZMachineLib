@@ -17,6 +17,7 @@
   <ItemGroup>
     <PackageReference Include="System.Runtime.Serialization.Json" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Text.Json" Version="4.6.0-preview9.19421.4" />
   </ItemGroup>
 
 

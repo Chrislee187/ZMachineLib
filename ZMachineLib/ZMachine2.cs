@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Text.Json;
 using ZMachineLib.Operations;
 using ZMachineLib.Operations.Kind0;
 using ZMachineLib.Operations.Kind1;
@@ -12,7 +14,7 @@ namespace ZMachineLib
 {
     public class ZMachine2
     {
-        internal FileHeader Header { get; private set; }
+        internal FileHeader2 Header { get; private set; }
         internal VersionedOffsets VersionedOffsets;
 
         internal byte[] Memory;
@@ -74,14 +76,13 @@ namespace ZMachineLib
         {
             Memory = ReadToMemory(stream);
 
-//            Header = ReadHeaderInfo();
-            Header = ReadHeaderInfo();
+            Header = ReadHeader(Memory[..0x3f]);
+
             // NOTE: Need header to be read (mainly for the Version) before we can setup the Ops as few of them have header value dependencies
             SetupNewOperations();
 #if DEBUG
-            Console.WriteLine($"File version: {Header.Version}");
+            DumpHeader();
 #endif
-
 
             // TODO: set these via IZMachineIO
             Memory[0x01] = 0x01;
@@ -95,6 +96,14 @@ namespace ZMachineLib
             var zsf = new ZStackFrame {PC = Header.Pc };
             Stack.Push(zsf);
         }
+
+#if DEBUG
+        private void DumpHeader()
+        {
+            var jsonSerializerOptions = new JsonSerializerOptions {WriteIndented = true};
+            Console.WriteLine(JsonSerializer.Serialize(Header, jsonSerializerOptions));
+        }
+#endif
 
         private byte[] ReadToMemory(Stream stream)
         {
@@ -310,49 +319,54 @@ namespace ZMachineLib
             }
         }
 
-        private FileHeader ReadHeaderInfo() => new FileHeader(Memory);
-        public class FileHeader
+        private FileHeader2 ReadHeader(byte[] headerBytes)
         {
-            public byte Version { get; }
-            public ushort Pc { get; }
-            public ushort Dictionary { get; }
-            public ushort ObjectTable { get; }
-            public ushort Globals { get; }
-            public ushort DynamicMemorySize { get; }
-            public ushort AbbreviationsTable { get; }
+            FileHeader2 aStruct;
+            int count = Marshal.SizeOf(typeof(FileHeader2));
+            GCHandle handle = GCHandle.Alloc(headerBytes, GCHandleType.Pinned);
+            aStruct = (FileHeader2)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(FileHeader2));
+            handle.Free();
 
-            public FileHeader(byte[] memory)
-            {
-                Version = memory[HeaderOffsets.Version];
-                Pc = GetWord(memory, HeaderOffsets.InitialPc);
-                Dictionary = GetWord(memory, HeaderOffsets.Dictionary);
-                ObjectTable = GetWord(memory, HeaderOffsets.ObjectTable);
-                Globals = GetWord(memory, HeaderOffsets.GlobalVar);
-                DynamicMemorySize = GetWord(memory, HeaderOffsets.StaticMemory);
-                AbbreviationsTable = GetWord(memory, HeaderOffsets.AbbreviationTable);
-            }
+            return aStruct;
         }
-        // https://inform-fiction.org/zmachine/standards/z1point0/sect11.html
+        [StructLayout(LayoutKind.Explicit)]
         public struct FileHeader2
         {
-            public byte Version;                            // 0x00
-            public ushort Flags1;                           // 0x01
-            public byte Unknown1;                           // 0x03
-            public ushort HighMemoryBaseAddress;            // 0x04
-            public ushort ProgramCounter;                   // 0x06 (NB. Packed address of initial main routine in >= V6)
-            public ushort Dictionary;                  // 0x08
-            public ushort ObjectTable;                      // 0x0a
-            public ushort Globals;                          // 0x0c
-            public ushort StaticMemoryBaseAddress;          // 0x0e
-            public ushort Flags2;                           // 0x10
-            public ushort Unknown2;                         // 0x12
-            public ushort Unknown3;                         // 0x14
-            public ushort Unknown4;                         // 0x16
-            public ushort AbbreviationsTable;               // 0x18
-            public ushort LengthOfFile;                     // 0x1A
-            public ushort ChecksumOfFile;                   // 0x1C
-            public byte InterpreterNumber;                  // 0x1E
-            public byte InterpreterNumberVersion;           // 0x1F
+            [FieldOffset(0x00)] public byte Version;                            
+            [FieldOffset(0x01)] [MarshalAs(UnmanagedType.U2)] public ushort Flags1Raw;                   
+            [FieldOffset(0x03)] public byte Unknown1;                   
+            [FieldOffset(0x04)] [MarshalAs(UnmanagedType.U2)] public ushort HighMemoryBaseAddressRaw;    
+            [FieldOffset(0x06)] [MarshalAs(UnmanagedType.U2)] public ushort ProgramCounterRaw;     // 0x06 (NB. Packed address of initial main routine in >= V6)
+            [FieldOffset(0x08)] [MarshalAs(UnmanagedType.U2)] public ushort DictionaryRaw;               
+            [FieldOffset(0x0a)] [MarshalAs(UnmanagedType.U2)] public ushort ObjectTableRaw;              
+            [FieldOffset(0x0c)] [MarshalAs(UnmanagedType.U2)] public ushort GlobalsRaw;                  
+            [FieldOffset(0x0e)] [MarshalAs(UnmanagedType.U2)] public ushort StaticMemoryBaseAddressRaw;  
+            [FieldOffset(0x10)] [MarshalAs(UnmanagedType.U2)] public ushort Flags2Raw;                   
+            [FieldOffset(0x12)] [MarshalAs(UnmanagedType.U2)] public ushort Unknown2;                 
+            [FieldOffset(0x14)] [MarshalAs(UnmanagedType.U2)] public ushort Unknown3;                 
+            [FieldOffset(0x16)] [MarshalAs(UnmanagedType.U2)] public ushort Unknown4;                 
+            [FieldOffset(0x18)] [MarshalAs(UnmanagedType.U2)] public ushort AbbreviationsTableRaw;       
+            [FieldOffset(0x1a)] [MarshalAs(UnmanagedType.U2)] public ushort LengthOfFileRaw;             
+            [FieldOffset(0x1c)] [MarshalAs(UnmanagedType.U2)] public ushort ChecksumOfFileRaw;           
+            [FieldOffset(0x1e)] public byte InterpreterNumber;          
+            [FieldOffset(0x1f)] public byte InterpreterNumberVersion;   
+
+            public ushort Flags1 => FlipEndianness(Flags1Raw);
+            public ushort HighMemoryBaseAddress => FlipEndianness(HighMemoryBaseAddressRaw);
+            public ushort ProgramCounter => FlipEndianness(ProgramCounterRaw);
+            public ushort Dictionary => FlipEndianness(DictionaryRaw);
+            public ushort ObjectTable => FlipEndianness(ObjectTableRaw);
+            public ushort Globals => FlipEndianness(GlobalsRaw);
+            public ushort StaticMemoryBaseAddress => FlipEndianness(StaticMemoryBaseAddressRaw);
+            public ushort Flags2 => FlipEndianness(Flags2Raw);
+            public ushort AbbreviationsTable => FlipEndianness(AbbreviationsTableRaw);
+            public ushort LengthOfFile => FlipEndianness(LengthOfFileRaw);
+            public ushort ChecksumOfFile => FlipEndianness(ChecksumOfFileRaw);
+
+            private ushort FlipEndianness(ushort value)
+            {
+                return (ushort)((value >> 8) | ((value & 0xFF) << 8));
+            }
 
             public ushort Pc => ProgramCounter;
             public ushort DynamicMemorySize => StaticMemoryBaseAddress;
