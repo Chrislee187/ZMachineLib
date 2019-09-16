@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using ZMachineLib.Extensions;
 using ZMachineLib.Operations;
 
@@ -6,10 +8,13 @@ namespace ZMachineLib
 {
     public abstract class ZMachineOperation : IOperation
     {
+        
         public ushort Code { get; }
         
         protected readonly ZMachine2 Machine;
-        private ushort Globals => Machine.Header.Globals;
+        protected readonly VarHandler VarHandler;
+
+        private ushort GlobalsTable => Machine.Header.Globals;
 
         protected byte[] Memory => Machine.Memory;
         protected Stack<ZStackFrame> Stack => Machine.Stack;
@@ -42,8 +47,54 @@ namespace ZMachineLib
         {
             Code = code;
             Machine = machine;
+            VarHandler = new VarHandler(Machine);
         }
         public abstract void Execute(List<ushort> args);
+
+        protected void Call(List<ushort> args, bool storeResult)
+        {
+            if (args[0] == 0)
+            {
+                if (storeResult)
+                {
+                    var dest = Memory[Stack.Peek().PC++];
+                    VarHandler.StoreWord(dest, 0, true);
+                }
+
+                return;
+            }
+
+            var pc = GetPackedAddress(args[0]);
+            Log.Write($"New PC: {pc:X5}");
+
+            var zsf = new ZStackFrame { PC = pc, StoreResult = storeResult };
+            Stack.Push(zsf);
+
+            var count = Memory[Stack.Peek().PC++];
+
+            if (Version <= 4)
+            {
+                for (var i = 0; i < count; i++)
+                {
+                    uint address = Stack.Peek().PC;
+                    zsf.Variables[i] = Machine.Memory.GetUshort(address);
+                    Stack.Peek().PC += 2;
+                }
+            }
+
+            for (var i = 0; i < args.Count - 1; i++)
+                zsf.Variables[i] = args[i + 1];
+
+            zsf.ArgumentCount = args.Count - 1;
+        }
+
+        protected ushort GetPropertyHeaderAddress(ushort obj)
+        {
+            var objectAddr = GetObjectAddress(obj);
+            var propAddr = (ushort)(objectAddr + Offsets.Property);
+            var prop = Machine.Memory.GetUshort(propAddr);
+            return prop;
+        }
 
         protected ushort GetPropertyAddress(ushort obj, byte prop)
         {
@@ -156,70 +207,12 @@ namespace ZMachineLib
             else
                 Memory.StoreAt(objectAddr, obj);
         }
-
-        protected void Call(List<ushort> args, bool storeResult)
+        protected ushort GetObjectNumber(ushort objectAddr)
         {
-            if (args[0] == 0)
-            {
-                if (storeResult)
-                {
-                    var dest = Memory[Stack.Peek().PC++];
-                    StoreWordInVariable(dest, 0);
-                }
-
-                return;
-            }
-
-            var pc = GetPackedAddress(args[0]);
-            Log.Write($"New PC: {pc:X5}");
-
-            var zsf = new ZStackFrame { PC = pc, StoreResult = storeResult };
-            Stack.Push(zsf);
-
-            var count = Memory[Stack.Peek().PC++];
-
-            if (Version <= 4)
-            {
-                for (var i = 0; i < count; i++)
-                {
-                    uint address = Stack.Peek().PC;
-                    zsf.Variables[i] = Machine.Memory.GetUshort(address);
-                    Stack.Peek().PC += 2;
-                }
-            }
-
-            for (var i = 0; i < args.Count - 1; i++)
-                zsf.Variables[i] = args[i + 1];
-
-            zsf.ArgumentCount = args.Count - 1;
+            if (Version <= 3)
+                return Memory[objectAddr];
+            return Machine.Memory.GetUshort(objectAddr);
         }
-
-        protected ushort GetVariable(byte variable, bool pop = true)
-        {
-            ushort val;
-
-            if (variable == 0)
-            {
-                if (pop)
-                    val = Stack.Peek().RoutineStack.Pop();
-                else
-                    val = Stack.Peek().RoutineStack.Peek();
-                Log.Write($"SP ({val:X4}), ");
-            }
-            else if (variable < 0x10)
-            {
-                val = Stack.Peek().Variables[variable - 1];
-                Log.Write($"L{variable - 1:X2} ({val:X4}), ");
-            }
-            else
-            {
-                val = Machine.Memory.GetUshort((ushort)(Globals + 2 * (variable - 0x10)));
-                Log.Write($"G{variable - 0x10:X2} ({val:X4}), ");
-            }
-
-            return val;
-        }
-
 
         protected ushort GetObjectAddress(ushort obj)
         {
@@ -243,64 +236,15 @@ namespace ZMachineLib
             return s;
         }
 
-        protected ushort GetPropertyHeaderAddress(ushort obj)
+        private Action<bool> _customJump = null;
+
+        public Action<bool> Jump
         {
-            var objectAddr = GetObjectAddress(obj);
-            var propAddr = (ushort)(objectAddr + Offsets.Property);
-            var prop = Machine.Memory.GetUshort(propAddr);
-            return prop;
+            protected get => _customJump ?? JumpImpl;
+            set => _customJump = value;
         }
 
-        protected ushort GetObjectNumber(ushort objectAddr)
-        {
-            if (Version <= 3)
-                return Memory[objectAddr];
-            return Machine.Memory.GetUshort(objectAddr);
-        }
-
-        private protected void StoreWordInVariable(byte dest, ushort value, bool push = true)
-        {
-            if (dest == 0)
-            {
-                Log.Write($"-> SP ({value:X4}), ");
-                if (!push)
-                    Stack.Peek().RoutineStack.Pop();
-                Stack.Peek().RoutineStack.Push(value);
-            }
-            else if (dest < 0x10)
-            {
-                Log.Write($"-> L{dest - 1:X2} ({value:X4}), ");
-                Stack.Peek().Variables[dest - 1] = value;
-            }
-            else
-            {
-                Log.Write($"-> G{dest - 0x10:X2} ({value:X4}), ");
-                Memory.StoreAt((ushort)(Globals + 2 * (dest - 0x10)), value);
-            }
-        }
-
-        protected void StoreByteInVariable(byte dest, byte value)
-        {
-            if (dest == 0)
-            {
-                Log.Write($"-> SP ({value:X4}), ");
-                Stack.Peek().RoutineStack.Push(value);
-            }
-            else if (dest < 0x10)
-            {
-                Log.Write($"-> L{dest - 1:X2} ({value:X4}), ");
-                Stack.Peek().Variables[dest - 1] = value;
-            }
-            else
-            {
-                // this still gets written as a word...write the byte to addr+1
-                Log.Write($"-> G{dest - 0x10:X2} ({value:X4}), ");
-                var addr = Globals + 2 * (dest - 0x10);
-                Memory.StoreAt(addr, 0, value);
-            }
-        }
-
-        protected void Jump(bool flag)
+        private void JumpImpl(bool flag)
         {
             bool branch;
 

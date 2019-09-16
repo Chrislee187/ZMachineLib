@@ -17,7 +17,8 @@ namespace ZMachineLib.Operations.OPVAR
             var key = _io.ReadChar();
 
             var dest = Memory[Stack.Peek().PC++];
-            StoreByteInVariable(dest, (byte)key);
+            byte value = (byte)key;
+            VarHandler.StoreByte(dest, value);
         }
     }
 }

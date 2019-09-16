@@ -34,7 +34,7 @@ namespace ZMachineLib.Operations.OP2
             else
                 val = Machine.Memory.GetUshort((ushort)(ObjectTable + (args[1] - 1) * 2));
 
-            StoreWordInVariable(dest, val);
+            VarHandler.StoreWord(dest, val, true);
         }
     }
 }

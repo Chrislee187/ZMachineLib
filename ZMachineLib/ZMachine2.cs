@@ -62,10 +62,9 @@ namespace ZMachineLib
         private void LoadFile(Stream stream)
         {
             Memory = ReadToMemory(stream);
-
-
+            
             Header = new Header(Memory[..0x3f]);
-//            var header = new Header(Memory[..0x3f]);
+
             // NOTE: Need header to be read (mainly for the Version) before we can setup the Ops as few of them have header value dependencies
             SetupNewOperations();
 #if DEBUG
@@ -84,7 +83,7 @@ namespace ZMachineLib
 
         private void SetupScreenParams()
         {
-// TODO: set these via IZMachineIO
+            // TODO: set these via IUserIo
             Memory[0x01] = 0x01; // Sets Flags1 to Status Line = hours:mins
             Memory[0x20] = 25; // Screen height
             Memory[0x21] = 80; // Screen width

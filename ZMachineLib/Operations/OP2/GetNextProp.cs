@@ -40,7 +40,7 @@ namespace ZMachineLib.Operations.OP2
 
                 if (next)
                 {
-                    StoreByteInVariable(dest, propNum);
+                    VarHandler.StoreByte(dest, propNum);
                     return;
                 }
 
@@ -50,7 +50,7 @@ namespace ZMachineLib.Operations.OP2
                 propHeaderAddr += (ushort)(len + 1);
             }
 
-            StoreByteInVariable(dest, 0);
+            VarHandler.StoreByte(dest, 0);
         }
     }
 }

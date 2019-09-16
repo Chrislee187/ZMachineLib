@@ -11,7 +11,8 @@ namespace ZMachineLib.Operations.OP2
 
         public override void Execute(List<ushort> args)
         {
-            StoreWordInVariable((byte)args[0], args[1], false);
+            ushort value = args[1];
+            VarHandler.StoreWord((byte)args[0], value, false);
         }
     }
 }

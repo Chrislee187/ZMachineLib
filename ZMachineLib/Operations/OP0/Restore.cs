@@ -27,9 +27,7 @@ namespace ZMachineLib.Operations.OP0
             }
             else
             {
-                StoreWordInVariable(
-                    Memory[Stack.Peek().PC++], 
-                    1);
+                VarHandler.StoreWord(Memory[Stack.Peek().PC++], 1, true);
             }
         }
 

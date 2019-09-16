@@ -21,9 +21,12 @@ namespace ZMachineLib.Operations.OP1
             var dest = Memory[Stack.Peek().PC++];
 
             if (Version <= 3)
-                StoreByteInVariable(dest, (byte)child);
+            {
+                byte value = (byte)child;
+                VarHandler.StoreByte(dest, value);
+            }
             else
-                StoreWordInVariable(dest, child);
+                VarHandler.StoreWord(dest, child, true);
 
             Jump(child != 0);
         }

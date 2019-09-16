@@ -17,7 +17,8 @@ namespace ZMachineLib.Operations.OP2
                 return;
 
             var val = (short)((short)args[0] / (short)args[1]);
-            StoreWordInVariable(dest, (ushort)val);
+            ushort value = (ushort)val;
+            VarHandler.StoreWord(dest, value, true);
         }
     }
 }

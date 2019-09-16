@@ -12,7 +12,8 @@ namespace ZMachineLib.Operations.OP1
         public override void Execute(List<ushort> args)
         {
             var dest = Memory[Stack.Peek().PC++];
-            StoreWordInVariable(dest, (ushort)~args[0]);
+            ushort value = (ushort)~args[0];
+            VarHandler.StoreWord(dest, value, true);
         }
     }
 }

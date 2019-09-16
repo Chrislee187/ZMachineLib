@@ -23,7 +23,7 @@ namespace ZMachineLib.Operations.OP1
             else
                 len = (byte)((propInfo >> (Version <= 3 ? 5 : 6)) + 1);
 
-            StoreByteInVariable(dest, len);
+            VarHandler.StoreByte(dest, len);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace ZMachineLib.Operations.OP2
                     addr += 1;
             }
 
-            StoreWordInVariable(dest, addr);
+            VarHandler.StoreWord(dest, addr, true);
         }
     }
 }

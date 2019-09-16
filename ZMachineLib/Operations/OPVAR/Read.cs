@@ -75,7 +75,7 @@ namespace ZMachineLib.Operations.OPVAR
                 if (Version >= 5)
                 {
                     var dest = Memory[Stack.Peek().PC++];
-                    StoreByteInVariable(dest, 10);
+                    VarHandler.StoreByte(dest, 10);
                 }
 
                 ReadTextAddr = 0;

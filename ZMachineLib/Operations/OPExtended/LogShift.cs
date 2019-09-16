@@ -19,7 +19,7 @@ namespace ZMachineLib.Operations.OPExtended
                 val >>= -args[1];
 
             var dest = Memory[Stack.Peek().PC++];
-            StoreWordInVariable(dest, val);
+            VarHandler.StoreWord(dest, val, true);
         }
     }
 }

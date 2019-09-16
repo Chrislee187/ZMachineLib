@@ -11,8 +11,9 @@ namespace ZMachineLib.Operations.OP1
 
         public override void Execute(List<ushort> args)
         {
-            var val = (short)(GetVariable((byte)args[0]) + 1);
-            StoreWordInVariable((byte)args[0], (ushort)val);
+            var val = (short)(VarHandler.GetWord((byte)args[0], true) + 1);
+            ushort value = (ushort)val;
+            VarHandler.StoreWord((byte)args[0], value, true);
         }
     }
     public sealed class Call1S : ZMachineOperation
