@@ -138,53 +138,99 @@ namespace ZMachineLib
             while (Running)
             {
                 Log.Write($"PC: {Stack.Peek().PC:X5}");
-                var o = Memory[Stack.Peek().PC++];
+                var opCode = Memory[Stack.Peek().PC++];
                 IOperation operation;
-                if (o == 0xbe)
-                {
-                    o = Memory[Stack.Peek().PC++];
-                    _kindExtOps.TryGetValue((KindExtOpCodes)(o & 0x1f), out operation);
-                    // TODO: hack to make this a VAR opcode...
-                    o |= 0xc0;
+                (opCode, operation) = GetOperation(opCode);
 
-                    Log.Write($" Ext ");
+                if (operation == null) throw new Exception($"No operation found for Op Code {opCode}!");
 
-                }
-                else if (o < 0x80)
-                {
-                    _kind2Ops.TryGetValue((Kind2OpCodes)(o & 0x1f), out operation);
-                    Log.Write($" 2Op(0x80) ");
-                }
-                else if (o < 0xb0)
-                {
-                    _kind1Ops.TryGetValue((Kind1OpCodes)(o & 0x0f), out operation);
-                    Log.Write($" 1Op ");
-                }
-                else if (o < 0xc0)
-                {
-                    _kind0Ops.TryGetValue((Kind0OpCodes)(o & 0x0f), out operation);
-                    Log.Write($" 0Op ");
-                }
-                else if (o < 0xe0)
-                {
-                    _kind2Ops.TryGetValue((Kind2OpCodes)(o & 0x1f), out operation);
-                    Log.Write($" 2Op(0xe0) ");
-                }
-                else
-                {
-                    _kindVarOps.TryGetValue((KindVarOpCodes)(o & 0x1f), out operation);
-                    Log.Write($" Var ");
-                }
-
-                Log.WriteLine($" Op Code ({operation?.Code:X2})");
-                var args = GetOperands(o);
-
-                if (operation == null) throw new Exception($"No operation found!");
+                Log.WriteLine($" Op Code ({operation?.Code:X2} - {operation.GetType().Name})");
+                var args = GetOperands(opCode);
 
                 operation.Execute(args);
 
                 Log.Flush();
             }
+        }
+        private (byte opCode, IOperation operation) GetOperation2(byte opCode)
+        {
+            IOperation operation;
+            if (opCode == 0xbe) // 0OP:190 - special op, indicates next byte contains Extended Op
+            {
+                opCode = Memory[Stack.Peek().PC++];
+                _kindExtOps.TryGetValue((KindExtOpCodes)(opCode & 0x1f), out operation);
+                // TODO: hack to make this a VAR opcode...
+                opCode |= 0xc0;
+
+                Log.Write($" Ext ");
+            }
+            else if (opCode < 0x80) // 2OP:0-127
+            {
+                _kind2Ops.TryGetValue((Kind2OpCodes)(opCode & 0x1f), out operation);
+                Log.Write($" 2Op(0x80) ");
+            }
+            else if (opCode < 0xb0) // 1OP:128-175
+            {
+                _kind1Ops.TryGetValue((Kind1OpCodes)(opCode & 0x0f), out operation);
+                Log.Write($" 1Op ");
+            }
+            else if (opCode < 0xc0) // 0OP:176-191
+            {
+                _kind0Ops.TryGetValue((Kind0OpCodes)(opCode & 0x0f), out operation);
+                Log.Write($" 0Op ");
+            }
+            else if (opCode < 0xe0) // (224 is first VAR OP) so this catches other 2OP's?
+            {
+                _kind2Ops.TryGetValue((Kind2OpCodes)(opCode & 0x1f), out operation);
+                Log.Write($" 2Op(0xe0) ");
+            }
+            else
+            {
+                _kindVarOps.TryGetValue((KindVarOpCodes)(opCode & 0x1f), out operation);
+                Log.Write($" Var ");
+            }
+
+            return (opCode, operation);
+        }
+        private (byte opCode, IOperation operation) GetOperation(byte opCode)
+        {
+            IOperation operation;
+            if (opCode == 0xbe) // 0OP:190 - special op, indicates next byte contains Extended Op
+            {
+                opCode = Memory[Stack.Peek().PC++];
+                _kindExtOps.TryGetValue((KindExtOpCodes) (opCode & 0x1f), out operation);
+                // TODO: hack to make this a VAR opcode...
+                opCode |= 0xc0;
+
+                Log.Write($" Ext ");
+            }
+            else if (opCode < 0x80) // 2OP:0-127
+            {
+                _kind2Ops.TryGetValue((Kind2OpCodes) (opCode & 0x1f), out operation);
+                Log.Write($" 2Op(0x80) ");
+            }
+            else if (opCode < 0xb0) // 1OP:128-175
+            {
+                _kind1Ops.TryGetValue((Kind1OpCodes) (opCode & 0x0f), out operation);
+                Log.Write($" 1Op ");
+            }
+            else if (opCode < 0xc0) // 0OP:176-191
+            {
+                _kind0Ops.TryGetValue((Kind0OpCodes) (opCode & 0x0f), out operation);
+                Log.Write($" 0Op ");
+            }
+            else if (opCode < 0xe0) // (224 is first VAR OP) so this catches other 2OP's?
+            {
+                _kind2Ops.TryGetValue((Kind2OpCodes) (opCode & 0x1f), out operation);
+                Log.Write($" 2Op(0xe0) ");
+            }
+            else
+            {
+                _kindVarOps.TryGetValue((KindVarOpCodes) (opCode & 0x1f), out operation);
+                Log.Write($" Var ");
+            }
+
+            return (opCode, operation);
         }
 
         private List<ushort> GetOperands(byte opcode)

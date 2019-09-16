@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace ZMachineLib.Operations.Kind0
 {
@@ -12,7 +13,7 @@ namespace ZMachineLib.Operations.Kind0
         public override void Execute(List<ushort> args)
         {
             var routineStack = Stack.Peek().RoutineStack;
-            if (routineStack.Count > 0)
+            if (routineStack.Any())
             {
                 routineStack.Pop();
             }
