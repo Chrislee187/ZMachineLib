@@ -12,9 +12,9 @@ namespace ZMachineLib.Operations.OP2
 
         public override void Execute(List<ushort> args)
         {
-            Log.Write($"[{GetObjectName(args[0])}] ");
+            Log.Write($"[{ObjectManager.GetObjectName(args[0])}] ");
 
-            var objectAddr = GetObjectAddress(args[0]);
+            var objectAddr = ObjectManager.GetObjectAddress(args[0]);
             ulong attributes;
             ulong flag;
 

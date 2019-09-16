@@ -27,5 +27,7 @@ namespace ZMachineLib
 		void SetColor(ZColor foreground, ZColor background);
 		void SoundEffect(ushort number);
 		void Quit();
-	}
+        byte ScreenHeight { get; }
+        byte ScreenWidth { get; }
+    }
 }

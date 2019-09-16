@@ -215,5 +215,8 @@ namespace ZPlay
             // TODO: Hook up Core logging
             Debug.Print(text);
         }
+
+        public byte ScreenHeight => (byte) Console.WindowHeight;
+        public byte ScreenWidth => (byte) Console.WindowWidth;
     }
 }

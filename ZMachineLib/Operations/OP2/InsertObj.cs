@@ -14,23 +14,23 @@ namespace ZMachineLib.Operations.OP2
             if (args[0] == 0 || args[1] == 0)
                 return;
 
-            Log.Write($"[{GetObjectName(args[0])}] [{GetObjectName(args[1])}] ");
+            Log.Write($"[{ObjectManager.GetObjectName(args[0])}] [{ObjectManager.GetObjectName(args[1])}] ");
 
             var obj1 = args[0];
             var obj2 = args[1];
 
-            var obj1Addr = GetObjectAddress(args[0]);
-            var obj2Addr = GetObjectAddress(args[1]);
+            var obj1Addr = ObjectManager.GetObjectAddress(args[0]);
+            var obj2Addr = ObjectManager.GetObjectAddress(args[1]);
 
-            var parent1 = GetObjectNumber((ushort)(obj1Addr + Offsets.Parent));
-            var sibling1 = GetObjectNumber((ushort)(obj1Addr + Offsets.Sibling));
-            var child2 = GetObjectNumber((ushort)(obj2Addr + Offsets.Child));
+            var parent1 = ObjectManager.GetObjectNumber((ushort)(obj1Addr + Offsets.Parent));
+            var sibling1 = ObjectManager.GetObjectNumber((ushort)(obj1Addr + Offsets.Sibling));
+            var child2 = ObjectManager.GetObjectNumber((ushort)(obj2Addr + Offsets.Child));
 
-            var parent1Addr = GetObjectAddress(parent1);
+            var parent1Addr = ObjectManager.GetObjectAddress(parent1);
 
-            var parent1Child = GetObjectNumber((ushort)(parent1Addr + Offsets.Child));
-            var parent1ChildAddr = GetObjectAddress(parent1Child);
-            var parent1ChildSibling = GetObjectNumber((ushort)(parent1ChildAddr + Offsets.Sibling));
+            var parent1Child = ObjectManager.GetObjectNumber((ushort)(parent1Addr + Offsets.Child));
+            var parent1ChildAddr = ObjectManager.GetObjectAddress(parent1Child);
+            var parent1ChildSibling = ObjectManager.GetObjectNumber((ushort)(parent1ChildAddr + Offsets.Sibling));
 
             if (parent1 == obj2 && child2 == obj1)
                 return;
@@ -39,7 +39,7 @@ namespace ZMachineLib.Operations.OP2
             if (parent1Child == obj1)
             {
                 // set parent1's child to obj1's sibling
-                SetObjectNumber((ushort)(parent1Addr + Offsets.Child), sibling1);
+                ObjectManager.SetObjectNumber((ushort)(parent1Addr + Offsets.Child), sibling1);
             }
             else // else if I'm not the child but there is a child, we need to link the broken sibling chain
             {
@@ -53,23 +53,23 @@ namespace ZMachineLib.Operations.OP2
                     if (currentSibling == obj1)
                     {
                         // set the current object's sibling to the next sibling
-                        SetObjectNumber((ushort)(addr + Offsets.Sibling), sibling1);
+                        ObjectManager.SetObjectNumber((ushort)(addr + Offsets.Sibling), sibling1);
                         break;
                     }
 
-                    addr = GetObjectAddress(currentSibling);
-                    currentSibling = GetObjectNumber((ushort)(addr + Offsets.Sibling));
+                    addr = ObjectManager.GetObjectAddress(currentSibling);
+                    currentSibling = ObjectManager.GetObjectNumber((ushort)(addr + Offsets.Sibling));
                 }
             }
 
             // set obj1's parent to obj2
-            SetObjectNumber((ushort)(obj1Addr + Offsets.Parent), obj2);
+            ObjectManager.SetObjectNumber((ushort)(obj1Addr + Offsets.Parent), obj2);
 
             // set obj2's child to obj1
-            SetObjectNumber((ushort)(obj2Addr + Offsets.Child), obj1);
+            ObjectManager.SetObjectNumber((ushort)(obj2Addr + Offsets.Child), obj1);
 
             // set obj1's sibling to obj2's child
-            SetObjectNumber((ushort)(obj1Addr + Offsets.Sibling), child2);
+            ObjectManager.SetObjectNumber((ushort)(obj1Addr + Offsets.Sibling), child2);
         }
     }
 }

@@ -14,7 +14,7 @@ namespace ZMachineLib.Operations.OPExtended
             // TODO
 
             var dest = Memory[Stack.Peek().PC++];
-            VarHandler.StoreWord(dest, 0, true);
+            VariableManager.StoreWord(dest, 0);
         }
     }
 }

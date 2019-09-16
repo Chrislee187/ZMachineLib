@@ -13,7 +13,7 @@ namespace ZMachineLib.Operations.OP2
         {
             var and = (ushort)(args[0] & args[1]);
             var dest = Memory[Stack.Peek().PC++];
-            VarHandler.StoreWord(dest, and, true);
+            VariableManager.StoreWord(dest, and);
         }
     }
 }

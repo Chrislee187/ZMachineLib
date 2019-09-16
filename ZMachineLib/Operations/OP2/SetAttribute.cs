@@ -18,9 +18,9 @@ namespace ZMachineLib.Operations.OP2
             if (obj == 0)
                 return;
 
-            Log.Write($"[{GetObjectName(obj)}] ");
+            Log.Write($"[{ObjectManager.GetObjectName(obj)}] ");
 
-            var objectAddr = GetObjectAddress(obj);
+            var objectAddr = ObjectManager.GetObjectAddress(obj);
             ulong attributes;
             ulong flag;
 

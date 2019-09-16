@@ -11,10 +11,11 @@ namespace ZMachineLib.Operations.OP2
 
         public override void Execute(List<ushort> args)
         {
-            Log.Write($"[{GetObjectName(args[0])}] ");
+            Log.Write($"[{ObjectManager.GetObjectName(args[0])}] ");
 
             var dest = Memory[Stack.Peek().PC++];
-            var addr = GetPropertyAddress(args[0], (byte)args[1]);
+            byte prop = (byte)args[1];
+            var addr = ObjectManager.GetPropertyAddress(args[0], prop);
 
             if (addr > 0)
             {
@@ -26,7 +27,7 @@ namespace ZMachineLib.Operations.OP2
                     addr += 1;
             }
 
-            VarHandler.StoreWord(dest, addr, true);
+            VariableManager.StoreWord(dest, addr);
         }
     }
 }

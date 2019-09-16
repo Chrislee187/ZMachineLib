@@ -12,12 +12,13 @@ namespace ZMachineLib.Operations.OP2
 
         public override void Execute(List<ushort> args)
         {
-            Log.Write($"[{GetObjectName(args[0])}] ");
+            Log.Write($"[{ObjectManager.GetObjectName(args[0])}] ");
 
             var dest = Memory[Stack.Peek().PC++];
             ushort val = 0;
 
-            var addr = GetPropertyAddress(args[0], (byte)args[1]);
+            byte prop = (byte)args[1];
+            var addr = ObjectManager.GetPropertyAddress(args[0], prop);
             if (addr > 0)
             {
                 var propInfo = Memory[addr++];
@@ -34,7 +35,7 @@ namespace ZMachineLib.Operations.OP2
             else
                 val = Machine.Memory.GetUshort((ushort)(ObjectTable + (args[1] - 1) * 2));
 
-            VarHandler.StoreWord(dest, val, true);
+            VariableManager.StoreWord(dest, val);
         }
     }
 }

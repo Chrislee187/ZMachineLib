@@ -12,9 +12,9 @@ namespace ZMachineLib.Operations.OPVAR
 
         public override void Execute(List<ushort> args)
         {
-            Log.Write($"[{GetObjectName(args[0])}] ");
+            Log.Write($"[{ObjectManager.GetObjectName(args[0])}] ");
 
-            var prop = GetPropertyHeaderAddress(args[0]);
+            var prop = ObjectManager.GetPropertyHeaderAddress(args[0]);
             var size = Memory[prop];
             prop += (ushort)(size * 2 + 1);
 

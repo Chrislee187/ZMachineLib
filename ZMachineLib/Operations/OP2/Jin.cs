@@ -11,10 +11,10 @@ namespace ZMachineLib.Operations.OP2
 
         public override void Execute(List<ushort> args)
         {
-            Log.Write($"C[{GetObjectName(args[0])}] P[{GetObjectName(args[1])}] ");
+            Log.Write($"C[{ObjectManager.GetObjectName(args[0])}] P[{ObjectManager.GetObjectName(args[1])}] ");
 
-            var addr = GetObjectAddress(args[0]);
-            var parent = GetObjectNumber((ushort)(addr + Offsets.Parent));
+            var addr = ObjectManager.GetObjectAddress(args[0]);
+            var parent = ObjectManager.GetObjectNumber((ushort)(addr + Offsets.Parent));
             Jump(parent == args[1]);
         }
     }

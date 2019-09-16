@@ -14,7 +14,7 @@ namespace ZMachineLib.Operations.OP2
             var val = (short)(args[0] + args[1]);
             var dest = Memory[Stack.Peek().PC++];
             ushort value = (ushort)val;
-            VarHandler.StoreWord(dest, value, true);
+            VariableManager.StoreWord(dest, value);
         }
     }
 }

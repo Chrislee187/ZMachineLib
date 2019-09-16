@@ -20,7 +20,7 @@ namespace ZMachineLib.Operations.OPVAR
                 val = (ushort)(_random.Next(0, args[0]) + 1);
 
             var dest = Memory[Stack.Peek().PC++];
-            VarHandler.StoreWord(dest, val, true);
+            VariableManager.StoreWord(dest, val);
         }
     }
 }

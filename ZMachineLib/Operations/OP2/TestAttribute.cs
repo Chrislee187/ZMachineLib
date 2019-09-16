@@ -15,10 +15,10 @@ namespace ZMachineLib.Operations.OP2
             var obj = args[0];
             var attr = args[1];
 
-            Log.Write($"[{GetObjectName(obj)}] ");
-            PrintObjectInfo(obj, false);
+            Log.Write($"[{ObjectManager.GetObjectName(obj)}] ");
+            ObjectManager.PrintObjectInfo(obj, false);
 
-            var objectAddr = GetObjectAddress(obj);
+            var objectAddr = ObjectManager.GetObjectAddress(obj);
             ulong attributes;
             ulong flag;
 

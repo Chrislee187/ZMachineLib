@@ -11,7 +11,7 @@ namespace ZMachineLib.Operations.OP2
 
         public override void Execute(List<ushort> args)
         {
-            Log.Write($"[{GetObjectName(args[0])}] ");
+            Log.Write($"[{ObjectManager.GetObjectName(args[0])}] ");
 
             var next = false;
 
@@ -19,7 +19,7 @@ namespace ZMachineLib.Operations.OP2
             if (args[1] == 0)
                 next = true;
 
-            var propHeaderAddr = GetPropertyHeaderAddress(args[0]);
+            var propHeaderAddr = ObjectManager.GetPropertyHeaderAddress(args[0]);
             var size = Memory[propHeaderAddr];
             propHeaderAddr += (ushort)(size * 2 + 1);
 
@@ -40,7 +40,7 @@ namespace ZMachineLib.Operations.OP2
 
                 if (next)
                 {
-                    VarHandler.StoreByte(dest, propNum);
+                    VariableManager.StoreByte(dest, propNum);
                     return;
                 }
 
@@ -50,7 +50,7 @@ namespace ZMachineLib.Operations.OP2
                 propHeaderAddr += (ushort)(len + 1);
             }
 
-            VarHandler.StoreByte(dest, 0);
+            VariableManager.StoreByte(dest, 0);
         }
     }
 }

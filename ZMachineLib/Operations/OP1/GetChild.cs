@@ -11,22 +11,22 @@ namespace ZMachineLib.Operations.OP1
 
         public override void Execute(List<ushort> args)
         {
-            Log.Write($"[{GetObjectName(args[0])}] ");
+            Log.Write($"[{ObjectManager.GetObjectName(args[0])}] ");
 
-            var addr = GetObjectAddress(args[0]);
-            var child = GetObjectNumber((ushort)(addr + Offsets.Child));
+            var addr = ObjectManager.GetObjectAddress(args[0]);
+            var child = ObjectManager.GetObjectNumber((ushort)(addr + Offsets.Child));
 
-            Log.Write($"[{GetObjectName(child)}] ");
+            Log.Write($"[{ObjectManager.GetObjectName(child)}] ");
 
             var dest = Memory[Stack.Peek().PC++];
 
             if (Version <= 3)
             {
                 byte value = (byte)child;
-                VarHandler.StoreByte(dest, value);
+                VariableManager.StoreByte(dest, value);
             }
             else
-                VarHandler.StoreWord(dest, child, true);
+                VariableManager.StoreWord(dest, child);
 
             Jump(child != 0);
         }

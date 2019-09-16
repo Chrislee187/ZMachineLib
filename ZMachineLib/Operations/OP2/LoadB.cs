@@ -14,7 +14,7 @@ namespace ZMachineLib.Operations.OP2
             var addr = (ushort)(args[0] + args[1]);
             var b = Memory[addr];
             var dest = Memory[Stack.Peek().PC++];
-            VarHandler.StoreByte(dest, b);
+            VariableManager.StoreByte(dest, b);
         }
     }
 }

@@ -30,13 +30,13 @@ namespace ZMachineLib.Operations.OPVAR
 
                 if (val == args[0])
                 {
-                    VarHandler.StoreWord(dest, addr, true);
+                    VariableManager.StoreWord(dest, addr);
                     Jump(true);
                     return;
                 }
             }
 
-            VarHandler.StoreWord(dest, 0, true);
+            VariableManager.StoreWord(dest, 0);
             Jump(false);
         }
     }

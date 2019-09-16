@@ -1,18 +1,13 @@
-﻿using System.Collections.Generic;
-using ZMachineLib.Extensions;
+﻿using ZMachineLib.Extensions;
 
 namespace ZMachineLib
 {
-    public class VarHandler
+    public class VariableManager : ZMachineHelper
     {
-        private readonly ZMachine2 _machine;
-        private byte[] Memory => _machine.Memory;
-        private ushort GlobalsTable => _machine.Header.Globals;
-        private Stack<ZStackFrame> Stack => _machine.Stack;
 
-        public VarHandler(ZMachine2 machine)
+        public VariableManager(ZMachine2 machine) : base(machine)
         {
-            _machine = machine;
+
         }
         public ushort GetWord(byte variable, bool andRemove = true)
         {
@@ -36,8 +31,7 @@ namespace ZMachineLib
 
         private ushort GetWordFromGlobals(byte variable)
         {
-            ushort val;
-            val = Memory.GetUshort((ushort)(GlobalsTable + 2 * (variable - 0x10)));
+            var val = Memory.GetUshort((ushort)(GlobalsTable + 2 * (variable - 0x10)));
             Log.Write($"G{variable - 0x10:X2} ({val:X4}), ");
             return val;
         }

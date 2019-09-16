@@ -11,9 +11,9 @@ namespace ZMachineLib.Operations.OP1
 
         public override void Execute(List<ushort> args)
         {
-            var val = (short)(VarHandler.GetWord((byte)args[0], true) - 1);
+            var val = (short)(VariableManager.GetWord((byte)args[0]) - 1);
             ushort value = (ushort)val;
-            VarHandler.StoreWord((byte)args[0], value, true);
+            VariableManager.StoreWord((byte)args[0], value);
         }
     }
 }

@@ -12,9 +12,9 @@ namespace ZMachineLib.Operations.OP1
         public override void Execute(List<ushort> args)
         {
             var dest = Memory[Stack.Peek().PC++];
-            var val = VarHandler.GetWord((byte)args[0], false);
+            var val = VariableManager.GetWord((byte)args[0], false);
             byte value = (byte)val;
-            VarHandler.StoreByte(dest, value);
+            VariableManager.StoreByte(dest, value);
         }
     }
 }
