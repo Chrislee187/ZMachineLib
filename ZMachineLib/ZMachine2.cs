@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Text.Json;
 using ZMachineLib.Extensions;
 using ZMachineLib.Operations;
-using ZMachineLib.Operations.Kind0;
-using ZMachineLib.Operations.Kind1;
-using ZMachineLib.Operations.Kind2;
-using ZMachineLib.Operations.KindExt;
-using ZMachineLib.Operations.KindVar;
+using System.Text.Json;
+using ZMachineLib.Operations.OPExtended;
 
 namespace ZMachineLib
 {
     public class ZMachine2
     {
-        internal FileHeader2 Header { get; private set; }
+        internal Header Header { get; private set; }
         internal VersionedOffsets VersionedOffsets;
 
         internal byte[] Memory;
@@ -33,19 +28,11 @@ namespace ZMachineLib
         internal ushort WordStart;
 
         private Stream _gameFileStream;
-        private readonly IUserIo _io;
 
-        // ReSharper disable once CollectionNeverUpdated.Local
-        private Kind0Operations _kind0Ops;
-        // ReSharper disable once CollectionNeverUpdated.Local
-        private Kind1Operations _kind1Ops;
-        // ReSharper disable once CollectionNeverUpdated.Local
-        private Kind2Operations _kind2Ops;
-        // ReSharper disable once CollectionNeverUpdated.Local
-        private KindVarOperations _kindVarOps;
-        // ReSharper disable once CollectionNeverUpdated.Local
-        private KindExtOperations _kindExtOps;
+        private readonly IUserIo _io;
         private readonly IFileIo _fileIo;
+        private KindExtOperations _extendedOperations;
+        private Operations.Operations _operations;
 
         public ZMachine2(IUserIo io, IFileIo fileIo)
         {
@@ -65,7 +52,6 @@ namespace ZMachineLib
         {
             var fileStream = File.OpenRead(filename);
             RunFile(fileStream);
-
         }
 
         internal void ReloadFile()
@@ -77,18 +63,16 @@ namespace ZMachineLib
         {
             Memory = ReadToMemory(stream);
 
-            Header = ReadHeader(Memory[..0x3f]);
 
+            Header = new Header(Memory[..0x3f]);
+//            var header = new Header(Memory[..0x3f]);
             // NOTE: Need header to be read (mainly for the Version) before we can setup the Ops as few of them have header value dependencies
             SetupNewOperations();
 #if DEBUG
             DumpHeader();
 #endif
 
-            // TODO: set these via IZMachineIO
-            Memory[0x01] = 0x01;
-            Memory[0x20] = 25;
-            Memory[0x21] = 80;
+            SetupScreenParams();
 
             ParseDictionary();
 
@@ -96,6 +80,14 @@ namespace ZMachineLib
 
             var zsf = new ZStackFrame {PC = Header.Pc };
             Stack.Push(zsf);
+        }
+
+        private void SetupScreenParams()
+        {
+// TODO: set these via IZMachineIO
+            Memory[0x01] = 0x01; // Sets Flags1 to Status Line = hours:mins
+            Memory[0x20] = 25; // Screen height
+            Memory[0x21] = 80; // Screen width
         }
 
 #if DEBUG
@@ -119,14 +111,10 @@ namespace ZMachineLib
 
         private void SetupNewOperations()
         {
-            _kind0Ops = new Kind0Operations(this, _io, _fileIo);
-            RTrue = _kind0Ops[Kind0OpCodes.RTrue];
-            RFalse = _kind0Ops[Kind0OpCodes.RFalse];
-
-            _kind1Ops = new Kind1Operations(this, _io);
-            _kind2Ops = new Kind2Operations(this, _io);
-            _kindVarOps = new KindVarOperations(this, _io);
-            _kindExtOps = new KindExtOperations(this, _kind0Ops);
+            _operations = new Operations.Operations(this, _io, _fileIo);
+            RTrue = _operations[OpCodes.RTrue];
+            RFalse = _operations[OpCodes.RFalse];
+            _extendedOperations = new KindExtOperations(this, _operations);
         }
 
         public void Run(bool terminateOnInput = false)
@@ -140,97 +128,41 @@ namespace ZMachineLib
                 Log.Write($"PC: {Stack.Peek().PC:X5}");
                 var opCode = Memory[Stack.Peek().PC++];
                 IOperation operation;
-                (opCode, operation) = GetOperation(opCode);
+                OpCodes opCodeEnum;
+                (opCode, opCodeEnum, operation) = GetOperation(opCode);
 
                 if (operation == null) throw new Exception($"No operation found for Op Code {opCode}!");
 
-                Log.WriteLine($" Op Code ({operation?.Code:X2} - {operation.GetType().Name})");
-                var args = GetOperands(opCode);
+                Log.WriteLine($" OP: {opCodeEnum:D} ({(byte) opCodeEnum:X2}) - {operation.GetType().Name})");
 
-                operation.Execute(args);
+                operation.Execute(GetOperands(opCode));
 
                 Log.Flush();
             }
         }
-        private (byte opCode, IOperation operation) GetOperation2(byte opCode)
+        private (byte opCode, OpCodes opCodeEnum, IOperation operation) GetOperation(byte opCode)
         {
+            //NOTE: http://inform-fiction.org/zmachine/standards/z1point1/sect14.html
             IOperation operation;
-            if (opCode == 0xbe) // 0OP:190 - special op, indicates next byte contains Extended Op
+            OpCodes opCodeEnum;
+            if (opCode == (byte) OpCodes.Extended) // 0OP:190 - special op, indicates next byte contains Extended Op
             {
+                opCodeEnum = OpCodes.Extended;
                 opCode = Memory[Stack.Peek().PC++];
-                _kindExtOps.TryGetValue((KindExtOpCodes)(opCode & 0x1f), out operation);
+                _extendedOperations.TryGetValue((KindExtOpCodes)(opCode & 0x1f), out operation);
                 // TODO: hack to make this a VAR opcode...
                 opCode |= 0xc0;
 
                 Log.Write($" Ext ");
             }
-            else if (opCode < 0x80) // 2OP:0-127
-            {
-                _kind2Ops.TryGetValue((Kind2OpCodes)(opCode & 0x1f), out operation);
-                Log.Write($" 2Op(0x80) ");
-            }
-            else if (opCode < 0xb0) // 1OP:128-175
-            {
-                _kind1Ops.TryGetValue((Kind1OpCodes)(opCode & 0x0f), out operation);
-                Log.Write($" 1Op ");
-            }
-            else if (opCode < 0xc0) // 0OP:176-191
-            {
-                _kind0Ops.TryGetValue((Kind0OpCodes)(opCode & 0x0f), out operation);
-                Log.Write($" 0Op ");
-            }
-            else if (opCode < 0xe0) // (224 is first VAR OP) so this catches other 2OP's?
-            {
-                _kind2Ops.TryGetValue((Kind2OpCodes)(opCode & 0x1f), out operation);
-                Log.Write($" 2Op(0xe0) ");
-            }
             else
             {
-                _kindVarOps.TryGetValue((KindVarOpCodes)(opCode & 0x1f), out operation);
-                Log.Write($" Var ");
+                opCodeEnum =opCode.ToOpCode();
+
+                _operations.TryGetValue(opCodeEnum, out operation);
             }
 
-            return (opCode, operation);
-        }
-        private (byte opCode, IOperation operation) GetOperation(byte opCode)
-        {
-            IOperation operation;
-            if (opCode == 0xbe) // 0OP:190 - special op, indicates next byte contains Extended Op
-            {
-                opCode = Memory[Stack.Peek().PC++];
-                _kindExtOps.TryGetValue((KindExtOpCodes) (opCode & 0x1f), out operation);
-                // TODO: hack to make this a VAR opcode...
-                opCode |= 0xc0;
-
-                Log.Write($" Ext ");
-            }
-            else if (opCode < 0x80) // 2OP:0-127
-            {
-                _kind2Ops.TryGetValue((Kind2OpCodes) (opCode & 0x1f), out operation);
-                Log.Write($" 2Op(0x80) ");
-            }
-            else if (opCode < 0xb0) // 1OP:128-175
-            {
-                _kind1Ops.TryGetValue((Kind1OpCodes) (opCode & 0x0f), out operation);
-                Log.Write($" 1Op ");
-            }
-            else if (opCode < 0xc0) // 0OP:176-191
-            {
-                _kind0Ops.TryGetValue((Kind0OpCodes) (opCode & 0x0f), out operation);
-                Log.Write($" 0Op ");
-            }
-            else if (opCode < 0xe0) // (224 is first VAR OP) so this catches other 2OP's?
-            {
-                _kind2Ops.TryGetValue((Kind2OpCodes) (opCode & 0x1f), out operation);
-                Log.Write($" 2Op(0xe0) ");
-            }
-            else
-            {
-                _kindVarOps.TryGetValue((KindVarOpCodes) (opCode & 0x1f), out operation);
-                Log.Write($" Var ");
-            }
-
-            return (opCode, operation);
+            return (opCode, opCodeEnum, operation);
         }
 
         private List<ushort> GetOperands(byte opcode)
@@ -361,54 +293,6 @@ namespace ZMachineLib
                 var s = ZsciiString.DecodeZsciiChars(chars);
                 DictionaryWords[i] = s;
             }
-        }
-
-        private FileHeader2 ReadHeader(byte[] headerBytes)
-        {
-            FileHeader2 aStruct;
-            int count = Marshal.SizeOf(typeof(FileHeader2));
-            GCHandle handle = GCHandle.Alloc(headerBytes, GCHandleType.Pinned);
-            aStruct = (FileHeader2)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(FileHeader2));
-            handle.Free();
-
-            return aStruct;
-        }
-        [StructLayout(LayoutKind.Explicit)]
-        public struct FileHeader2
-        {
-            [FieldOffset(0x00)] public readonly byte Version;                            
-            [FieldOffset(0x01)] [MarshalAs(UnmanagedType.U2)] private readonly ushort Flags1Raw;
-            [FieldOffset(0x03)] private readonly byte Unknown1;
-            [FieldOffset(0x04)] private readonly ushort HighMemoryBaseAddressRaw;    
-            [FieldOffset(0x06)] private readonly ushort ProgramCounterRaw;     // 0x06 (NB. Packed address of initial main routine in >= V6)
-            [FieldOffset(0x08)] private readonly ushort DictionaryRaw;               
-            [FieldOffset(0x0a)] private readonly ushort ObjectTableRaw;              
-            [FieldOffset(0x0c)] private readonly ushort GlobalsRaw;                  
-            [FieldOffset(0x0e)] private readonly ushort StaticMemoryBaseAddressRaw;  
-            [FieldOffset(0x10)] private readonly ushort Flags2Raw;                   
-            [FieldOffset(0x12)] private readonly ushort Unknown2;                 
-            [FieldOffset(0x14)] private readonly ushort Unknown3;                 
-            [FieldOffset(0x16)] private readonly ushort Unknown4;                 
-            [FieldOffset(0x18)] private readonly ushort AbbreviationsTableRaw;       
-            [FieldOffset(0x1a)] private readonly ushort LengthOfFileRaw;             
-            [FieldOffset(0x1c)] private readonly ushort ChecksumOfFileRaw;           
-            [FieldOffset(0x1e)] private readonly byte InterpreterNumber;          
-            [FieldOffset(0x1f)] private readonly byte InterpreterNumberVersion;   
-
-            public ushort Flags1 => Flags1Raw.SwapBytes();
-            public ushort HighMemoryBaseAddress => HighMemoryBaseAddressRaw.SwapBytes();
-            public ushort ProgramCounter => ProgramCounterRaw.SwapBytes();
-            public ushort Dictionary => DictionaryRaw.SwapBytes();
-            public ushort ObjectTable => ObjectTableRaw.SwapBytes();
-            public ushort Globals => GlobalsRaw.SwapBytes();
-            public ushort StaticMemoryBaseAddress => StaticMemoryBaseAddressRaw.SwapBytes();
-            public ushort Flags2 => Flags2Raw.SwapBytes();
-            public ushort AbbreviationsTable => AbbreviationsTableRaw.SwapBytes();
-            public ushort LengthOfFile => LengthOfFileRaw.SwapBytes();
-            public ushort ChecksumOfFile => ChecksumOfFileRaw.SwapBytes();
-
-            public ushort Pc => ProgramCounter;
-            public ushort DynamicMemorySize => StaticMemoryBaseAddress;
         }
     }
 }

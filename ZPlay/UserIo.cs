@@ -2,7 +2,6 @@
 using System;
 using System.Diagnostics;
 using ZMachineLib;
-using ZMachineLib.Operations.KindExt;
 
 namespace ZPlay
 {

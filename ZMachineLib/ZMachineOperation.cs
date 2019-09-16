@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using ZMachineLib.Extensions;
 using ZMachineLib.Operations;
-using ZMachineLib.Operations.Kind0;
 
 namespace ZMachineLib
 {
