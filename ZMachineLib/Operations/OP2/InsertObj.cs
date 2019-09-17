@@ -2,6 +2,13 @@
 
 namespace ZMachineLib.Operations.OP2
 {
+    /// <summary>
+    /// 2OP:14 E insert_obj object destination
+    /// Moves object O to become the first child of the destination object D.
+    /// (Thus, after the operation the child of D is O, and the sibling of O
+    /// is whatever was previously the child of D.) All children of O move with it.
+    /// (Initially O can be at any point in the object tree; it may legally have parent zero.)
+    /// </summary>
     public sealed class InsertObj : ZMachineOperation
     {
         public InsertObj(ZMachine2 machine)
@@ -19,32 +26,26 @@ namespace ZMachineLib.Operations.OP2
             var obj1 = args[0];
             var obj2 = args[1];
 
-            var obj1Addr = ObjectManager.GetObjectAddress(args[0]);
-            var obj2Addr = ObjectManager.GetObjectAddress(args[1]);
+            var zObj1 = ObjectManager.GetObject(obj1);
+            var zObj2 = ObjectManager.GetObject(obj2);
 
-            var parent1 = ObjectManager.GetObjectNumber((ushort)(obj1Addr + Machine.VersionedOffsets.Parent));
-            var sibling1 = ObjectManager.GetObjectNumber((ushort)(obj1Addr + Machine.VersionedOffsets.Sibling));
-            var child2 = ObjectManager.GetObjectNumber((ushort)(obj2Addr + Machine.VersionedOffsets.Child));
 
-            var parent1Addr = ObjectManager.GetObjectAddress(parent1);
-
-            var parent1Child = ObjectManager.GetObjectNumber((ushort)(parent1Addr + Machine.VersionedOffsets.Child));
-            var parent1ChildAddr = ObjectManager.GetObjectAddress(parent1Child);
-            var parent1ChildSibling = ObjectManager.GetObjectNumber((ushort)(parent1ChildAddr + Machine.VersionedOffsets.Sibling));
-
-            if (parent1 == obj2 && child2 == obj1)
+            if (zObj1.Parent == obj2 && zObj2.Child == obj1)
                 return;
 
+            var parent1ZObj = ObjectManager.GetObject(zObj1.Parent);
+
             // if parent1's child is obj1 we need to assign the sibling
-            if (parent1Child == obj1)
+            if (parent1ZObj.Child == obj1)
             {
                 // set parent1's child to obj1's sibling
-                ObjectManager.SetObjectNumber((ushort)(parent1Addr + Machine.VersionedOffsets.Child), sibling1);
+                ObjectManager.SetObjectNumber((ushort)(parent1ZObj.Address + Machine.VersionedOffsets.Child), zObj1.Sibling);
             }
             else // else if I'm not the child but there is a child, we need to link the broken sibling chain
             {
-                var addr = parent1ChildAddr;
-                var currentSibling = parent1ChildSibling;
+                var parent1ChildZObj = ObjectManager.GetObject(parent1ZObj.Child);
+                var addr = parent1ChildZObj.Address;
+                var currentSibling = parent1ChildZObj.Sibling;
 
                 // while sibling of parent1's child has siblings
                 while (currentSibling != 0)
@@ -53,23 +54,24 @@ namespace ZMachineLib.Operations.OP2
                     if (currentSibling == obj1)
                     {
                         // set the current object's sibling to the next sibling
-                        ObjectManager.SetObjectNumber((ushort)(addr + Machine.VersionedOffsets.Sibling), sibling1);
+                        ObjectManager.SetObjectNumber((ushort)(addr + Machine.VersionedOffsets.Sibling), zObj1.Sibling);
                         break;
                     }
 
-                    addr = ObjectManager.GetObjectAddress(currentSibling);
+                    addr = ObjectManager.GetObject(currentSibling).Address; // ObjectManager.GetObjectAddress(currentSibling);
+                    
                     currentSibling = ObjectManager.GetObjectNumber((ushort)(addr + Machine.VersionedOffsets.Sibling));
                 }
             }
 
             // set obj1's parent to obj2
-            ObjectManager.SetObjectNumber((ushort)(obj1Addr + Machine.VersionedOffsets.Parent), obj2);
+            ObjectManager.SetObjectNumber((ushort)(zObj1.Address + Machine.VersionedOffsets.Parent), obj2);
 
             // set obj2's child to obj1
-            ObjectManager.SetObjectNumber((ushort)(obj2Addr + Machine.VersionedOffsets.Child), obj1);
+            ObjectManager.SetObjectNumber((ushort)(zObj2.Address + Machine.VersionedOffsets.Child), obj1);
 
             // set obj1's sibling to obj2's child
-            ObjectManager.SetObjectNumber((ushort)(obj1Addr + Machine.VersionedOffsets.Sibling), child2);
+            ObjectManager.SetObjectNumber((ushort)(zObj1.Address + Machine.VersionedOffsets.Sibling), zObj2.Child);
         }
     }
 }
