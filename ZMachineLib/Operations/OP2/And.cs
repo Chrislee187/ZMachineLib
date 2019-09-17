@@ -16,7 +16,7 @@ namespace ZMachineLib.Operations.OP2
 
         public override void Execute(List<ushort> operands)
         {
-            var dest = GetNextByte();
+            var dest = PeekNextByte();
             VariableManager.StoreWord(dest, (ushort)(operands[0] & operands[1]));
         }
     }

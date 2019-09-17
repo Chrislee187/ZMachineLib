@@ -11,7 +11,7 @@ namespace ZMachineLib.Operations.OP2
 
         public override void Execute(List<ushort> operands)
         {
-            var dest = GetNextByte();
+            var dest = PeekNextByte();
 
             if (operands[1] == 0)
                 return;

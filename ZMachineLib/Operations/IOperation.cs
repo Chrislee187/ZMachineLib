@@ -7,7 +7,7 @@ namespace ZMachineLib.Operations
     {
         ushort Code { get; }
         Action<bool> Jump { set; }
-        Func<byte> GetNextByte { set; }
+        Func<byte> PeekNextByte { set; }
         void Execute(List<ushort> operands);
     }
 }

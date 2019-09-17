@@ -11,7 +11,7 @@ namespace ZMachineLib.Operations.OP1
 
         public override void Execute(List<ushort> operands)
         {
-            var dest = GetNextByte();
+            var dest = PeekNextByte();
             var propInfo = Machine.Memory[operands[0] - 1];
             byte len;
             if (Machine.Header.Version > 3 && (propInfo & 0x80) == 0x80)

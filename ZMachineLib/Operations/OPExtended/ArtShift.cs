@@ -18,7 +18,7 @@ namespace ZMachineLib.Operations.OPExtended
             else if ((short)operands[1] < 0)
                 val >>= -operands[1];
 
-            var dest = GetNextByte();
+            var dest = PeekNextByte();
             ushort value = (ushort)val;
             VariableManager.StoreWord(dest, value);
         }

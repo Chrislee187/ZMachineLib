@@ -20,7 +20,7 @@ namespace ZMachineLib.Operations.OP1
         {
             var zObj = ObjectManager.GetObject(operands[0]);
 
-            var dest = GetNextByte();
+            var dest = PeekNextByte();
 
             // NOTE: Do we need to store if Child == 0 ???
             if (Machine.Header.Version <= 3)

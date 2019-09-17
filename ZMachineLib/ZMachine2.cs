@@ -70,7 +70,7 @@ namespace ZMachineLib
                 OpCodes opCodeEnum;
                 (opCode, opCodeEnum, operation) = GetOperation(opCode);
 
-                if (operation == null) throw new Exception($"No operation found for Op Code {opCode}!");
+                if (operation == null) throw new Exception($"No operation found for Op Code {opCode} ({opCode:X2})!");
 
                 Log.WriteLine($" OP: {opCodeEnum:D} ({(byte)opCodeEnum:X2}) - {operation.GetType().Name})");
 
@@ -105,11 +105,6 @@ namespace ZMachineLib
             return (opCode, opCodeEnum, operation);
         }
 
-        internal void ReloadFile()
-        {
-            LoadFile(_gameFileStream);
-        }
-
         private void LoadFile(Stream stream)
         {
             Memory = Read(stream);
@@ -139,6 +134,7 @@ namespace ZMachineLib
             Memory[0x20] = _io.ScreenHeight; 
             Memory[0x21] = _io.ScreenWidth;
         }
+
 #if DEBUG
         private void DumpHeader()
         {
@@ -269,5 +265,7 @@ namespace ZMachineLib
                 DictionaryWords[i] = s;
             }
         }
+
+        internal void ReloadFile() => LoadFile(_gameFileStream);
     }
 }

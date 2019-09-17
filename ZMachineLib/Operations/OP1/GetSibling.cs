@@ -17,7 +17,7 @@ namespace ZMachineLib.Operations.OP1
         {
             var zObj = ObjectManager.GetObject(operands[0]);
 
-            var dest = GetNextByte();
+            var dest = PeekNextByte();
 
             if (Machine.Header.Version <= 3)
             {

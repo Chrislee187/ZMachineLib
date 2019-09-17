@@ -12,7 +12,7 @@ namespace ZMachineLib.Operations.OPVAR
 
         public override void Execute(List<ushort> operands)
         {
-            var dest = GetNextByte();
+            var dest = PeekNextByte();
             byte len = 0x02;
 
             if (operands.Count == 4)

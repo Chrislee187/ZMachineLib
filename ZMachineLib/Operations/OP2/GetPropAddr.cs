@@ -13,7 +13,7 @@ namespace ZMachineLib.Operations.OP2
         {
             Log.Write($"[{ObjectManager.GetObjectName(operands[0])}] ");
 
-            var dest = GetNextByte();
+            var dest = PeekNextByte();
             byte prop = (byte)operands[1];
             var addr = ObjectManager.GetPropertyAddress(operands[0], prop);
 

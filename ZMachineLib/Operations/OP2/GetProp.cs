@@ -14,7 +14,7 @@ namespace ZMachineLib.Operations.OP2
         {
             Log.Write($"[{ObjectManager.GetObjectName(operands[0])}] ");
 
-            var dest = GetNextByte();
+            var dest = PeekNextByte();
             ushort val = 0;
 
             byte prop = (byte)operands[1];

@@ -16,7 +16,7 @@ namespace ZMachineLib.Operations.OPVAR
         {
             var key = _io.ReadChar();
 
-            var dest = GetNextByte();
+            var dest = PeekNextByte();
             byte value = (byte)key;
             VariableManager.StoreByte(dest, value);
         }

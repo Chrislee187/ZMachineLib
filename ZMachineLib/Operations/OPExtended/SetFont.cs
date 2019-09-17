@@ -13,7 +13,7 @@ namespace ZMachineLib.Operations.OPExtended
         {
             // TODO
 
-            var dest = GetNextByte();
+            var dest = PeekNextByte();
             VariableManager.StoreWord(dest, 0);
         }
     }

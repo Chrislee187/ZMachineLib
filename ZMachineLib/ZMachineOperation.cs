@@ -7,7 +7,6 @@ namespace ZMachineLib
 {
     public abstract class ZMachineOperation : IOperation
     {
-        
         public ushort Code { get; }
         
         protected readonly ZMachine2 Machine;
@@ -25,15 +24,6 @@ namespace ZMachineLib
             VariableManager = variableManager ?? new VariableManager(Machine);
         }
 
-        private Func<byte> _customGetNextByte;
-        public Func<byte> GetNextByte
-        {
-            protected get => _customGetNextByte ?? GetNextByteImpl;
-            set => _customGetNextByte = value;
-        }
-        private byte GetNextByteImpl() 
-            => Machine.Memory[Machine.Stack.Peek().PC++];
-
         public abstract void Execute(List<ushort> operands);
 
         protected void Call(List<ushort> args, bool storeResult)
@@ -42,7 +32,7 @@ namespace ZMachineLib
             {
                 if (storeResult)
                 {
-                    var dest = GetNextByte();
+                    var dest = PeekNextByte();
                     VariableManager.StoreWord(dest, 0);
                 }
 
@@ -55,7 +45,7 @@ namespace ZMachineLib
             var zsf = new ZStackFrame { PC = pc, StoreResult = storeResult };
             Machine.Stack.Push(zsf);
 
-            var count = GetNextByte();
+            var count = PeekNextByte();
 
             if (Machine.Header.Version <= 4)
             {
@@ -73,19 +63,20 @@ namespace ZMachineLib
             zsf.ArgumentCount = args.Count - 1;
         }
 
-        private Action<bool> _customJump;
 
+        // NOTE: Slightly funky setup for Jump and PeekNextByte
+        // so we can replace them when testing
+        private Action<bool> _customJump;
         public Action<bool> Jump
         {
             protected get => _customJump ?? JumpImpl;
             set => _customJump = value;
         }
-
         private void JumpImpl(bool flag)
         {
             bool branch;
 
-            var offset = GetNextByte();
+            var offset = PeekNextByte();
             short newOffset;
 
             if ((offset & 0x80) == 0x80)
@@ -123,7 +114,7 @@ namespace ZMachineLib
             }
             else
             {
-                var offset2 = GetNextByte();
+                var offset2 = PeekNextByte();
                 var final = (ushort)((offset & 0x3f) << 8 | offset2);
 
                 // this is a 14-bit number, so set the sign bit properly because we can jump backwards
@@ -138,5 +129,16 @@ namespace ZMachineLib
 
             Log.Write($"-> { Machine.Stack.Peek().PC:X5}");
         }
+
+        private Func<byte> _customPeekNextByte;
+        public Func<byte> PeekNextByte
+        {
+            protected get => _customPeekNextByte ?? PeekNextByteImpl;
+            set => _customPeekNextByte = value;
+        }
+        private byte PeekNextByteImpl()
+            => Machine.Memory[Machine.Stack.Peek().PC++];
+
+
     }
 }

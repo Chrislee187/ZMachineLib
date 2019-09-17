@@ -16,7 +16,7 @@ namespace ZMachineLib.Operations.OP0
             if (stackFrame.StoreResult)
             {
                 ushort value = stackFrame.RoutineStack.Pop();
-                VariableManager.StoreWord(GetNextByte(), value);
+                VariableManager.StoreWord(PeekNextByte(), value);
             }
         }
     }

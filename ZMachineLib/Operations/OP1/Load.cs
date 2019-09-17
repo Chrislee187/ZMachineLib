@@ -11,7 +11,7 @@ namespace ZMachineLib.Operations.OP1
 
         public override void Execute(List<ushort> operands)
         {
-            var dest = GetNextByte();
+            var dest = PeekNextByte();
             var val = VariableManager.GetWord((byte)operands[0], false);
             byte value = (byte)val;
             VariableManager.StoreByte(dest, value);

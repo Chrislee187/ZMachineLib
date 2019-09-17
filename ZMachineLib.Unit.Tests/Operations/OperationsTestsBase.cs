@@ -26,7 +26,7 @@ namespace ZMachineLib.Unit.Tests.Operations
         }
         protected void MockGetNextByte(IOperation op)
         {
-            op.GetNextByte = () => 0;
+            op.PeekNextByte = () => 0;
         }
         protected void JumpedWith(bool value)
         {

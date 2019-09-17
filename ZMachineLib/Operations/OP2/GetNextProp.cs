@@ -15,7 +15,7 @@ namespace ZMachineLib.Operations.OP2
 
             var next = false;
 
-            var dest = GetNextByte();
+            var dest = PeekNextByte();
             if (operands[1] == 0)
                 next = true;
 
