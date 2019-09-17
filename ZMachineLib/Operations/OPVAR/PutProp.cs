@@ -10,11 +10,11 @@ namespace ZMachineLib.Operations.OPVAR
         {
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
-            Log.Write($"[{ObjectManager.GetObjectName(args[0])}] ");
+            Log.Write($"[{ObjectManager.GetObjectName(operands[0])}] ");
 
-            var prop = ObjectManager.GetPropertyHeaderAddress(args[0]);
+            var prop = ObjectManager.GetPropertyHeaderAddress(operands[0]);
             var size = Machine.Memory[prop];
             prop += (ushort)(size * 2 + 1);
 
@@ -32,13 +32,13 @@ namespace ZMachineLib.Operations.OPVAR
                     len = (byte)((propInfo >> ((ushort) Machine.Header.Version <= 3 ? 5 : 6)) + 1);
 
                 var propNum = (byte)(propInfo & ((ushort) Machine.Header.Version <= 3 ? 0x1f : 0x3f));
-                if (propNum == args[1])
+                if (propNum == operands[1])
                 {
                     if (len == 1)
-                        Machine.Memory[prop + 1] = (byte)args[2];
+                        Machine.Memory[prop + 1] = (byte)operands[2];
                     else
                     {
-                        ushort value = args[2];
+                        ushort value = operands[2];
                         Machine.Memory.StoreAt(prop, value);
                     }
 

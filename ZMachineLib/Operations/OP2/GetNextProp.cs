@@ -9,17 +9,17 @@ namespace ZMachineLib.Operations.OP2
         {
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
-            Log.Write($"[{ObjectManager.GetObjectName(args[0])}] ");
+            Log.Write($"[{ObjectManager.GetObjectName(operands[0])}] ");
 
             var next = false;
 
             var dest = GetNextByte();
-            if (args[1] == 0)
+            if (operands[1] == 0)
                 next = true;
 
-            var propHeaderAddr = ObjectManager.GetPropertyHeaderAddress(args[0]);
+            var propHeaderAddr = ObjectManager.GetPropertyHeaderAddress(operands[0]);
             var size = Machine.Memory[propHeaderAddr];
             propHeaderAddr += (ushort)(size * 2 + 1);
 
@@ -44,7 +44,7 @@ namespace ZMachineLib.Operations.OP2
                     return;
                 }
 
-                if (propNum == args[1])
+                if (propNum == operands[1])
                     next = true;
 
                 propHeaderAddr += (ushort)(len + 1);

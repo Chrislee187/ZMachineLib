@@ -10,14 +10,14 @@ namespace ZMachineLib.Operations.OPVAR
         {
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
             ushort val = 0;
 
-            if ((short)args[0] <= 0)
-                _random = new System.Random(-args[0]);
+            if ((short)operands[0] <= 0)
+                _random = new System.Random(-operands[0]);
             else
-                val = (ushort)(_random.Next(0, args[0]) + 1);
+                val = (ushort)(_random.Next(0, operands[0]) + 1);
 
             var dest = GetNextByte();
             VariableManager.StoreWord(dest, val);

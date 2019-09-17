@@ -12,7 +12,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         public void SetUp()
         {
             base.Setup();
-            _op = new Or(ZMachine2, VariableManagerMocks.Object);
+            _op = new Or(ZMachine2, VariableManagerMockery.Object);
             MockGetNextByte(_op);
         }
 
@@ -28,7 +28,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
             _op.Execute(args);
 
             var expectedValue = (ushort) (val1 | val2);
-            VariableManagerMocks.VerifyStoreWord(expectedValue);
+            VariableManagerMockery.VerifyStoreWord(expectedValue);
 
         }
 

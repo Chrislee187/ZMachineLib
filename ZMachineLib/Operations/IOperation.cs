@@ -8,6 +8,6 @@ namespace ZMachineLib.Operations
         ushort Code { get; }
         Action<bool> Jump { set; }
         Func<byte> GetNextByte { set; }
-        void Execute(List<ushort> args);
+        void Execute(List<ushort> operands);
     }
 }

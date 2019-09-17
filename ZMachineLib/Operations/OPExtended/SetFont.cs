@@ -9,7 +9,7 @@ namespace ZMachineLib.Operations.OPExtended
         {
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
             // TODO
 

@@ -9,9 +9,9 @@ namespace ZMachineLib.Operations.OP1
         {
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
-            Machine.Stack.Peek().PC = (uint)(Machine.Stack.Peek().PC + (short)(args[0] - 2));
+            Machine.Stack.Peek().PC = (uint)(Machine.Stack.Peek().PC + (short)(operands[0] - 2));
             Log.Write($"-> {Machine.Stack.Peek().PC:X5}");
         }
     }

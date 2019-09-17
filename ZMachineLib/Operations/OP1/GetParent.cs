@@ -15,9 +15,9 @@ namespace ZMachineLib.Operations.OP1
         {
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
-            var zObj = ObjectManager.GetObject(args[0]);
+            var zObj = ObjectManager.GetObject(operands[0]);
 
             var dest = GetNextByte();
 

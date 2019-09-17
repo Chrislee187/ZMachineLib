@@ -14,10 +14,10 @@ namespace ZMachineLib.Operations.OPVAR
             _io = io;
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
-            Machine.ReadTextAddr = args[0];
-            Machine.ReadParseAddr = args[1];
+            Machine.ReadTextAddr = operands[0];
+            Machine.ReadParseAddr = operands[1];
 
             if (Machine.TerminateOnInput)
                 Machine.Running = false;

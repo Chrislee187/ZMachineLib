@@ -15,7 +15,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         public void SetUp()
         {
             base.Setup();
-            _op = new Jin(ZMachine2, objectManager: ObjectManagerMocks.Object);
+            _op = new Jin(ZMachine2, objectManager: ObjectManagerMockery.Object);
             MockJump(_op);
         }
 
@@ -23,7 +23,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         public void Should_jump_if_objectA_is_child_of_objectB()
         {
             ushort parent = 1234;
-            ObjectManagerMocks
+            ObjectManagerMockery
                 .SetupSequenceGetObject(new ZMachineObject
                 {
                     Parent = parent
@@ -43,7 +43,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
             const ushort parent = 1234;
             const ushort notParent = 4321;
 
-            ObjectManagerMocks
+            ObjectManagerMockery
                 .SetupSequenceGetObject(new ZMachineObjectBuilder()
                     .WithAddress(address)
                     .WithParent(parent).Build());

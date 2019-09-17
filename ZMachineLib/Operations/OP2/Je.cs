@@ -9,12 +9,12 @@ namespace ZMachineLib.Operations.OP2
         {
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
             var equal = false;
-            for (var i = 1; i < args.Count; i++)
+            for (var i = 1; i < operands.Count; i++)
             {
-                if (args[0] == args[i])
+                if (operands[0] == operands[i])
                 {
                     equal = true;
                     break;

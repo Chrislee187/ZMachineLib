@@ -10,22 +10,22 @@ namespace ZMachineLib.Operations.OPVAR
         {
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
-            if (args[1] == 0)
+            if (operands[1] == 0)
             {
-                for (var i = 0; i < args[2]; i++)
-                    Machine.Memory[args[0] + i] = 0;
+                for (var i = 0; i < operands[2]; i++)
+                    Machine.Memory[operands[0] + i] = 0;
             }
-            else if ((short)args[1] < 0)
+            else if ((short)operands[1] < 0)
             {
-                for (var i = 0; i < Math.Abs(args[2]); i++)
-                    Machine.Memory[args[1] + i] = Machine.Memory[args[0] + i];
+                for (var i = 0; i < Math.Abs(operands[2]); i++)
+                    Machine.Memory[operands[1] + i] = Machine.Memory[operands[0] + i];
             }
             else
             {
-                for (var i = Math.Abs(args[2]) - 1; i >= 0; i--)
-                    Machine.Memory[args[1] + i] = Machine.Memory[args[0] + i];
+                for (var i = Math.Abs(operands[2]) - 1; i >= 0; i--)
+                    Machine.Memory[operands[1] + i] = Machine.Memory[operands[0] + i];
             }
         }
     }

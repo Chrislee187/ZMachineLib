@@ -7,8 +7,8 @@ namespace ZMachineLib.Unit.Tests.Operations
 {
     public class OperationsTestsBase
     {
-        protected VariableManagerMocks VariableManagerMocks;
-        protected ObjectManagerMocks ObjectManagerMocks;
+        protected VariableManagerMockery VariableManagerMockery;
+        protected ObjectManagerMockery ObjectManagerMockery;
         protected ZMachine2 ZMachine2;
         private bool? _jumped;
         protected List<ushort> AnyArgs = new OpArgBuilder().Build();
@@ -17,8 +17,8 @@ namespace ZMachineLib.Unit.Tests.Operations
         protected void Setup()
         {
             ZMachine2 = new ZMachine2(null, null);
-            VariableManagerMocks = new VariableManagerMocks();
-            ObjectManagerMocks = new ObjectManagerMocks();
+            VariableManagerMockery = new VariableManagerMockery();
+            ObjectManagerMockery = new ObjectManagerMockery();
         }
         protected void MockJump(IOperation op)
         {

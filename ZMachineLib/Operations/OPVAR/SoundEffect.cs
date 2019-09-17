@@ -12,10 +12,10 @@ namespace ZMachineLib.Operations.OPVAR
             _io = io;
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
             // TODO - the rest of the params
-            _io.SoundEffect(args[0]);
+            _io.SoundEffect(operands[0]);
         }
     }
 }

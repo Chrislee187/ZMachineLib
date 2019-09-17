@@ -9,11 +9,11 @@ namespace ZMachineLib.Operations.OP1
         {
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
-            var val = (short)(VariableManager.GetWord((byte)args[0]) + 1);
+            var val = (short)(VariableManager.GetWord((byte)operands[0]) + 1);
             ushort value = (ushort)val;
-            VariableManager.StoreWord((byte)args[0], value);
+            VariableManager.StoreWord((byte)operands[0], value);
         }
     }
 }

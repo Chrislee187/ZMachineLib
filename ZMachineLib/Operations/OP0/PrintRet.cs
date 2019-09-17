@@ -15,7 +15,7 @@ namespace ZMachineLib.Operations.OP0
             _rTrue = rTrue;
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
             var s = Machine.ZsciiString.GetZsciiString();
 

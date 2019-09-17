@@ -10,7 +10,7 @@ namespace ZMachineLib.Operations.OP0
         {
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
             var s = Machine.ZsciiString.GetZsciiString();
             Io.Print(s);

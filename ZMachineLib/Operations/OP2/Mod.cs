@@ -9,9 +9,9 @@ namespace ZMachineLib.Operations.OP2
         {
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
-            var val = (short)((short)args[0] % (short)args[1]);
+            var val = (short)((short)operands[0] % (short)operands[1]);
             var dest = GetNextByte();
             ushort value = (ushort)val;
             VariableManager.StoreWord(dest, value);

@@ -9,13 +9,13 @@ namespace ZMachineLib.Operations.OP2
         {
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
-            Log.Write($"[{ObjectManager.GetObjectName(args[0])}] ");
+            Log.Write($"[{ObjectManager.GetObjectName(operands[0])}] ");
 
             var dest = GetNextByte();
-            byte prop = (byte)args[1];
-            var addr = ObjectManager.GetPropertyAddress(args[0], prop);
+            byte prop = (byte)operands[1];
+            var addr = ObjectManager.GetPropertyAddress(operands[0], prop);
 
             if (addr > 0)
             {

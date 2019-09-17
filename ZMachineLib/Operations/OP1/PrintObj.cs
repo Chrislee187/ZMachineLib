@@ -13,9 +13,9 @@ namespace ZMachineLib.Operations.OP1
             _io = io;
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
-            var addr = ObjectManager.GetPropertyHeaderAddress(args[0]);
+            var addr = ObjectManager.GetPropertyHeaderAddress(operands[0]);
             var s = Machine.ZsciiString.GetZsciiString((ushort)(addr + 1));
             _io.Print(s);
             Log.Write($"[{s}]");

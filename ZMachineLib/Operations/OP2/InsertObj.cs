@@ -16,15 +16,15 @@ namespace ZMachineLib.Operations.OP2
         {
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
-            if (args[0] == 0 || args[1] == 0)
+            if (operands[0] == 0 || operands[1] == 0)
                 return;
 
-            Log.Write($"[{ObjectManager.GetObjectName(args[0])}] [{ObjectManager.GetObjectName(args[1])}] ");
+            Log.Write($"[{ObjectManager.GetObjectName(operands[0])}] [{ObjectManager.GetObjectName(operands[1])}] ");
 
-            var obj1 = args[0];
-            var obj2 = args[1];
+            var obj1 = operands[0];
+            var obj2 = operands[1];
 
             var zObj1 = ObjectManager.GetObject(obj1);
             var zObj2 = ObjectManager.GetObject(obj2);

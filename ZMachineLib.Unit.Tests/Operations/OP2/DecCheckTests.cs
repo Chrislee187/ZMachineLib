@@ -12,7 +12,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         public void Setup()
         {
             base.Setup();
-            _op = new DecCheck(ZMachine2, variableManager: VariableManagerMocks.Object);
+            _op = new DecCheck(ZMachine2, variableManager: VariableManagerMockery.Object);
             MockJump(_op);
         }
 
@@ -26,13 +26,13 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
                 .WithValue(comparison)
                 .Build();
 
-            VariableManagerMocks.SetupGetWord(initialValue);
+            VariableManagerMockery.SetupGetWord(initialValue);
 
             _op.Execute(args);
 
             var expectedValue = initialValue - 1;
 
-            VariableManagerMocks.VerifyStoreWord((ushort)expectedValue);
+            VariableManagerMockery.VerifyStoreWord((ushort)expectedValue);
 
             JumpedWith(true);
         }
@@ -47,13 +47,13 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
                 .WithValue(comparison)
                 .Build();
 
-            VariableManagerMocks.SetupGetWord(initialValue);
+            VariableManagerMockery.SetupGetWord(initialValue);
 
             _op.Execute(args);
 
             var expectedValue = initialValue - 1;
 
-            VariableManagerMocks.VerifyStoreWord((ushort)expectedValue);
+            VariableManagerMockery.VerifyStoreWord((ushort)expectedValue);
 
             JumpedWith(false);
         }

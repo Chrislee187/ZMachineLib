@@ -2,6 +2,10 @@
 
 namespace ZMachineLib.Operations.OP2
 {
+    /// <summary>
+    /// 2OP:9 9 and a b -> (result)
+    /// Bitwise AND.
+    /// </summary>
     public sealed class And : ZMachineOperation
     {
         public And(ZMachine2 machine,
@@ -10,10 +14,10 @@ namespace ZMachineLib.Operations.OP2
         {
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
             var dest = GetNextByte();
-            VariableManager.StoreWord(dest, (ushort)(args[0] & args[1]));
+            VariableManager.StoreWord(dest, (ushort)(operands[0] & operands[1]));
         }
     }
 }

@@ -9,14 +9,14 @@ namespace ZMachineLib.Operations.OPExtended
         {
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
             // kill the sign bit, so make it a ushort
-            var val = args[0];
-            if ((short)args[1] > 0)
-                val <<= args[1];
-            else if ((short)args[1] < 0)
-                val >>= -args[1];
+            var val = operands[0];
+            if ((short)operands[1] > 0)
+                val <<= operands[1];
+            else if ((short)operands[1] < 0)
+                val >>= -operands[1];
 
             var dest = GetNextByte();
             VariableManager.StoreWord(dest, val);

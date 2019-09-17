@@ -9,9 +9,9 @@ namespace ZMachineLib.Operations.OP1
         {
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
-            Jump(args[0] == 0);
+            Jump(operands[0] == 0);
         }
     }
 }

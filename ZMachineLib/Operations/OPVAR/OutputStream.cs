@@ -9,7 +9,7 @@ namespace ZMachineLib.Operations.OPVAR
         {
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
             // TODO
             Log.WriteLine("VarOp.OutputSteam To Be Implemented");

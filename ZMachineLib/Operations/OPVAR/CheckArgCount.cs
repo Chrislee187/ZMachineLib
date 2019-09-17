@@ -9,9 +9,9 @@ namespace ZMachineLib.Operations.OPVAR
         {
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
-            Jump(args[0] <= Machine.Stack.Peek().ArgumentCount);
+            Jump(operands[0] <= Machine.Stack.Peek().ArgumentCount);
         }
     }
 }

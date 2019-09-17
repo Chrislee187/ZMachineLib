@@ -8,7 +8,7 @@ namespace ZMachineLib.Operations.OP0
             : base((ushort)OpCodes.Restart, machine)
         {
         }
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
             Machine.ReloadFile();
         }

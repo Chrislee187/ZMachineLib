@@ -9,10 +9,10 @@ namespace ZMachineLib.Operations.OPVAR
         {
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
-            var addr = (ushort)(args[0] + args[1]);
-            Machine.Memory[addr] = (byte)args[2];
+            var addr = (ushort)(operands[0] + operands[1]);
+            Machine.Memory[addr] = (byte)operands[2];
         }
     }
 }

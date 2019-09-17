@@ -10,12 +10,11 @@ namespace ZMachineLib.Operations.OP2
         {
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
-            var addr = (ushort)(args[0] + 2 * args[1]);
-            var word = Machine.Memory.GetUshort(addr);
+            var addr = (ushort)(operands[0] + 2 * operands[1]);
             var dest = GetNextByte();
-            VariableManager.StoreWord(dest, word);
+            VariableManager.StoreWord(dest, Machine.Memory.GetUshort(addr));
         }
     }
 }

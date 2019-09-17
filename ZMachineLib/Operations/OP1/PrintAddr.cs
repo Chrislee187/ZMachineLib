@@ -13,9 +13,9 @@ namespace ZMachineLib.Operations.OP1
             _io = io;
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
-            var s = Machine.ZsciiString.GetZsciiString(args[0]);
+            var s = Machine.ZsciiString.GetZsciiString(operands[0]);
             _io.Print(s);
             Log.Write($"[{s}]");
         }

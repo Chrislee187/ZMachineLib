@@ -12,9 +12,9 @@ namespace ZMachineLib.Operations.OPVAR
             _io = io;
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
-            _io.SetTextStyle((TextStyle)args[0]);
+            _io.SetTextStyle((TextStyle)operands[0]);
         }
     }
 }

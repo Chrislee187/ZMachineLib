@@ -34,7 +34,7 @@ namespace ZMachineLib
         private byte GetNextByteImpl() 
             => Machine.Memory[Machine.Stack.Peek().PC++];
 
-        public abstract void Execute(List<ushort> args);
+        public abstract void Execute(List<ushort> operands);
 
         protected void Call(List<ushort> args, bool storeResult)
         {

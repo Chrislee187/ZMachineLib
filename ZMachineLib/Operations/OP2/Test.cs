@@ -12,9 +12,9 @@ namespace ZMachineLib.Operations.OP2
         {
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
-            Jump((args[0] & args[1]) == args[1]);
+            Jump((operands[0] & operands[1]) == operands[1]);
         }
     }
 }

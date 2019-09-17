@@ -15,12 +15,12 @@ namespace ZMachineLib.Operations.OP2
         {
         }
 
-        public override void Execute(List<ushort> args)
+        public override void Execute(List<ushort> operands)
         {
-            var zObj = ObjectManager.GetObject(args[0]);
+            var zObj = ObjectManager.GetObject(operands[0]);
             Log.Write($"[{zObj.Name}] ");
 
-            zObj.ClearAttribute(args[1]);
+            zObj.ClearAttribute(operands[1]);
         }
     }
 }
