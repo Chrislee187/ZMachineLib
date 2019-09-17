@@ -17,18 +17,18 @@ namespace ZMachineLib.Operations.OP1
 
             Log.Write($"[{ObjectManager.GetObjectName(args[0])}] ");
             var objAddr = ObjectManager.GetObjectAddress(args[0]);
-            var parent = ObjectManager.GetObjectNumber((ushort)(objAddr + Offsets.Parent));
+            var parent = ObjectManager.GetObjectNumber((ushort)(objAddr + Machine.VersionedOffsets.Parent));
             var parentAddr = ObjectManager.GetObjectAddress(parent);
-            var parentChild = ObjectManager.GetObjectNumber((ushort)(parentAddr + Offsets.Child));
-            var sibling = ObjectManager.GetObjectNumber((ushort)(objAddr + Offsets.Sibling));
+            var parentChild = ObjectManager.GetObjectNumber((ushort)(parentAddr + Machine.VersionedOffsets.Child));
+            var sibling = ObjectManager.GetObjectNumber((ushort)(objAddr + Machine.VersionedOffsets.Sibling));
 
             // if object is the first child, set first child to the sibling
             if (parent == args[0])
-                ObjectManager.SetObjectNumber((ushort)(parentAddr + Offsets.Child), sibling);
+                ObjectManager.SetObjectNumber((ushort)(parentAddr + Machine.VersionedOffsets.Child), sibling);
             else if (parentChild != 0)
             {
                 var addr = ObjectManager.GetObjectAddress(parentChild);
-                var currentSibling = ObjectManager.GetObjectNumber((ushort)(addr + Offsets.Sibling));
+                var currentSibling = ObjectManager.GetObjectNumber((ushort)(addr + Machine.VersionedOffsets.Sibling));
 
                 // while sibling of parent1's child has siblings
                 while (currentSibling != 0)
@@ -37,17 +37,17 @@ namespace ZMachineLib.Operations.OP1
                     if (currentSibling == args[0])
                     {
                         // set the current object's sibling to the next sibling
-                        ObjectManager.SetObjectNumber((ushort)(addr + Offsets.Sibling), sibling);
+                        ObjectManager.SetObjectNumber((ushort)(addr + Machine.VersionedOffsets.Sibling), sibling);
                         break;
                     }
 
                     addr = ObjectManager.GetObjectAddress(currentSibling);
-                    currentSibling = ObjectManager.GetObjectNumber((ushort)(addr + Offsets.Sibling));
+                    currentSibling = ObjectManager.GetObjectNumber((ushort)(addr + Machine.VersionedOffsets.Sibling));
                 }
             }
 
             // set the object's parent to nothing
-            ObjectManager.SetObjectNumber((ushort)(objAddr + Offsets.Parent), 0);
+            ObjectManager.SetObjectNumber((ushort)(objAddr + Machine.VersionedOffsets.Parent), 0);
         }
     }
 }

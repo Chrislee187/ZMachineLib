@@ -11,7 +11,7 @@ namespace ZMachineLib.Operations.OPVAR
 
         public override void Execute(List<ushort> args)
         {
-            var val = Stack.Peek().RoutineStack.Pop();
+            var val = Machine.Stack.Peek().RoutineStack.Pop();
             VariableManager.StoreWord((byte)args[0], val, false);
         }
     }

@@ -16,7 +16,7 @@ namespace ZMachineLib.Operations.OPVAR
         {
             // TODO: print properly
 
-            var s = ZsciiString.GetZsciiString(args[0]);
+            var s = Machine.ZsciiString.GetZsciiString(args[0]);
             _io.Print(s);
             Log.Write($"[{s}]");
         }

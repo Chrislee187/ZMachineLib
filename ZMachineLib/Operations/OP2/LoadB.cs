@@ -12,8 +12,8 @@ namespace ZMachineLib.Operations.OP2
         public override void Execute(List<ushort> args)
         {
             var addr = (ushort)(args[0] + args[1]);
-            var b = Memory[addr];
-            var dest = Memory[Stack.Peek().PC++];
+            var b = Machine.Memory[addr];
+            var dest = Machine.Memory[Machine.Stack.Peek().PC++];
             VariableManager.StoreByte(dest, b);
         }
     }

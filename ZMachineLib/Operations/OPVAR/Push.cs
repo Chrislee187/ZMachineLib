@@ -11,7 +11,7 @@ namespace ZMachineLib.Operations.OPVAR
 
         public override void Execute(List<ushort> args)
         {
-            Stack.Peek().RoutineStack.Push(args[0]);
+            Machine.Stack.Peek().RoutineStack.Push(args[0]);
         }
     }
 }

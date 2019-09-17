@@ -11,9 +11,9 @@ namespace ZMachineLib.Operations.OP0
 
         public override void Execute(List<ushort> args)
         {
-            if (Stack.Pop().StoreResult)
+            if (Machine.Stack.Pop().StoreResult)
             {
-                VariableManager.StoreWord(Memory[Stack.Peek().PC++], 1);
+                VariableManager.StoreWord(Machine.Memory[Machine.Stack.Peek().PC++], 1);
             }
         }
     }

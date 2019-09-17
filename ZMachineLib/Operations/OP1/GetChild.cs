@@ -14,13 +14,13 @@ namespace ZMachineLib.Operations.OP1
             Log.Write($"[{ObjectManager.GetObjectName(args[0])}] ");
 
             var addr = ObjectManager.GetObjectAddress(args[0]);
-            var child = ObjectManager.GetObjectNumber((ushort)(addr + Offsets.Child));
+            var child = ObjectManager.GetObjectNumber((ushort)(addr + Machine.VersionedOffsets.Child));
 
             Log.Write($"[{ObjectManager.GetObjectName(child)}] ");
 
-            var dest = Memory[Stack.Peek().PC++];
+            var dest = Machine.Memory[Machine.Stack.Peek().PC++];
 
-            if (Version <= 3)
+            if (Machine.Header.Version <= 3)
             {
                 byte value = (byte)child;
                 VariableManager.StoreByte(dest, value);

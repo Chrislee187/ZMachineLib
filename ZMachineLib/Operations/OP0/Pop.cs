@@ -12,14 +12,14 @@ namespace ZMachineLib.Operations.OP0
 
         public override void Execute(List<ushort> args)
         {
-            var routineStack = Stack.Peek().RoutineStack;
+            var routineStack = Machine.Stack.Peek().RoutineStack;
             if (routineStack.Any())
             {
                 routineStack.Pop();
             }
             else
             {
-                Stack.Pop();
+                Machine.Stack.Pop();
             }
         }
     }

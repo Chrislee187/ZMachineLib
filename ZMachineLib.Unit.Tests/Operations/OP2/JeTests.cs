@@ -1,9 +1,10 @@
 using NUnit.Framework;
 using Shouldly;
 using ZMachineLib.Operations.OP2;
+
 // ReSharper disable PossibleInvalidOperationException
 
-namespace ZMachineLib.Unit.Tests.Operations
+namespace ZMachineLib.Unit.Tests.Operations.OP2
 {
     public class JeTests
     {

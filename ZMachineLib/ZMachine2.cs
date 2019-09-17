@@ -40,6 +40,7 @@ namespace ZMachineLib
             _io = io;
             ZsciiString = new ZsciiString(this);
             _variableManager = new VariableManager(this);
+            VersionedOffsets = new VersionedOffsets();
         }
 
         public void RunFile(Stream stream, bool terminateOnInput = false)

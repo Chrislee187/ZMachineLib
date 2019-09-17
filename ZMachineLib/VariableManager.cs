@@ -2,7 +2,14 @@
 
 namespace ZMachineLib
 {
-    public class VariableManager : ZMachineHelper
+    public interface IVariableManager
+    {
+        ushort GetWord(byte variable, bool andRemove = true);
+        void StoreWord(byte dest, ushort value, bool newEntry = true);
+        void StoreByte(byte dest, byte value);
+    }
+
+    public class VariableManager : ZMachineHelper, IVariableManager
     {
 
         public VariableManager(ZMachine2 machine) : base(machine)

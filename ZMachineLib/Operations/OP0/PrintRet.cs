@@ -17,7 +17,7 @@ namespace ZMachineLib.Operations.OP0
 
         public override void Execute(List<ushort> args)
         {
-            var s = ZsciiString.GetZsciiString();
+            var s = Machine.ZsciiString.GetZsciiString();
 
             Io.Print(s + Environment.NewLine);
             Log.Write($"[{s}]");

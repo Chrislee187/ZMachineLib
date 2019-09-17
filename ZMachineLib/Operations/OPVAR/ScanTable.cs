@@ -12,7 +12,7 @@ namespace ZMachineLib.Operations.OPVAR
 
         public override void Execute(List<ushort> args)
         {
-            var dest = Memory[Stack.Peek().PC++];
+            var dest = Machine.Memory[Machine.Stack.Peek().PC++];
             byte len = 0x02;
 
             if (args.Count == 4)
@@ -26,7 +26,7 @@ namespace ZMachineLib.Operations.OPVAR
                 if (args.Count == 3 || (args[3] & 0x80) == 0x80)
                     val = Machine.Memory.GetUshort(addr);
                 else
-                    val = Memory[addr];
+                    val = Machine.Memory[addr];
 
                 if (val == args[0])
                 {

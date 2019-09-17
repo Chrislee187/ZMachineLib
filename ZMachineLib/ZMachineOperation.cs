@@ -11,43 +11,20 @@ namespace ZMachineLib
         public ushort Code { get; }
         
         protected readonly ZMachine2 Machine;
-        protected readonly VariableManager VariableManager;
-        protected readonly ObjectManager ObjectManager;
-
-        protected byte[] Memory => Machine.Memory;
-        protected Stack<ZStackFrame> Stack => Machine.Stack;
-
-        protected void SetStack(Stack<ZStackFrame> newStack)
-        {
-            Machine.Stack = newStack;
-        }
-        protected ushort Version => Machine.Header.Version;
-        protected ushort ReadParseAddr
-        {
-            get => Machine.ReadParseAddr;
-            set => Machine.ReadParseAddr = value;
-        }
-
-        protected ushort ReadTextAddr
-        {
-            get => Machine.ReadTextAddr;
-            set => Machine.ReadTextAddr = value;
-        }
-
-        protected ushort ObjectTable => Machine.Header.ObjectTable;
-        protected VersionedOffsets Offsets => Machine.VersionedOffsets;
-        protected VersionedOffsets VersionedOffsets => Machine.VersionedOffsets;
-        protected ZsciiString ZsciiString => Machine.ZsciiString;
-        protected ushort DynamicMemorySize => Machine.Header.DynamicMemorySize;
+        protected readonly IVariableManager VariableManager;
+        protected readonly IObjectManager ObjectManager;
 
         protected ZMachineOperation(ushort code,
-            ZMachine2 machine)
+            ZMachine2 machine,
+            IObjectManager objectManager = null,
+            IVariableManager variableManager = null)
         {
             Code = code;
             Machine = machine;
-            ObjectManager = new ObjectManager(Machine);
-            VariableManager = new VariableManager(Machine);
+            ObjectManager = objectManager ?? new ObjectManager(Machine);
+            VariableManager = variableManager ?? new VariableManager(Machine);
         }
+
         public abstract void Execute(List<ushort> args);
 
         protected void Call(List<ushort> args, bool storeResult)
@@ -56,7 +33,7 @@ namespace ZMachineLib
             {
                 if (storeResult)
                 {
-                    var dest = Memory[Stack.Peek().PC++];
+                    var dest = Machine.Memory[Machine.Stack.Peek().PC++];
                     VariableManager.StoreWord(dest, 0);
                 }
 
@@ -67,17 +44,17 @@ namespace ZMachineLib
             Log.Write($"New PC: {pc:X5}");
 
             var zsf = new ZStackFrame { PC = pc, StoreResult = storeResult };
-            Stack.Push(zsf);
+            Machine.Stack.Push(zsf);
 
-            var count = Memory[Stack.Peek().PC++];
+            var count = Machine.Memory[Machine.Stack.Peek().PC++];
 
-            if (Version <= 4)
+            if (Machine.Header.Version <= 4)
             {
                 for (var i = 0; i < count; i++)
                 {
-                    uint address = Stack.Peek().PC;
+                    uint address = Machine.Stack.Peek().PC;
                     zsf.Variables[i] = Machine.Memory.GetUshort(address);
-                    Stack.Peek().PC += 2;
+                    Machine.Stack.Peek().PC += 2;
                 }
             }
 
@@ -99,7 +76,7 @@ namespace ZMachineLib
         {
             bool branch;
 
-            var offset = Memory[Stack.Peek().PC++];
+            var offset = Machine.Memory[Machine.Stack.Peek().PC++];
             short newOffset;
 
             if ((offset & 0x80) == 0x80)
@@ -137,7 +114,7 @@ namespace ZMachineLib
             }
             else
             {
-                var offset2 = Memory[Stack.Peek().PC++];
+                var offset2 = Machine.Memory[Machine.Stack.Peek().PC++];
                 var final = (ushort)((offset & 0x3f) << 8 | offset2);
 
                 // this is a 14-bit number, so set the sign bit properly because we can jump backwards
@@ -148,9 +125,9 @@ namespace ZMachineLib
             }
 
             if (executeBranch)
-                Stack.Peek().PC += (uint)newOffset;
+                Machine.Stack.Peek().PC += (uint)newOffset;
 
-            Log.Write($"-> { Stack.Peek().PC:X5}");
+            Log.Write($"-> { Machine.Stack.Peek().PC:X5}");
         }
     }
 }

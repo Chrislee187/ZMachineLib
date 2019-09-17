@@ -13,15 +13,15 @@ namespace ZMachineLib.Operations.OP2
         {
             Log.Write($"[{ObjectManager.GetObjectName(args[0])}] ");
 
-            var dest = Memory[Stack.Peek().PC++];
+            var dest = Machine.Memory[Machine.Stack.Peek().PC++];
             byte prop = (byte)args[1];
             var addr = ObjectManager.GetPropertyAddress(args[0], prop);
 
             if (addr > 0)
             {
-                var propInfo = Memory[addr + 1];
+                var propInfo = Machine.Memory[addr + 1];
 
-                if (Version > 3 && (propInfo & 0x80) == 0x80)
+                if (Machine.Header.Version > 3 && (propInfo & 0x80) == 0x80)
                     addr += 2;
                 else
                     addr += 1;
