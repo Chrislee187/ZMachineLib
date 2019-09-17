@@ -4,7 +4,8 @@ namespace ZMachineLib
 {
     public abstract class ZMachineHelper
     {
-        protected readonly ZMachine2 Machine;
+        public ZMachine2 Machine { get; }
+
         protected ZMachineHelper(ZMachine2 machine)
         {
             Machine = machine;

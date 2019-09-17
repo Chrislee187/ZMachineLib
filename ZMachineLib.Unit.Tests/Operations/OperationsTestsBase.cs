@@ -1,3 +1,4 @@
+using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 using Shouldly;
 using ZMachineLib.Operations;
 
@@ -22,7 +23,10 @@ namespace ZMachineLib.Unit.Tests.Operations
         {
             op.Jump = b => _jumped = b;
         }
-
+        protected void MockGetNextByte(IOperation op)
+        {
+            op.GetNextByte = () => 0;
+        }
         protected void JumpedWith(bool value)
         {
             _jumped.HasValue.ShouldBeTrue();

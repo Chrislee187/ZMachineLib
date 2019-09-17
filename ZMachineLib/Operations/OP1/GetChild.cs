@@ -2,33 +2,37 @@
 
 namespace ZMachineLib.Operations.OP1
 {
+    /// <summary>
+    /// 1OP:130 2 get_child object -> (result) ?(label)
+    /// Get first object contained in given object,
+    /// branching if this exists,
+    /// i.e. is not nothing (i.e., is not 0).
+    /// </summary>
     public sealed class GetChild : ZMachineOperation
     {
-        public GetChild(ZMachine2 machine)
-            : base((ushort)OpCodes.GetChild, machine)
+        public GetChild(ZMachine2 machine, 
+            IVariableManager variableManager = null)
+            : base((ushort)OpCodes.GetChild, machine, variableManager: variableManager)
         {
         }
 
         public override void Execute(List<ushort> args)
         {
-            Log.Write($"[{ObjectManager.GetObjectName(args[0])}] ");
+            var zObj = ObjectManager.GetObject(args[0]);
 
-            var addr = ObjectManager.GetObjectAddress(args[0]);
-            var child = ObjectManager.GetObjectNumber((ushort)(addr + Machine.VersionedOffsets.Child));
+            var dest = GetNextByte();
 
-            Log.Write($"[{ObjectManager.GetObjectName(child)}] ");
-
-            var dest = Machine.Memory[Machine.Stack.Peek().PC++];
-
+            // NOTE: Do we need to store if Child == 0 ???
             if (Machine.Header.Version <= 3)
             {
-                byte value = (byte)child;
-                VariableManager.StoreByte(dest, value);
+                VariableManager.StoreByte(dest, (byte) zObj.Child);
             }
             else
-                VariableManager.StoreWord(dest, child);
+            {
+                VariableManager.StoreWord(dest, zObj.Child);
+            }
 
-            Jump(child != 0);
+            Jump(zObj.Child != 0);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace ZMachineLib.Operations.OP0
         {
             if (Machine.Stack.Pop().StoreResult)
             {
-                VariableManager.StoreWord(Machine.Memory[Machine.Stack.Peek().PC++], 0);
+                VariableManager.StoreWord(GetNextByte(), 0);
             }
         }
     }

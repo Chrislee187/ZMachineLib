@@ -47,8 +47,15 @@ namespace ZMachineLib.Feature.Tests
         [Test]
         public void Should_save_and_load()
         {
-            // TODO: Need seperate the Save/Load mechanism out from the IZMachineIO interface
-            // to a seperate interface
+            Assert.Inconclusive("TODO");
+        }
+
+        [Test]
+        public void Should_drink_the_bottle_of_water()
+        {
+            // This tests exercises some additional operations that simple moving around do not
+            // i.e. RemoveObj is called when the water is drunk
+            Assert.Inconclusive("TODO");
         }
 
         private void ExpectZorkIStartText()

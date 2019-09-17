@@ -74,7 +74,7 @@ namespace ZMachineLib.Operations.OPVAR
 
                 if (Machine.Header.Version >= 5)
                 {
-                    var dest = Machine.Memory[Machine.Stack.Peek().PC++];
+                    var dest = GetNextByte();
                     VariableManager.StoreByte(dest, 10);
                 }
 

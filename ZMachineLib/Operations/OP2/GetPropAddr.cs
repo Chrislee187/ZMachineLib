@@ -13,7 +13,7 @@ namespace ZMachineLib.Operations.OP2
         {
             Log.Write($"[{ObjectManager.GetObjectName(args[0])}] ");
 
-            var dest = Machine.Memory[Machine.Stack.Peek().PC++];
+            var dest = GetNextByte();
             byte prop = (byte)args[1];
             var addr = ObjectManager.GetPropertyAddress(args[0], prop);
 

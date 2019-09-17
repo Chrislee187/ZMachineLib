@@ -12,7 +12,7 @@ namespace ZMachineLib.Operations.OPVAR
 
         public override void Execute(List<ushort> args)
         {
-            var dest = Machine.Memory[Machine.Stack.Peek().PC++];
+            var dest = GetNextByte();
             byte len = 0x02;
 
             if (args.Count == 4)

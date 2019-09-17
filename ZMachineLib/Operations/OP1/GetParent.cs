@@ -1,32 +1,34 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace ZMachineLib.Operations.OP1
 {
+    /// <summary>
+    /// 1OP:131 3 get_parent object -> (result)
+    /// Get parent object
+    /// (note that this has NO "branch if exists" clause as Get Child has).
+    /// </summary>
     public sealed class GetParent : ZMachineOperation
     {
         public GetParent(ZMachine2 machine)
-            : base((ushort)OpCodes.GetParent, machine)
+            : base((ushort) OpCodes.GetParent, machine)
         {
         }
 
         public override void Execute(List<ushort> args)
         {
-            Log.Write($"[{ObjectManager.GetObjectName(args[0])}] ");
+            var zObj = ObjectManager.GetObject(args[0]);
 
-            var addr = ObjectManager.GetObjectAddress(args[0]);
-            var parent = ObjectManager.GetObjectNumber((ushort)(addr + Machine.VersionedOffsets.Parent));
-
-            Log.Write($"[{ObjectManager.GetObjectName(parent)}] ");
-
-            var dest = Machine.Memory[Machine.Stack.Peek().PC++];
+            var dest = GetNextByte();
 
             if (Machine.Header.Version <= 3)
             {
-                byte value = (byte)parent;
-                VariableManager.StoreByte(dest, value);
+                VariableManager.StoreByte(dest, (byte)zObj.Parent);
             }
             else
-                VariableManager.StoreWord(dest, parent);
+            {
+                VariableManager.StoreWord(dest, zObj.Parent);
+            }
         }
     }
 }

@@ -25,6 +25,15 @@ namespace ZMachineLib
             VariableManager = variableManager ?? new VariableManager(Machine);
         }
 
+        private Func<byte> _customGetNextByte;
+        public Func<byte> GetNextByte
+        {
+            protected get => _customGetNextByte ?? GetNextByteImpl;
+            set => _customGetNextByte = value;
+        }
+        private byte GetNextByteImpl() 
+            => Machine.Memory[Machine.Stack.Peek().PC++];
+
         public abstract void Execute(List<ushort> args);
 
         protected void Call(List<ushort> args, bool storeResult)
@@ -33,7 +42,7 @@ namespace ZMachineLib
             {
                 if (storeResult)
                 {
-                    var dest = Machine.Memory[Machine.Stack.Peek().PC++];
+                    var dest = GetNextByte();
                     VariableManager.StoreWord(dest, 0);
                 }
 
@@ -46,7 +55,7 @@ namespace ZMachineLib
             var zsf = new ZStackFrame { PC = pc, StoreResult = storeResult };
             Machine.Stack.Push(zsf);
 
-            var count = Machine.Memory[Machine.Stack.Peek().PC++];
+            var count = GetNextByte();
 
             if (Machine.Header.Version <= 4)
             {
@@ -76,7 +85,7 @@ namespace ZMachineLib
         {
             bool branch;
 
-            var offset = Machine.Memory[Machine.Stack.Peek().PC++];
+            var offset = GetNextByte();
             short newOffset;
 
             if ((offset & 0x80) == 0x80)
@@ -114,7 +123,7 @@ namespace ZMachineLib
             }
             else
             {
-                var offset2 = Machine.Memory[Machine.Stack.Peek().PC++];
+                var offset2 = GetNextByte();
                 var final = (ushort)((offset & 0x3f) << 8 | offset2);
 
                 // this is a 14-bit number, so set the sign bit properly because we can jump backwards

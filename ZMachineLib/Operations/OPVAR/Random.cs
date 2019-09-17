@@ -19,7 +19,7 @@ namespace ZMachineLib.Operations.OPVAR
             else
                 val = (ushort)(_random.Next(0, args[0]) + 1);
 
-            var dest = Machine.Memory[Machine.Stack.Peek().PC++];
+            var dest = GetNextByte();
             VariableManager.StoreWord(dest, val);
         }
     }

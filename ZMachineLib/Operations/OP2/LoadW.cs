@@ -14,7 +14,7 @@ namespace ZMachineLib.Operations.OP2
         {
             var addr = (ushort)(args[0] + 2 * args[1]);
             var word = Machine.Memory.GetUshort(addr);
-            var dest = Machine.Memory[Machine.Stack.Peek().PC++];
+            var dest = GetNextByte();
             VariableManager.StoreWord(dest, word);
         }
     }

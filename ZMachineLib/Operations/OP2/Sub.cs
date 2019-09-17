@@ -12,7 +12,7 @@ namespace ZMachineLib.Operations.OP2
         public override void Execute(List<ushort> args)
         {
             var val = (short)(args[0] - args[1]);
-            var dest = Machine.Memory[Machine.Stack.Peek().PC++];
+            var dest = GetNextByte();
             ushort value = (ushort)val;
             VariableManager.StoreWord(dest, value);
         }

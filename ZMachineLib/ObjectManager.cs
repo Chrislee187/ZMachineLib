@@ -4,6 +4,8 @@ namespace ZMachineLib
 {
     public interface IObjectManager
     {
+        ZMachine2 Machine { get; }
+
         void SetObjectNumber(ushort objectAddr, ushort obj);
         ushort GetObjectNumber(ushort objectAddr);
         ushort GetObjectAddress(ushort obj);
@@ -13,6 +15,7 @@ namespace ZMachineLib
         uint GetPackedAddress(ushort address);
         ushort PrintObjectInfo(ushort obj, bool properties);
         ushort GetObjectParent(ushort objectAddr);
+        ZMachineObject GetObject(ushort obj);
     }
 
     public class ObjectManager : ZMachineHelper, IObjectManager
@@ -41,8 +44,10 @@ namespace ZMachineLib
 
         public ushort GetObjectAddress(ushort obj)
         {
-            var objectAddr = (ushort)(ObjectTable + Offsets.PropertyDefaultTableSize + (obj - 1) * Offsets.ObjectSize);
-            return objectAddr;
+            return (ushort)(ObjectTable 
+                            + Offsets.PropertyDefaultTableSize 
+                            + (obj - 1) 
+                            * Offsets.ObjectSize);
         }
 
         public string GetObjectName(ushort obj)
@@ -173,5 +178,9 @@ namespace ZMachineLib
             return propAddr;
         }
 
+        public ZMachineObject GetObject(ushort obj)
+        {
+            return new ZMachineObject(obj, this);
+        }
     }
 }

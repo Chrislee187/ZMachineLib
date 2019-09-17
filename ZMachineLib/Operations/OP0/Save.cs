@@ -25,7 +25,7 @@ namespace ZMachineLib.Operations.OP0
                 else
                 {
                     ushort value = (ushort)(val ? 1 : 0);
-                    VariableManager.StoreWord(Machine.Memory[Machine.Stack.Peek().PC++], value);
+                    VariableManager.StoreWord(GetNextByte(), value);
                 }
             }
             catch

@@ -13,7 +13,7 @@ namespace ZMachineLib.Operations.OP2
         {
             var addr = (ushort)(args[0] + args[1]);
             var b = Machine.Memory[addr];
-            var dest = Machine.Memory[Machine.Stack.Peek().PC++];
+            var dest = GetNextByte();
             VariableManager.StoreByte(dest, b);
         }
     }

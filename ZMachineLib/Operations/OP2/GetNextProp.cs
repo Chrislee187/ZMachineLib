@@ -15,7 +15,7 @@ namespace ZMachineLib.Operations.OP2
 
             var next = false;
 
-            var dest = Machine.Memory[Machine.Stack.Peek().PC++];
+            var dest = GetNextByte();
             if (args[1] == 0)
                 next = true;
 

@@ -2,6 +2,10 @@
 
 namespace ZMachineLib.Operations.OP1
 {
+    /// <summary>
+    /// 1OP:129 1 get_sibling object -> (result) ?(label)
+    /// Get next object in tree, branching if this exists, i.e. is not 0.
+    /// </summary>
     public sealed class GetSibling : ZMachineOperation
     {
         public GetSibling(ZMachine2 machine)
@@ -11,24 +15,18 @@ namespace ZMachineLib.Operations.OP1
 
         public override void Execute(List<ushort> args)
         {
-            Log.Write($"[{ObjectManager.GetObjectName(args[0])}] ");
+            var zObj = ObjectManager.GetObject(args[0]);
 
-            var addr = ObjectManager.GetObjectAddress(args[0]);
-            var sibling = ObjectManager.GetObjectNumber((ushort)(addr + Machine.VersionedOffsets.Sibling));
-
-            Log.Write($"[{ObjectManager.GetObjectName(sibling)}] ");
-
-            var dest = Machine.Memory[Machine.Stack.Peek().PC++];
+            var dest = GetNextByte();
 
             if (Machine.Header.Version <= 3)
             {
-                byte value = (byte)sibling;
-                VariableManager.StoreByte(dest, value);
+                VariableManager.StoreByte(dest, (byte)zObj.Sibling);
             }
             else
-                VariableManager.StoreWord(dest, sibling);
+                VariableManager.StoreWord(dest, zObj.Sibling);
 
-            Jump(sibling != 0);
+            Jump(zObj.Sibling != 0);
         }
     }
 }

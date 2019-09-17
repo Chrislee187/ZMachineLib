@@ -3,6 +3,10 @@ using ZMachineLib.Extensions;
 
 namespace ZMachineLib.Operations.OP2
 {
+    /// <summary>
+    /// 2OP:10 A test_attr object attribute ?(label)
+    /// Jump if object has attribute
+    /// </summary>
     public sealed class TestAttribute : ZMachineOperation
     {
         public TestAttribute(ZMachine2 machine)
@@ -16,25 +20,11 @@ namespace ZMachineLib.Operations.OP2
             var attr = args[1];
 
             Log.Write($"[{ObjectManager.GetObjectName(obj)}] ");
-            ObjectManager.PrintObjectInfo(obj, false);
 
-            var objectAddr = ObjectManager.GetObjectAddress(obj);
-            ulong attributes;
-            ulong flag;
+            var zObj = ObjectManager.GetObject(obj);
 
-            if (Machine.Header.Version <= 3)
-            {
-                attributes = Machine.Memory.GetUInt(objectAddr);
-                flag = 0x80000000 >> attr;
-            }
-            else
-            {
-                attributes = (ulong)Machine.Memory.GetUInt(objectAddr) << 16 | Machine.Memory.GetUshort((uint)(objectAddr + 4));
-                flag = (ulong)(0x800000000000 >> attr);
-            }
-
-            var branch = (flag & attributes) == flag;
-            Jump(branch);
+            Jump(zObj.TestAttribute(attr));
         }
     }
+
 }

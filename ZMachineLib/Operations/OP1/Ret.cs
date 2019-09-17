@@ -14,7 +14,7 @@ namespace ZMachineLib.Operations.OP1
             var sf = Machine.Stack.Pop();
             if (sf.StoreResult)
             {
-                var dest = Machine.Memory[Machine.Stack.Peek().PC++];
+                var dest = GetNextByte();
                 ushort value = args[0];
                 VariableManager.StoreWord(dest, value);
             }
