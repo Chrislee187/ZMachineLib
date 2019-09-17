@@ -53,9 +53,16 @@ namespace ZMachineLib.Feature.Tests
         [Test]
         public void Should_drink_the_bottle_of_water()
         {
-            // This tests exercises some additional operations that simple moving around do not
-            // i.e. RemoveObj is called when the water is drunk
-            Assert.Inconclusive("TODO");
+            Feature.Execute("s");
+            Feature.Execute("e");
+            Feature.Execute("open window");
+            Feature.Execute("go thru window");
+            Feature.Execute("get bottle");
+            Feature.Execute("open bottle", "Opened.");
+            Feature.Execute("drink water", "Thank you very much.");
+            Feature.Quit();
+
+            ShouldRunToCompletion(TestFile);
         }
 
         private void ExpectZorkIStartText()
