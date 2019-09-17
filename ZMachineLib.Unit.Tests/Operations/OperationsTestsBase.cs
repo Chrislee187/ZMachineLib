@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 using Shouldly;
 using ZMachineLib.Operations;
@@ -10,7 +11,7 @@ namespace ZMachineLib.Unit.Tests.Operations
         protected ObjectManagerMocks ObjectManagerMocks;
         protected ZMachine2 ZMachine2;
         private bool? _jumped;
-        
+        protected List<ushort> AnyArgs = new OpArgBuilder().Build();
         protected const ushort AnyValue = 1;
 
         protected void Setup()

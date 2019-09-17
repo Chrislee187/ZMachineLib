@@ -1,4 +1,5 @@
 using Moq;
+using Moq.Language;
 
 namespace ZMachineLib.Unit.Tests.Operations
 {
@@ -40,6 +41,7 @@ namespace ZMachineLib.Unit.Tests.Operations
     public class ObjectManagerMocks
     {
         private Mock<IObjectManager> _objectManagerMock;
+        private ISetupSequentialResult<ZMachineObject> _getObjectSequence;
 
         public ObjectManagerMocks()
         {
@@ -47,6 +49,9 @@ namespace ZMachineLib.Unit.Tests.Operations
             _objectManagerMock
                 .Setup(o => o.GetObjectName(It.IsAny<ushort>()))
                 .Returns("");
+            _getObjectSequence = _objectManagerMock
+                .SetupSequence(m => m.GetObject(It.IsAny<ushort>()));
+
         }
 
         public IObjectManager Object => _objectManagerMock.Object;
@@ -59,6 +64,12 @@ namespace ZMachineLib.Unit.Tests.Operations
                 )
                 .Returns(returnValue);
 
+            return this;
+        }
+
+        public ObjectManagerMocks SetupSequenceGetObject(ZMachineObject obj)
+        {
+            _getObjectSequence.Returns(obj);
             return this;
         }
 

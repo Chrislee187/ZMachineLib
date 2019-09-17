@@ -11,7 +11,6 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
     {
         private Jin _op;
 
-
         [SetUp]
         public void SetUp()
         {
@@ -23,18 +22,16 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         [Test]
         public void Should_jump_if_objectA_is_child_of_objectB()
         {
-            ushort parent = 20;
-
-            var args = new OpArgBuilder()
-                .WithValue(AnyValue)
-                .WithValue(parent)
-                .Build();
-
+            ushort parent = 1234;
             ObjectManagerMocks
-                .SetupGetObjectAddress(AnyValue)
-                .SetupGetObjectParent(parent);
+                .SetupSequenceGetObject(new ZMachineObject
+                {
+                    Parent = parent
+                });
 
-            _op.Execute(args);
+            _op.Execute(new OpArgBuilder()
+                .WithValues(1, parent)
+                .Build());
 
             JumpedWith(true);
         }
@@ -42,19 +39,18 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         [Test]
         public void Should_not_jump_if_objectA_is_NOT_child_of_objectB()
         {
-            ushort parent = 20;
-            ushort notParent = 30;
-
-            var args = new OpArgBuilder()
-                .WithValue(AnyValue)
-                .WithValue(parent)
-                .Build();
+            const ushort address = 1111;
+            const ushort parent = 1234;
+            const ushort notParent = 4321;
 
             ObjectManagerMocks
-                .SetupGetObjectAddress(AnyValue)
-                .SetupGetObjectParent(notParent);
+                .SetupSequenceGetObject(new ZMachineObjectBuilder()
+                    .WithAddress(address)
+                    .WithParent(parent).Build());
 
-            _op.Execute(args);
+            _op.Execute(new OpArgBuilder()
+                .WithValues(address, notParent)
+                .Build());
 
             JumpedWith(false);
         }

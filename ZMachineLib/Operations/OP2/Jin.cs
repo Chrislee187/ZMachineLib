@@ -16,12 +16,9 @@ namespace ZMachineLib.Operations.OP2
 
         public override void Execute(List<ushort> args)
         {
-            Log.Write($"C[{ObjectManager.GetObjectName(args[0])}] P[{ObjectManager.GetObjectName(args[1])}] ");
+            var zObj = ObjectManager.GetObject(args[0]);
 
-            var addr = ObjectManager.GetObjectAddress(args[0]);
-            var objectA = ObjectManager.GetObjectParent((ushort)(addr));
-            var objectB = args[1];
-            Jump(objectA == objectB);
+            Jump(zObj.Parent == args[1]);
         }
     }
 }
