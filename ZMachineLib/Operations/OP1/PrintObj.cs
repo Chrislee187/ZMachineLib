@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace ZMachineLib.Operations.OP1
 {
@@ -15,8 +16,10 @@ namespace ZMachineLib.Operations.OP1
 
         public override void Execute(List<ushort> operands)
         {
-            var addr = ObjectManager.GetPropertyHeaderAddress(operands[0]);
-            var s = Machine.ZsciiString.GetZsciiString((ushort)(addr + 1));
+            var zObj = ObjectManager.GetObject(operands[0]);
+            //var addr = ObjectManager.GetPropertyHeaderAddress(operands[0]);
+            var s = zObj.Name; // Machine.ZsciiString.GetZsciiString((ushort)(addr + 1));
+            Debug.Assert(zObj.Name == s);
             _io.Print(s);
             Log.Write($"[{s}]");
         }

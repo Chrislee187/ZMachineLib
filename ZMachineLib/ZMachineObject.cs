@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using ZMachineLib.Extensions;
 
 namespace ZMachineLib
@@ -17,6 +18,7 @@ namespace ZMachineLib
         ushort PropertyHeader { get; set; }
     }
 
+    [DebuggerDisplay("{Name}")]
     public class ZMachineObject : IZMachineObject
     {
         public ulong Attributes { get; }
@@ -55,12 +57,24 @@ namespace ZMachineLib
                         Address +
                         _objectManager.Machine.VersionedOffsets.Child)
                 );
+
+            if (Child != 0)
+            {
+                ChildZObject = _objectManager.GetObject(Child);
+            }
             Parent =
                 _objectManager
                     .GetObjectNumber((ushort)(
                             Address +
                             _objectManager.Machine.VersionedOffsets.Parent)
                     );
+
+            // NOTE: Cannot do ParentZObject, as it blows the stack
+//            if (Parent != 0)
+//            {
+//                ParentZObject = _objectManager.GetObject(Parent);
+//            }
+
             Sibling =
                 _objectManager
                     .GetObjectNumber((ushort)(
@@ -68,15 +82,24 @@ namespace ZMachineLib
                             _objectManager.Machine.VersionedOffsets.Sibling)
                     );
 
-//            var versionedOffsetsProperty = Address + _objectManager.Machine.VersionedOffsets.Property;
-//            PropertyHeader = _objectManager.Machine.Memory.GetUshort((ushort) versionedOffsetsProperty);
+            if (Sibling != 0)
+            {
+                SiblingZObject = _objectManager.GetObject(Sibling);
+            }
+            //            var versionedOffsetsProperty = Address + _objectManager.Machine.VersionedOffsets.Property;
+            //            PropertyHeader = _objectManager.Machine.Memory.GetUshort((ushort) versionedOffsetsProperty);
         }
+
+//        public IZMachineObject ParentZObject { get; set; }
+
+        public IZMachineObject SiblingZObject { get; private set; }
 
         public ushort Sibling { get; set; }
 
         public ushort Parent { get; set; }
 
         public ushort Child { get; set; }
+        public IZMachineObject ChildZObject { get; set; }
         public ushort PropertyHeader { get; set; }
 
         public bool TestAttribute(ushort attr)

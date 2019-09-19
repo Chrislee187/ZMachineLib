@@ -1,4 +1,5 @@
-﻿using ZMachineLib.Extensions;
+﻿using System.Collections.Generic;
+using ZMachineLib.Extensions;
 
 namespace ZMachineLib
 {
@@ -185,9 +186,20 @@ namespace ZMachineLib
             return propAddr;
         }
 
-        public IZMachineObject GetObject(ushort obj)
-        {
-            return new ZMachineObject(obj, this);
-        }
+        public IZMachineObject GetObject(ushort obj) 
+            => new ZMachineObject(obj, this);
+
+//        private readonly IDictionary<ushort, IZMachineObject> _objectCache = new Dictionary<ushort, IZMachineObject>();
+//
+//        public IZMachineObject GetObject(ushort obj)
+//        {
+//            if (!_objectCache.TryGetValue(obj, out var zObj))
+//            {
+//                zObj = new ZMachineObject(obj, this);
+//                _objectCache.Add(obj, zObj);
+//            }
+//
+//            return zObj;
+//        }
     }
 }
