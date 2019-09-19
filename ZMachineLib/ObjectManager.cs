@@ -20,16 +20,23 @@ namespace ZMachineLib
 
     public class ObjectManager : ZMachineHelper, IObjectManager
     {
-        public ObjectManager(ZMachine2 machine) : base(machine)
+        public ObjectManager(ZMachine2 machine, 
+            IMemoryManager memoryManager = null) 
+            : base(machine, memoryManager)
         {
         }
         
         public void SetObjectNumber(ushort objectAddr, ushort obj)
         {
             if (Version <= 3)
-                Memory[objectAddr] = (byte)obj;
+            {
+                MemoryManager.Set(objectAddr, (byte) obj);
+            }
             else
-                Memory.StoreAt(objectAddr, obj);
+            {
+                MemoryManager.Set(objectAddr, obj);
+            }
+        
         }
 
         public ushort GetObjectNumber(ushort objectAddr)

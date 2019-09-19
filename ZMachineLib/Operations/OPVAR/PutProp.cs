@@ -39,7 +39,7 @@ namespace ZMachineLib.Operations.OPVAR
                     else
                     {
                         ushort value = operands[2];
-                        Machine.Memory.StoreAt(prop, value);
+                        MemoryManager.Set(prop, value);
                     }
 
                     break;

@@ -12,7 +12,8 @@ namespace ZMachineLib
     public class VariableManager : ZMachineHelper, IVariableManager
     {
 
-        public VariableManager(ZMachine2 machine) : base(machine)
+        public VariableManager(ZMachine2 machine,
+            IMemoryManager memoryManager) : base(machine, memoryManager)
         {
 
         }
@@ -145,27 +146,4 @@ namespace ZMachineLib
         private bool DestinationIsVariable(byte dest) => dest < 0x10;
     }
 
-    public interface IMemoryManager
-    {
-        byte Get(uint address);
-        byte Get(int address);
-        byte Get(ushort address);
-        void Set(int address, byte value);
-        void Set(ushort address, byte value);
-    }
-    public class MemoryManager : ZMachineHelper, IMemoryManager
-    {
-        public MemoryManager(ZMachine2 machine) : base(machine)
-        {
-
-        }
-
-
-        public byte Get(uint address) => Machine.Memory[address];
-        public byte Get(int address) => Machine.Memory[address];
-        public byte Get(ushort address) => Machine.Memory[address];
-
-        public void Set(int address, byte value) => Machine.Memory[address] = value;
-        public void Set(ushort address, byte value) => Machine.Memory[address] = value;
-    }
 }

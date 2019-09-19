@@ -31,6 +31,7 @@ namespace ZMachineLib
         private KindExtOperations _extendedOperations;
         private Operations.Operations _operations;
         private readonly VariableManager _variableManager;
+        private readonly MemoryManager _memoryManager;
         public Header Header { get; private set; }
         internal VersionedOffsets VersionedOffsets;
 
@@ -39,7 +40,8 @@ namespace ZMachineLib
             _fileIo = fileIo;
             _io = io;
             ZsciiString = new ZsciiString(this);
-            _variableManager = new VariableManager(this);
+            _memoryManager = new MemoryManager(this);
+            _variableManager = new VariableManager(this, _memoryManager);
             VersionedOffsets = new VersionedOffsets();
         }
 

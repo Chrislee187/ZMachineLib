@@ -4,10 +4,13 @@ namespace ZMachineLib
 {
     public abstract class ZMachineHelper
     {
+        protected IMemoryManager MemoryManager;
         public ZMachine2 Machine { get; }
 
-        protected ZMachineHelper(ZMachine2 machine)
+        protected ZMachineHelper(ZMachine2 machine, 
+            IMemoryManager memoryManager)
         {
+            MemoryManager = memoryManager;
             Machine = machine;
         }
 

@@ -65,7 +65,7 @@ namespace ZMachineLib.Operations.OPVAR
 
                     var wordIndex = (ushort)(Array.IndexOf(Machine.DictionaryWords, tokenised[i]));
                     var addr = (ushort)(wordIndex == 0xffff ? 0 : Machine.WordStart + wordIndex * Machine.EntryLength);
-                    Machine.Memory.StoreAt((ushort)(Machine.ReadParseAddr + 2 + i * 4), addr);
+                    MemoryManager.Set((ushort)(Machine.ReadParseAddr + 2 + i * 4), addr);
                     MemoryManager.Set(Machine.ReadParseAddr + 4 + i * 4, (byte)tokenised[i].Length);
                     var index = input.IndexOf(tokenised[i], last, StringComparison.Ordinal);
                     MemoryManager.Set(Machine.ReadParseAddr + 5 + i * 4, (byte)(index + ((ushort) Machine.Header.Version < 5 ? 1 : 2)));

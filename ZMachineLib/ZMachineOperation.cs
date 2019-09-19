@@ -22,9 +22,9 @@ namespace ZMachineLib
         {
             Code = code;
             Machine = machine;
-            ObjectManager = objectManager ?? new ObjectManager(Machine);
-            VariableManager = variableManager ?? new VariableManager(Machine);
             MemoryManager = memoryManager ?? new MemoryManager(Machine);
+            ObjectManager = objectManager ?? new ObjectManager(Machine, MemoryManager);
+            VariableManager = variableManager ?? new VariableManager(Machine, MemoryManager);
         }
 
         public abstract void Execute(List<ushort> operands);
