@@ -23,7 +23,7 @@ namespace ZMachineLib.Operations.OPVAR
                 Machine.Running = false;
             else
             {
-                var max = Machine.Memory[Machine.ReadTextAddr];
+                var max = MemoryManager.Get(Machine.ReadTextAddr);
                 var input = _io.Read(max);
                 FinishRead(input);
             }
@@ -33,8 +33,8 @@ namespace ZMachineLib.Operations.OPVAR
         {
             if (input != null && Machine.ReadTextAddr != 0 && Machine.ReadParseAddr != 0)
             {
-                int textMax = Machine.Memory[Machine.ReadTextAddr];
-                int wordMax = Machine.Memory[Machine.ReadParseAddr];
+                int textMax = MemoryManager.Get(Machine.ReadTextAddr);
+                int wordMax = MemoryManager.Get(Machine.ReadParseAddr);
 
                 input = input.ToLower().Substring(0, Math.Min(input.Length, textMax));
                 Log.Write($"[{input}]");
@@ -42,17 +42,17 @@ namespace ZMachineLib.Operations.OPVAR
                 var ix = 1;
 
                 if (Machine.Header.Version >= 5)
-                    Machine.Memory[Machine.ReadTextAddr + ix++] = (byte)input.Length;
+                    MemoryManager.Set(Machine.ReadTextAddr + ix++, (byte)input.Length);
 
                 for (var j = 0; j < input.Length; j++, ix++)
-                    Machine.Memory[Machine.ReadTextAddr + ix] = (byte)input[j];
+                    MemoryManager.Set(Machine.ReadTextAddr + ix, (byte)input[j]);
 
                 if (Machine.Header.Version < 5)
-                    Machine.Memory[Machine.ReadTextAddr + ++ix] = 0;
+                    MemoryManager.Set(Machine.ReadTextAddr + ++ix, 0);
 
                 var tokenised = input.Split(' ');
 
-                Machine.Memory[Machine.ReadParseAddr + 1] = (byte)tokenised.Length;
+                MemoryManager.Set(Machine.ReadParseAddr + 1,  (byte)tokenised.Length);
 
                 var len = ((ushort) Machine.Header.Version <= 3) ? 6 : 9;
                 var last = 0;
@@ -66,9 +66,9 @@ namespace ZMachineLib.Operations.OPVAR
                     var wordIndex = (ushort)(Array.IndexOf(Machine.DictionaryWords, tokenised[i]));
                     var addr = (ushort)(wordIndex == 0xffff ? 0 : Machine.WordStart + wordIndex * Machine.EntryLength);
                     Machine.Memory.StoreAt((ushort)(Machine.ReadParseAddr + 2 + i * 4), addr);
-                    Machine.Memory[Machine.ReadParseAddr + 4 + i * 4] = (byte)tokenised[i].Length;
+                    MemoryManager.Set(Machine.ReadParseAddr + 4 + i * 4, (byte)tokenised[i].Length);
                     var index = input.IndexOf(tokenised[i], last, StringComparison.Ordinal);
-                    Machine.Memory[Machine.ReadParseAddr + 5 + i * 4] = (byte)(index + ((ushort) Machine.Header.Version < 5 ? 1 : 2));
+                    MemoryManager.Set(Machine.ReadParseAddr + 5 + i * 4, (byte)(index + ((ushort) Machine.Header.Version < 5 ? 1 : 2)));
                     last = index + tokenised[i].Length;
                 }
 

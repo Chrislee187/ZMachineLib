@@ -13,7 +13,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         {
             base.Setup();
             _op = new And(ZMachine2, VariableManagerMockery.Object);
-            MockGetNextByte(_op);
+            MockPeekNextByte(_op);
         }
 
         [TestCase((ushort)0x01, (ushort)0x02)]

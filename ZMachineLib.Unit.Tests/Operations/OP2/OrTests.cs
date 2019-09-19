@@ -13,7 +13,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         {
             base.Setup();
             _op = new Or(ZMachine2, VariableManagerMockery.Object);
-            MockGetNextByte(_op);
+            MockPeekNextByte(_op);
         }
 
         [TestCase((ushort) 0x01, (ushort) 0x02 )]
@@ -24,7 +24,6 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
                 .WithValue(val2)
                 .Build();
 
-            // TODO: Need to be able to Mock Memory & Stack interactions
             _op.Execute(args);
 
             var expectedValue = (ushort) (val1 | val2);

@@ -31,13 +31,13 @@ namespace ZMachineLib.Feature.Tests
         public void Quit()
         {
             Execute("quit", "wish to leave");
-            Execute("y");
+            Execute("Y");
         }
 
         public void Restart()
         {
             Execute("restart", "restart?");
-            Execute("y", "Restarting");
+            Execute("Y", "Restarting");
         }
         public void ExpectAdditionalOutput(params string[] commands)
         {

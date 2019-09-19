@@ -10,8 +10,9 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class ClearAttribute : ZMachineOperation
     {
-        public ClearAttribute(ZMachine2 machine)
-            : base((ushort)OpCodes.ClearAttribute, machine)
+        public ClearAttribute(ZMachine2 machine,
+            IObjectManager objectManager = null)
+            : base((ushort)OpCodes.ClearAttribute, machine, objectManager: objectManager)
         {
         }
 

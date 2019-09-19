@@ -35,5 +35,14 @@ namespace ZMachineLib.Unit.Tests.Operations
 
             return this;
         }
+        public VariableManagerMockery VerifyStoreByte(byte expectedValue)
+        {
+            _variableManagerMock.Verify(m => m.StoreByte(
+                It.IsAny<byte>(),
+                It.Is<byte>(v => v == expectedValue)
+                ), Times.Once);
+
+            return this;
+        }
     }
 }

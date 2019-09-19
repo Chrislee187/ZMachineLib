@@ -2,6 +2,10 @@
 
 namespace ZMachineLib.Operations.OP2
 {
+    /// <summary>
+    /// 2OP:26 1A 5 call_2n routine arg1
+    /// Executes routine(arg1) and throws away result.
+    /// </summary>
     public sealed class Call2N : ZMachineOperation
     {
         public Call2N(ZMachine2 machine)

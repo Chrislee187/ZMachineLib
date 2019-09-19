@@ -4,8 +4,9 @@ namespace ZMachineLib.Operations.OP2
 {
     public sealed class Div : ZMachineOperation
     {
-        public Div(ZMachine2 machine)
-            : base((ushort)OpCodes.Div, machine)
+        public Div(ZMachine2 machine,
+            IVariableManager variableManager = null)
+            : base((ushort)OpCodes.Div, machine, variableManager: variableManager)
         {
         }
 

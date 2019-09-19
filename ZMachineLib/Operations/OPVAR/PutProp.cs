@@ -15,16 +15,16 @@ namespace ZMachineLib.Operations.OPVAR
             Log.Write($"[{ObjectManager.GetObjectName(operands[0])}] ");
 
             var prop = ObjectManager.GetPropertyHeaderAddress(operands[0]);
-            var size = Machine.Memory[prop];
+            var size = MemoryManager.Get(prop);
             prop += (ushort)(size * 2 + 1);
 
-            while (Machine.Memory[prop] != 0x00)
+            while (MemoryManager.Get(prop) != 0x00)
             {
-                var propInfo = Machine.Memory[prop++];
+                var propInfo = MemoryManager.Get(prop++);
                 byte len;
                 if (Machine.Header.Version > 3 && (propInfo & 0x80) == 0x80)
                 {
-                    len = (byte)(Machine.Memory[prop++] & 0x3f);
+                    len = (byte)(MemoryManager.Get(prop++) & 0x3f);
                     if (len == 0)
                         len = 64;
                 }
@@ -35,7 +35,7 @@ namespace ZMachineLib.Operations.OPVAR
                 if (propNum == operands[1])
                 {
                     if (len == 1)
-                        Machine.Memory[prop + 1] = (byte)operands[2];
+                        MemoryManager.Set(prop + 1, (byte)operands[2]);
                     else
                     {
                         ushort value = operands[2];

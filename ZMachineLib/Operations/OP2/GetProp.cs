@@ -3,6 +3,15 @@ using ZMachineLib.Extensions;
 
 namespace ZMachineLib.Operations.OP2
 {
+    /// <summary>
+    /// 2OP:17 11 get_prop object property -> (result)
+    /// Read property from object (resulting in the default value if it had no such
+    /// declared property).
+    /// If the property has length 1, the value is only that byte.
+    /// If it has length 2, the first two bytes of the property are taken as a word value.
+    /// It is illegal for the opcode to be used if the property has length greater than 2,
+    /// and the result is unspecified.
+    /// </summary>
     public sealed class GetProp : ZMachineOperation
     {
         public GetProp(ZMachine2 machine)
@@ -21,16 +30,16 @@ namespace ZMachineLib.Operations.OP2
             var addr = ObjectManager.GetPropertyAddress(operands[0], prop);
             if (addr > 0)
             {
-                var propInfo = Machine.Memory[addr++];
+                var propInfo = MemoryManager.Get(addr++);
                 byte len;
 
                 if (Machine.Header.Version > 3 && (propInfo & 0x80) == 0x80)
-                    len = (byte)(Machine.Memory[addr++] & 0x3f);
+                    len = (byte)(MemoryManager.Get(addr++) & 0x3f);
                 else
                     len = (byte)((propInfo >> ((ushort) Machine.Header.Version <= 3 ? 5 : 6)) + 1);
 
                 for (var i = 0; i < len; i++)
-                    val |= (ushort)(Machine.Memory[addr + i] << (len - 1 - i) * 8);
+                    val |= (ushort)(MemoryManager.Get(addr + i) << (len - 1 - i) * 8);
             }
             else
                 val = Machine.Memory.GetUshort((ushort)(Machine.Header.ObjectTable + (operands[1] - 1) * 2));

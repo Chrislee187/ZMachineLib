@@ -15,7 +15,7 @@ namespace ZMachineLib
         uint GetPackedAddress(ushort address);
         ushort PrintObjectInfo(ushort obj, bool properties);
         ushort GetObjectParent(ushort objectAddr);
-        ZMachineObject GetObject(ushort obj);
+        IZMachineObject GetObject(ushort obj);
     }
 
     public class ObjectManager : ZMachineHelper, IObjectManager
@@ -178,7 +178,7 @@ namespace ZMachineLib
             return propAddr;
         }
 
-        public ZMachineObject GetObject(ushort obj)
+        public IZMachineObject GetObject(ushort obj)
         {
             return new ZMachineObject(obj, this);
         }

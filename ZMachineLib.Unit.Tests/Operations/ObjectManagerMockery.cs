@@ -6,7 +6,7 @@ namespace ZMachineLib.Unit.Tests.Operations
     public class ObjectManagerMockery
     {
         private Mock<IObjectManager> _objectManagerMock;
-        private ISetupSequentialResult<ZMachineObject> _getObjectSequence;
+        private ISetupSequentialResult<IZMachineObject> _getObjectSequence;
 
         public ObjectManagerMockery()
         {
@@ -32,7 +32,7 @@ namespace ZMachineLib.Unit.Tests.Operations
             return this;
         }
 
-        public ObjectManagerMockery SetupSequenceGetObject(ZMachineObject obj)
+        public ObjectManagerMockery SetupSequenceGetObject(IZMachineObject obj)
         {
             _getObjectSequence.Returns(obj);
             return this;
@@ -53,6 +53,16 @@ namespace ZMachineLib.Unit.Tests.Operations
                     => m.GetObjectParent(It.IsAny<ushort>())
                 )
                 .Returns(returnValue);
+
+            return this;
+        }
+
+        public ObjectManagerMockery VerifyGetObject(ushort obj)
+        {
+            _objectManagerMock
+                .Verify(m
+                        => m.GetObject(It.Is<ushort>(v => v == obj))
+                    , Times.Once);
 
             return this;
         }

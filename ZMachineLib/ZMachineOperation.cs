@@ -12,16 +12,19 @@ namespace ZMachineLib
         protected readonly ZMachine2 Machine;
         protected readonly IVariableManager VariableManager;
         protected readonly IObjectManager ObjectManager;
+        protected readonly IMemoryManager MemoryManager;
 
         protected ZMachineOperation(ushort code,
             ZMachine2 machine,
             IObjectManager objectManager = null,
-            IVariableManager variableManager = null)
+            IVariableManager variableManager = null,
+            IMemoryManager memoryManager = null)
         {
             Code = code;
             Machine = machine;
             ObjectManager = objectManager ?? new ObjectManager(Machine);
             VariableManager = variableManager ?? new VariableManager(Machine);
+            MemoryManager = memoryManager ?? new MemoryManager(Machine);
         }
 
         public abstract void Execute(List<ushort> operands);
@@ -137,8 +140,6 @@ namespace ZMachineLib
             set => _customPeekNextByte = value;
         }
         private byte PeekNextByteImpl()
-            => Machine.Memory[Machine.Stack.Peek().PC++];
-
-
+            => MemoryManager.Get( Machine.Stack.Peek().PC++ );
     }
 }

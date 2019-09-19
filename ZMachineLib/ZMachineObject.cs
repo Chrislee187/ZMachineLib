@@ -3,7 +3,21 @@ using ZMachineLib.Extensions;
 
 namespace ZMachineLib
 {
-    public class ZMachineObject
+    public interface IZMachineObject
+    {
+        bool TestAttribute(ushort attr);
+        void ClearAttribute(ushort attr);
+        void SetAttribute(ushort attr);
+        ulong Attributes { get; }
+        string Name { get; }
+        ushort Address { get; set; }
+        ushort Sibling { get; set; }
+        ushort Parent { get; set; }
+        ushort Child { get; set; }
+        ushort PropertyHeader { get; set; }
+    }
+
+    public class ZMachineObject : IZMachineObject
     {
         public ulong Attributes { get; }
         public string Name { get; }
@@ -53,6 +67,9 @@ namespace ZMachineLib
                             Address +
                             _objectManager.Machine.VersionedOffsets.Sibling)
                     );
+
+//            var versionedOffsetsProperty = Address + _objectManager.Machine.VersionedOffsets.Property;
+//            PropertyHeader = _objectManager.Machine.Memory.GetUshort((ushort) versionedOffsetsProperty);
         }
 
         public ushort Sibling { get; set; }
@@ -60,6 +77,7 @@ namespace ZMachineLib
         public ushort Parent { get; set; }
 
         public ushort Child { get; set; }
+        public ushort PropertyHeader { get; set; }
 
         public bool TestAttribute(ushort attr)
         {

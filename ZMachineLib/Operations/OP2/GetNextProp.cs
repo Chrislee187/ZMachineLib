@@ -2,6 +2,16 @@
 
 namespace ZMachineLib.Operations.OP2
 {
+    /// <summary>
+    /// 2OP:19 13 get_next_prop object property -> (result)
+    /// Gives the number of the next property provided by the quoted object.
+    /// This may be zero, indicating the end of the property list;
+    /// if called with zero,
+    /// it gives the first property number present.
+    /// It is illegal to try to find the next property of a property which does not exist,
+    /// and an interpreter should halt with an error message
+    /// (if it can efficiently check this condition).
+    /// </summary>
     public sealed class GetNextProp : ZMachineOperation
     {
         public GetNextProp(ZMachine2 machine)
@@ -20,16 +30,16 @@ namespace ZMachineLib.Operations.OP2
                 next = true;
 
             var propHeaderAddr = ObjectManager.GetPropertyHeaderAddress(operands[0]);
-            var size = Machine.Memory[propHeaderAddr];
+            var size = MemoryManager.Get(propHeaderAddr);
             propHeaderAddr += (ushort)(size * 2 + 1);
 
-            while (Machine.Memory[propHeaderAddr] != 0x00)
+            while (MemoryManager.Get(propHeaderAddr) != 0x00)
             {
-                var propInfo = Machine.Memory[propHeaderAddr];
+                var propInfo = MemoryManager.Get(propHeaderAddr);
                 byte len;
                 if (Machine.Header.Version > 3 && (propInfo & 0x80) == 0x80)
                 {
-                    len = (byte)(Machine.Memory[++propHeaderAddr] & 0x3f);
+                    len = (byte)(MemoryManager.Get(++propHeaderAddr) & 0x3f);
                     if (len == 0)
                         len = 64;
                 }

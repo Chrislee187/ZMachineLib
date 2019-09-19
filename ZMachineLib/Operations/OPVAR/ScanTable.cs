@@ -26,7 +26,7 @@ namespace ZMachineLib.Operations.OPVAR
                 if (operands.Count == 3 || (operands[3] & 0x80) == 0x80)
                     val = Machine.Memory.GetUshort(addr);
                 else
-                    val = Machine.Memory[addr];
+                    val = MemoryManager.Get(addr);
 
                 if (val == operands[0])
                 {

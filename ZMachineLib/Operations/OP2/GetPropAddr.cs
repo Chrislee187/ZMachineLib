@@ -19,7 +19,7 @@ namespace ZMachineLib.Operations.OP2
 
             if (addr > 0)
             {
-                var propInfo = Machine.Memory[addr + 1];
+                var propInfo = MemoryManager.Get(addr + 1);
 
                 if (Machine.Header.Version > 3 && (propInfo & 0x80) == 0x80)
                     addr += 2;
