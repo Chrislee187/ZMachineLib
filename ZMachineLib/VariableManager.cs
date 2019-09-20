@@ -39,7 +39,7 @@ namespace ZMachineLib
 
         private ushort GetWordFromGlobals(byte variable)
         {
-            var val = Memory.GetUshort((ushort)(GlobalsTable + 2 * (variable - 0x10)));
+            var val = Memory.GetUShort((ushort)(GlobalsTable + 2 * (variable - 0x10)));
             Log.Write($"G{variable - 0x10:X2} ({val:X4}), ");
             return val;
         }

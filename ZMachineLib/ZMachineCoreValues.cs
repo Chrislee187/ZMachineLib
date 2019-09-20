@@ -20,7 +20,5 @@ namespace ZMachineLib
         protected VersionedOffsets Offsets => Machine.VersionedOffsets;
         protected Stack<ZStackFrame> Stack => Machine.Stack;
         protected byte Version => Machine.Header.Version;
-        protected ZsciiString ZsciiString => Machine.ZsciiString;
-
     }
 }

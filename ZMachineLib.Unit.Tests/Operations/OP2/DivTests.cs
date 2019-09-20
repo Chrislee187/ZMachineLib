@@ -10,7 +10,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         [SetUp]
         public void SetUp()
         {
-            base.Setup();
+            Setup();
             _op = new Div(ZMachine2, VariableManagerMockery.Object);
             MockPeekNextByte(_op);
         }

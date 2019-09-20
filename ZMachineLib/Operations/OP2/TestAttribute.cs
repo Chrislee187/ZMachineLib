@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using ZMachineLib.Extensions;
 
 namespace ZMachineLib.Operations.OP2
 {
@@ -18,9 +17,6 @@ namespace ZMachineLib.Operations.OP2
         {
             var obj = operands[0];
             var attr = operands[1];
-
-            Log.Write($"[{ObjectManager.GetObjectName(obj)}] ");
-
             var zObj = ObjectManager.GetObject(obj);
 
             Jump(zObj.TestAttribute(attr));

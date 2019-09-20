@@ -12,12 +12,12 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         [SetUp]
         public void SetUp()
         {
-            base.Setup();
+            Setup();
             _op = new Test(ZMachine2);
             MockJump(_op);
         }
 
-        [NUnit.Framework.Test]
+        [Test]
         public void Should_jump_if_all_flags_set()
         {
             ushort bitmap = 0xFF;
@@ -32,7 +32,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
 
             JumpedWith(true);
         }
-        [NUnit.Framework.Test]
+        [Test]
         public void Should_NOT_jump_if_any_flags_NOT_set()
         {
             ushort bitmap = 0x0E;

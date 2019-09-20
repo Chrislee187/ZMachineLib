@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 using ZMachineLib.Extensions;
 
 // ReSharper disable PrivateFieldCanBeConvertedToLocalVariable
@@ -27,6 +28,7 @@ namespace ZMachineLib
         [FieldOffset(0x1e)] private readonly byte InterpreterNumber;
         [FieldOffset(0x1f)] private readonly byte InterpreterNumberVersion;
 
+
         public ushort Flags1 => Flags1Raw.SwapBytes();
         public ushort HighMemoryBaseAddress => HighMemoryBaseAddressRaw.SwapBytes();
         public ushort ProgramCounter => ProgramCounterRaw.SwapBytes();
@@ -42,11 +44,34 @@ namespace ZMachineLib
         public ushort Pc => ProgramCounter;
         public ushort DynamicMemorySize => StaticMemoryBaseAddress;
 
-        public  Header(byte[] headerBytes)
+        public Header(Span<byte> headerBytes)
         {
-            GCHandle handle = GCHandle.Alloc(headerBytes, GCHandleType.Pinned);
+            GCHandle handle = GCHandle.Alloc(headerBytes.ToArray(), GCHandleType.Pinned);
             this = (Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Header));
             handle.Free();
         }
     }
+
+    [Flags]
+    // ReSharper disable UnusedMember.Global
+    public enum Flags1_V3 : byte
+    {
+        Bit0NotUsed = Bits.Bit0,
+        StatusLineInTime = Bits.Bit1,
+        TwoDiscStory = Bits.Bit2,
+        Bit3NotUsed = Bits.Bit3,
+        StatusLineNOTAvailable = Bits.Bit4,
+        ScreenSplittingAvailable = Bits.Bit5,
+        DefaultFontIsVariablePitch = Bits.Bit6,
+        Bit7NotUsed = Bits.Bit7
+    }
+
+    public static class Flags1V3Extensions
+    {
+        public static bool HasFlagFast(this Flags1_V3 value, Flags1_V3 flag)
+        {
+            return (value & flag) != 0;
+        }
+    }
+    // ReSharper restore UnusedMember.Global
 }

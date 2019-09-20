@@ -11,8 +11,6 @@ namespace ZMachineLib.Operations.OP2
 
         public override void Execute(List<ushort> operands)
         {
-            Log.Write($"[{ObjectManager.GetObjectName(operands[0])}] ");
-
             var dest = PeekNextByte();
             byte prop = (byte)operands[1];
             var addr = ObjectManager.GetPropertyAddress(operands[0], prop);

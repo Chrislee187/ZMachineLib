@@ -17,10 +17,12 @@ namespace ZMachineLib.Operations.OP0
 
         public override void Execute(List<ushort> operands)
         {
-            var s = Machine.ZsciiString.GetZsciiString();
+            var array = Machine.Memory.AsSpan((int)Machine.Stack.Peek().PC);
+
+            var s = ZsciiString.Get(array, Machine.Abbreviations);
 
             Io.Print(s + Environment.NewLine);
-            Log.Write($"[{s}]");
+
             _rTrue.Execute(null);
         }
     }

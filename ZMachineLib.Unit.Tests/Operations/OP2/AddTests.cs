@@ -11,7 +11,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         [SetUp]
         public void SetUp()
         {
-            base.Setup();
+            Setup();
             _op = new Add(ZMachine2, VariableManagerMockery.Object);
             MockPeekNextByte(_op);
         }
@@ -39,7 +39,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         [SetUp]
         public void SetUp()
         {
-            base.Setup();
+            Setup();
             _op = new Sub(ZMachine2, VariableManagerMockery.Object);
             MockPeekNextByte(_op);
         }

@@ -22,9 +22,12 @@ namespace ZMachineLib
         {
             Code = code;
             Machine = machine;
-            MemoryManager = memoryManager ?? new MemoryManager(Machine);
-            ObjectManager = objectManager ?? new ObjectManager(Machine, MemoryManager);
-            VariableManager = variableManager ?? new VariableManager(Machine, MemoryManager);
+            if (Machine != null)
+            {
+                MemoryManager = memoryManager ?? new MemoryManager(Machine);
+                ObjectManager = objectManager ?? new ObjectManager(Machine, Machine.Abbreviations, MemoryManager);
+                VariableManager = variableManager ?? new VariableManager(Machine, MemoryManager);
+            }
         }
 
         public abstract void Execute(List<ushort> operands);
@@ -55,7 +58,7 @@ namespace ZMachineLib
                 for (var i = 0; i < count; i++)
                 {
                     uint address = Machine.Stack.Peek().PC;
-                    zsf.Variables[i] = Machine.Memory.GetUshort(address);
+                    zsf.Variables[i] = Machine.Memory.GetUShort((int) address);
                     Machine.Stack.Peek().PC += 2;
                 }
             }

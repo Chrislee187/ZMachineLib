@@ -34,6 +34,7 @@ namespace ZMachineLib
         }
         public ZMachineObject(ushort obj, IObjectManager objectManager)
         {
+            // TODO: This needs to be refactored to use a Span<bytes> approach, not the objectManager.GetXXX methods
             _objectManager = objectManager;
             // NOTE: Call doesn't seem to do anything and result not used!!
             //            ObjectManager.PrintObjectInfo(obj, false);
@@ -48,7 +49,7 @@ namespace ZMachineLib
             else
             {
                 Attributes = (ulong)objectManager.Machine.Memory.GetUInt(Address) << 16 
-                             | objectManager.Machine.Memory.GetUshort((uint)(Address + 4));
+                             | objectManager.Machine.Memory.GetUShort(Address + 4);
                 _flagsProvider = attr => (ulong)(0x800000000000 >> attr);
             }
 
@@ -87,7 +88,7 @@ namespace ZMachineLib
                 SiblingZObject = _objectManager.GetObject(Sibling);
             }
             //            var versionedOffsetsProperty = Address + _objectManager.Machine.VersionedOffsets.Property;
-            //            PropertyHeader = _objectManager.Machine.Memory.GetUshort((ushort) versionedOffsetsProperty);
+            //            PropertyHeader = _objectManager.Machine.Memory.GetUShort((ushort) versionedOffsetsProperty);
         }
 
 //        public IZMachineObject ParentZObject { get; set; }

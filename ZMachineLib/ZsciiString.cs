@@ -7,40 +7,51 @@ namespace ZMachineLib
 {
     public class ZsciiString
     {
-        public ZMachine2 Machine { get; }
+        public static string Get(Span<byte> data, ZAbbreviations abbreviations) => new ZsciiString(data, abbreviations).String;
 
-        protected readonly string Table = @" ^0123456789.,!?_#'""/\-:()";
+        public string String { get; }
 
-        public ZsciiString(ZMachine2 machine)
+        public ushort BytesUsed { get; }
+
+        public ZsciiString(Span<byte> data, ZAbbreviations abbreviations)
         {
-            Machine = machine;
+            var chars = GetZsciiChars(data);
+
+            BytesUsed = (ushort)(chars.Count / 3 * 2);
+
+            String = DecodeZsciiChars(chars, abbreviations);
         }
 
-        public string GetZsciiString()
+        private List<byte> GetZsciiChars(Span<byte> data)
         {
-            var chars = GetZsciiChars(Machine.Stack.Peek().PC);
-            Machine.Stack.Peek().PC += (ushort)(chars.Count / 3 * 2);
-            return DecodeZsciiChars(chars);
+            var chars = new List<byte>();
+            var ptr = 0;
+            ushort word;
+            do
+            {
+                word = data.Slice(ptr, 2).GetUShort();
+                chars.AddRange(GetZCharsFromWord(word));
+                ptr += 2;
+            }
+            while ((word & LastZChars) != LastZChars);
+
+            return chars;
         }
-        public string GetZsciiString(uint address)
-        {
-            var chars = GetZsciiChars(address);
-            return DecodeZsciiChars(chars);
-        }
-        public string DecodeZsciiChars(List<byte> chars)
+
+        private bool IsAbbreviation(byte c)
+            => c >= 0x01 && c <= 0x03;
+
+        private string DecodeZsciiChars(List<byte> chars, ZAbbreviations abbreviations)
         {
             var sb = new StringBuilder();
             for (var i = 0; i < chars.Count; i++)
             {
                 if (chars[i] == 0x00)
                     sb.Append(" ");
-                else if (chars[i] >= 0x01 && chars[i] <= 0x03)
+                else if (abbreviations != null && IsAbbreviation(chars[i]))
                 {
                     var offset = (ushort)(32 * (chars[i] - 1) + chars[++i]);
-                    var lookup = (ushort)(Machine.Header.AbbreviationsTable + (offset * 2));
-                    var wordAddr = Machine.Memory.GetUshort(lookup);
-                    var abbrev = GetZsciiChars((ushort)(wordAddr * 2));
-                    sb.Append(DecodeZsciiChars(abbrev));
+                    sb.Append(abbreviations.Abbreviations[offset]);
                 }
                 else if (chars[i] == 0x04)
                     sb.Append(Convert.ToChar((chars[++i] - 6) + 'A'));
@@ -61,7 +72,10 @@ namespace ZMachineLib
                         i++;
                     }
                     else
+                    {
                         sb.Append(Table[chars[++i] - 6]);
+                    }
+
                 }
                 else
                     sb.Append(Convert.ToChar((chars[i] - 6) + 'a'));
@@ -69,35 +83,34 @@ namespace ZMachineLib
             return sb.ToString();
         }
 
+        /// <summary>
+        /// <see cref="http://inform-fiction.org/zmachine/standards/z1point1/sect03.html"/> S3.2
+        /// </summary>
+        private const string Table = @" ^0123456789.,!?_#'""/\-:()";
+        private const ushort LastZChars = 0x8000;
 
-        public List<byte> GetZsciiChars(uint address)
+        /// <summary>
+        /// Create a mask to extract the three individual zChars stored in two bytes
+        /// </summary>
+        /// <param name="word"></param>
+        /// <param name="charIdx"></param>
+        /// <returns></returns>
+        private byte CharMask(ushort word, ZCharIdxMask charIdx) 
+            => (byte)(word >> ((int)charIdx) * 5 & 0x1f);
+
+        private enum ZCharIdxMask
         {
-            var chars = new List<byte>();
-            ushort word;
-            do
-            {
-                word = Machine.Memory.GetUshort(address);
-                chars.AddRange(GetZsciiChar(address));
-                address += 2;
-            }
-            while ((word & 0x8000) != 0x8000);
-
-            return chars;
+            Char1 = 2, Char2 = 1, Char3 = 0
         }
 
-        public List<byte> GetZsciiChar(uint address)
+        private IEnumerable<byte> GetZCharsFromWord(ushort word)
         {
-            var chars = new List<byte>();
-
-            var word = Machine.Memory.GetUshort(address);
-
-            var c = (byte)(word >> 10 & 0x1f);
-            chars.Add(c);
-            c = (byte)(word >> 5 & 0x1f);
-            chars.Add(c);
-            c = (byte)(word >> 0 & 0x1f);
-            chars.Add(c);
-
+            var chars = new List<byte>
+            {
+                CharMask(word, ZCharIdxMask.Char1),
+                CharMask(word, ZCharIdxMask.Char2),
+                CharMask(word, ZCharIdxMask.Char3)
+            };
             return chars;
         }
     }

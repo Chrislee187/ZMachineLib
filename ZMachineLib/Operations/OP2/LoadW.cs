@@ -14,7 +14,7 @@ namespace ZMachineLib.Operations.OP2
         {
             var addr = (ushort)(operands[0] + 2 * operands[1]);
             var dest = PeekNextByte();
-            VariableManager.StoreWord(dest, Machine.Memory.GetUshort(addr));
+            VariableManager.StoreWord(dest, Machine.Memory.GetUShort(addr));
         }
     }
 }

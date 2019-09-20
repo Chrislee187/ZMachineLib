@@ -21,8 +21,6 @@ namespace ZMachineLib.Operations.OP2
 
         public override void Execute(List<ushort> operands)
         {
-            Log.Write($"[{ObjectManager.GetObjectName(operands[0])}] ");
-
             var next = false;
 
             var dest = PeekNextByte();

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ZMachineLib.Operations.OP0
 {
@@ -12,9 +13,14 @@ namespace ZMachineLib.Operations.OP0
 
         public override void Execute(List<ushort> operands)
         {
-            var s = Machine.ZsciiString.GetZsciiString();
-            Io.Print(s);
-            Log.Write($"[{s}]");
+            var array = Machine.Memory.AsSpan((int) Machine.Stack.Peek().PC);
+
+            var zStr = new ZsciiString(array, Machine.Abbreviations);
+
+            Machine.Stack.Peek().PC += zStr.BytesUsed;
+
+            Io.Print(zStr.String);
+            Log.Write($"[{zStr.String}]");
         }
     }
 }

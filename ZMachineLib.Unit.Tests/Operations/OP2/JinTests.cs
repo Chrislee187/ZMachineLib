@@ -14,7 +14,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         [SetUp]
         public void SetUp()
         {
-            base.Setup();
+            Setup();
             _op = new Jin(ZMachine2, objectManager: ObjectManagerMockery.Object);
             MockJump(_op);
         }

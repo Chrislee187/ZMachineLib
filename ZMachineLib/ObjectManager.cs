@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using ZMachineLib.Extensions;
 
 namespace ZMachineLib
@@ -21,10 +21,14 @@ namespace ZMachineLib
 
     public class ObjectManager : ZMachineHelper, IObjectManager
     {
-        public ObjectManager(ZMachine2 machine, 
+        private ZAbbreviations _abbreviations;
+
+        public ObjectManager(ZMachine2 machine,
+            ZAbbreviations abbreviations,
             IMemoryManager memoryManager = null) 
             : base(machine, memoryManager)
         {
+            _abbreviations = abbreviations;
         }
         
         public void SetObjectNumber(ushort objectAddr, ushort obj)
@@ -44,7 +48,7 @@ namespace ZMachineLib
         {
             if (Version <= 3)
                 return Memory[objectAddr];
-            return Memory.GetUshort(objectAddr);
+            return Memory.GetUShort(objectAddr);
         }
 
         public ushort GetObjectParent(ushort objectAddr) 
@@ -67,7 +71,7 @@ namespace ZMachineLib
                 var addr = GetPropertyHeaderAddress(obj);
                 if (Memory[addr] != 0)
                 {
-                    s = ZsciiString.GetZsciiString((uint)(addr + 1));
+                    s = ZsciiString.Get(Memory.AsSpan(addr +1), _abbreviations); 
                 }
             }
 
@@ -78,7 +82,7 @@ namespace ZMachineLib
         {
             var objectAddr = GetObjectAddress(obj);
             var propAddr = (ushort)(objectAddr + Offsets.Property);
-            var prop = Memory.GetUshort(propAddr);
+            var prop = Memory.GetUShort(propAddr);
             return prop;
         }
 
@@ -132,11 +136,11 @@ namespace ZMachineLib
 
             var startAddr = GetObjectAddress(obj);
 
-            var attributes = (ulong)Memory.GetUInt(startAddr) << 16 | Memory.GetUshort((uint)(startAddr + 4));
+            var attributes = (ulong)Memory.GetUInt(startAddr) << 16 | Memory.GetUShort(startAddr + 4);
             var parent = GetObjectNumber((ushort)(startAddr + Offsets.Parent));
             var sibling = GetObjectNumber((ushort)(startAddr + Offsets.Sibling));
             var child = GetObjectNumber((ushort)(startAddr + Offsets.Child));
-            var propAddr = Memory.GetUshort((uint)(startAddr + Offsets.Property));
+            var propAddr = Memory.GetUShort(startAddr + Offsets.Property);
 
             Log.Write($"{obj} ({obj:X2}) at {propAddr:X5}: ");
 
@@ -144,7 +148,7 @@ namespace ZMachineLib
             var s = string.Empty;
             if (size > 0)
             {
-                s = ZsciiString.GetZsciiString(propAddr);
+                s = ZsciiString.Get(Memory.AsSpan(propAddr), Machine.Abbreviations); // s = ZsciiString.GetZsciiString(propAddr);
             }
 
             propAddr += (ushort)(size * 2);

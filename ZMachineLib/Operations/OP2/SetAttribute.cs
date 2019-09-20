@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using ZMachineLib.Extensions;
 
 namespace ZMachineLib.Operations.OP2
 {

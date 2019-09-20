@@ -38,17 +38,53 @@ namespace ZMachineLib.Extensions
                 buffer.StoreAt(address + idx++, b);
             }
         }
-        public static uint GetUInt(this byte[] buffer, uint address)
-        {
-            var data = buffer.AsSpan((int)address, 4);
 
-            return (uint)(data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3]);
-        }
-        public static ushort GetUshort(this byte[] buffer, uint address)
-        {
-            var data = buffer.AsSpan((int)address, 2);
+        public static uint GetUInt(this byte[] buffer, int address)
+            => buffer.AsSpan(address, sizeof(uint)).GetUInt();
 
-            return (ushort) (data[0] << 8 | data[1]);
+        public static ushort GetUShort(this Span<byte> data, int address) 
+            => data.Slice(address,2).GetUShort();
+
+        public static ushort GetUShort(this byte[] buffer, int address) 
+            => GetUShort(buffer.AsSpan(address, 2));
+        
+        /// <summary>
+        /// Gets a short from the next two bytes
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        public static ushort GetUShort(this Span<byte> bytes) 
+            => (ushort)(bytes[0] << 8 | bytes[1]);
+
+        /// <summary>
+        /// Gets a uint from the next four bytes
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        public static uint GetUInt(this Span<byte> bytes)
+            => (uint)(bytes[0] << 24 | bytes[1] << 16 | bytes[2] << 8 | bytes[3]);
+
+        public static byte FromBitNumber(this byte bitNumber)
+            => (byte) (1 << bitNumber);
+    }
+
+    public class Bits
+    {
+        public const byte Bit0 = 1 << 0;
+        public const byte Bit1 = 1 << 1;
+        public const byte Bit2 = 1 << 2;
+        public const byte Bit3 = 1 << 3;
+        public const byte Bit4 = 1 << 4;
+        public const byte Bit5 = 1 << 5;
+        public const byte Bit6 = 1 << 6;
+        public const byte Bit7 = 1 << 7;
+        public static byte ForByte( int bitNumber)
+        {
+            if (bitNumber < 0 || bitNumber > 7)
+            {
+                throw new ArgumentOutOfRangeException(nameof(bitNumber), "Byte bit numbers must be between 0 and 7");
+            }
+            return (byte) (1 << bitNumber);
         }
     }
 }

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 using Shouldly;
 using ZMachineLib.Operations;
 
@@ -31,6 +30,7 @@ namespace ZMachineLib.Unit.Tests.Operations
         protected void JumpedWith(bool value)
         {
             _jumped.HasValue.ShouldBeTrue();
+            // ReSharper disable once PossibleInvalidOperationException
             _jumped.Value.ShouldBe(value);
         }
 

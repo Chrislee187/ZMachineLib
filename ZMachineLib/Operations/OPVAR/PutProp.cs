@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using ZMachineLib.Extensions;
 
 namespace ZMachineLib.Operations.OPVAR
 {
@@ -12,8 +11,6 @@ namespace ZMachineLib.Operations.OPVAR
 
         public override void Execute(List<ushort> operands)
         {
-            Log.Write($"[{ObjectManager.GetObjectName(operands[0])}] ");
-
             var prop = ObjectManager.GetPropertyHeaderAddress(operands[0]);
             var size = MemoryManager.Get(prop);
             prop += (ushort)(size * 2 + 1);

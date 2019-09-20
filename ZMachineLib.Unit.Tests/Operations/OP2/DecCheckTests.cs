@@ -9,9 +9,9 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         private DecCheck _op;
 
         [SetUp]
-        public void Setup()
+        public void SetUp()
         {
-            base.Setup();
+            Setup();
             _op = new DecCheck(ZMachine2, variableManager: VariableManagerMockery.Object);
             MockJump(_op);
         }

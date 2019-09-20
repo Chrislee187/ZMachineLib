@@ -21,8 +21,6 @@ namespace ZMachineLib.Operations.OP2
 
         public override void Execute(List<ushort> operands)
         {
-            Log.Write($"[{ObjectManager.GetObjectName(operands[0])}] ");
-
             var dest = PeekNextByte();
             ushort val = 0;
 
@@ -42,7 +40,7 @@ namespace ZMachineLib.Operations.OP2
                     val |= (ushort)(MemoryManager.Get(addr + i) << (len - 1 - i) * 8);
             }
             else
-                val = Machine.Memory.GetUshort((ushort)(Machine.Header.ObjectTable + (operands[1] - 1) * 2));
+                val = Machine.Memory.GetUShort((ushort)(Machine.Header.ObjectTable + (operands[1] - 1) * 2));
 
             VariableManager.StoreWord(dest, val);
         }

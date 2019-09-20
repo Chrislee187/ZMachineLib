@@ -21,14 +21,12 @@ namespace ZMachineLib.Operations.OP2
             if (operands[0] == 0 || operands[1] == 0)
                 return;
 
-            Log.Write($"[{ObjectManager.GetObjectName(operands[0])}] [{ObjectManager.GetObjectName(operands[1])}] ");
 
             var obj1 = operands[0];
             var obj2 = operands[1];
 
             var zObj1 = ObjectManager.GetObject(obj1);
             var zObj2 = ObjectManager.GetObject(obj2);
-
 
             if (zObj1.Parent == obj2 && zObj2.Child == obj1)
                 return;

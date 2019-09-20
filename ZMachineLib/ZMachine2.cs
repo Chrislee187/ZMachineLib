@@ -12,15 +12,12 @@ namespace ZMachineLib
     {
         internal byte[] Memory;
         internal Stack<ZStackFrame> Stack = new Stack<ZStackFrame>();
-        
-        internal ZsciiString ZsciiString { get; }
 
         internal ushort ReadTextAddr;
         internal ushort ReadParseAddr;
 
         internal bool TerminateOnInput;
         internal bool Running;
-        internal string[] DictionaryWords;
         internal byte EntryLength;
         internal ushort WordStart;
 
@@ -39,7 +36,6 @@ namespace ZMachineLib
         {
             _fileIo = fileIo;
             _io = io;
-            ZsciiString = new ZsciiString(this);
             _memoryManager = new MemoryManager(this);
             _variableManager = new VariableManager(this, _memoryManager);
             VersionedOffsets = new VersionedOffsets();
@@ -110,9 +106,14 @@ namespace ZMachineLib
         private void LoadFile(Stream stream)
         {
             Memory = Read(stream);
-            
-            Header = new Header(Memory[..0x3f]);
+            var machineContents = new ZMachineContents(Memory);
 
+            Header = machineContents.Header; // new Header(Memory[..0x3f]);
+            Abbreviations = machineContents.Abbreviations;
+
+            Dictionary = machineContents.Dictionary;
+            WordStart = (ushort)(Header.Dictionary + Dictionary.WordStart);
+            EntryLength = Dictionary.EntryLength;
             // NOTE: Need header to be read (mainly for the Version) before we can setup the Ops as few of them have header value dependencies
             SetupNewOperations();
 #if DEBUG
@@ -121,13 +122,14 @@ namespace ZMachineLib
 
             SetupScreenParams();
 
-            ParseDictionary();
-
             VersionedOffsets = VersionedOffsets.For(Header.Version);
 
             var zsf = new ZStackFrame {PC = Header.Pc };
             Stack.Push(zsf);
         }
+
+        public ZAbbreviations Abbreviations { get; set; }
+        public ZDictionary Dictionary { get; set; }
 
         private void SetupScreenParams()
         {
@@ -224,7 +226,7 @@ namespace ZMachineLib
             switch (type)
             {
                 case OperandType.LargeConstant:
-                    arg = Memory.GetUshort(Stack.Peek().PC);
+                    arg = Memory.GetUShort((int)Stack.Peek().PC);
                     Stack.Peek().PC += 2;
                     Log.Write($"#{arg:X4}, ");
                     break;
@@ -239,33 +241,6 @@ namespace ZMachineLib
             }
 
             return arg;
-        }
-
-        private void ParseDictionary()
-        {
-            var address = Header.Dictionary;
-
-            var len = Memory[address++];
-            address += len;
-
-            EntryLength = Memory[address++];
-            var numEntries = Memory.GetUshort(address);
-            address += 2;
-
-            WordStart = address;
-
-            DictionaryWords = new string[numEntries];
-
-            for (var i = 0; i < numEntries; i++)
-            {
-                var wordAddress = (ushort) (address + i * EntryLength);
-                var chars = ZsciiString.GetZsciiChar(wordAddress);
-                chars.AddRange(ZsciiString.GetZsciiChar((uint) (wordAddress + 2)));
-                if (EntryLength == 9)
-                    chars.AddRange(ZsciiString.GetZsciiChar((uint) (wordAddress + 4)));
-                var s = ZsciiString.DecodeZsciiChars(chars);
-                DictionaryWords[i] = s;
-            }
         }
 
         internal void ReloadFile() => LoadFile(_gameFileStream);
