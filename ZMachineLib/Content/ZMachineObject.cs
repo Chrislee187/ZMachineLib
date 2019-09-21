@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using ZMachineLib.Extensions;
+using ZMachineLib.Managers;
 
-namespace ZMachineLib
+namespace ZMachineLib.Content
 {
     public interface IZMachineObject
     {

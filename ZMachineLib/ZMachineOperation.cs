@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using ZMachineLib.Content;
 using ZMachineLib.Extensions;
+using ZMachineLib.Managers;
 using ZMachineLib.Operations;
 
 namespace ZMachineLib

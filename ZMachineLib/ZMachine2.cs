@@ -4,6 +4,8 @@ using System.IO;
 using ZMachineLib.Extensions;
 using ZMachineLib.Operations;
 using System.Text.Json;
+using ZMachineLib.Content;
+using ZMachineLib.Managers;
 using ZMachineLib.Operations.OPExtended;
 
 namespace ZMachineLib

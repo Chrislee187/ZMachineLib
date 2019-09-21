@@ -1,5 +1,7 @@
 using Moq;
 using Moq.Language;
+using ZMachineLib.Content;
+using ZMachineLib.Managers;
 
 namespace ZMachineLib.Unit.Tests.Operations
 {

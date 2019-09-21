@@ -1,3 +1,5 @@
+using ZMachineLib.Content;
+
 namespace ZMachineLib.Unit.Tests
 {
     public class ZMachineObjectBuilder

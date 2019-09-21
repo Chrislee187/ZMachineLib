@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Json;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP0
 {

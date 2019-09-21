@@ -1,6 +1,6 @@
 ﻿using ZMachineLib.Extensions;
 
-namespace ZMachineLib
+namespace ZMachineLib.Managers
 {
     public interface IVariableManager
     {
@@ -9,7 +9,7 @@ namespace ZMachineLib
         void StoreByte(byte dest, byte value);
     }
 
-    public class VariableManager : ZMachineHelper, IVariableManager
+    public class VariableManager : ZMachineBase, IVariableManager
     {
 
         public VariableManager(ZMachine2 machine,

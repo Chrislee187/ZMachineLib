@@ -1,4 +1,5 @@
 using Moq;
+using ZMachineLib.Managers;
 
 namespace ZMachineLib.Unit.Tests.Operations
 {

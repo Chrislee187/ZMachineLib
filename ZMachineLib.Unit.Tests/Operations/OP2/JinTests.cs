@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using ZMachineLib.Content;
 using ZMachineLib.Operations.OP2;
 using TestAttribute = NUnit.Framework.TestAttribute;
 

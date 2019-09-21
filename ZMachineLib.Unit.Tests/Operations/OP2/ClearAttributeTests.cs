@@ -1,5 +1,6 @@
 using Moq;
 using NUnit.Framework;
+using ZMachineLib.Content;
 using ZMachineLib.Operations.OP2;
 
 namespace ZMachineLib.Unit.Tests.Operations.OP2

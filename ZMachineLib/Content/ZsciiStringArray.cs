@@ -1,7 +1,7 @@
 ﻿using System;
 using ZMachineLib.Extensions;
 
-namespace ZMachineLib
+namespace ZMachineLib.Content
 {
     /// <summary>
     /// Expects the bytes of data to represent a collection of Zscii strings where

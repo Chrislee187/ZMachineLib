@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using ZMachineLib.Extensions;
 
-namespace ZMachineLib
+namespace ZMachineLib.Content
 {
     public class ZAbbreviations
     {

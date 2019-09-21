@@ -1,7 +1,8 @@
 ﻿using System;
+using ZMachineLib.Content;
 using ZMachineLib.Extensions;
 
-namespace ZMachineLib
+namespace ZMachineLib.Managers
 {
     public interface IObjectManager
     {
@@ -19,7 +20,7 @@ namespace ZMachineLib
         IZMachineObject GetObject(ushort obj);
     }
 
-    public class ObjectManager : ZMachineHelper, IObjectManager
+    public class ObjectManager : ZMachineBase, IObjectManager
     {
         private ZAbbreviations _abbreviations;
 

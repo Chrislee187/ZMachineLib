@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ZMachineLib
+namespace ZMachineLib.Content
 {
     public class ZDictionary
     {

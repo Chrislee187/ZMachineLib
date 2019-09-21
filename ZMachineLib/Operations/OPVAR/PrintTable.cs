@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OPVAR
 {

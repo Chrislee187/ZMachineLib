@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
+using ZMachineLib.Managers;
 
 namespace ZMachineLib
 {
-    public abstract class ZMachineHelper
+    public abstract class ZMachineBase
     {
         protected IMemoryManager MemoryManager;
         public ZMachine2 Machine { get; }
 
-        protected ZMachineHelper(ZMachine2 machine, 
+        protected ZMachineBase(ZMachine2 machine, 
             IMemoryManager memoryManager)
         {
             MemoryManager = memoryManager;

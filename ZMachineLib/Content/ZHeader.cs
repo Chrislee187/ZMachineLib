@@ -4,7 +4,7 @@ using ZMachineLib.Extensions;
 
 // ReSharper disable PrivateFieldCanBeConvertedToLocalVariable
 
-namespace ZMachineLib
+namespace ZMachineLib.Content
 {
     [StructLayout(LayoutKind.Explicit)]
     public struct ZHeader

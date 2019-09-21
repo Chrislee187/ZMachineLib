@@ -1,4 +1,4 @@
-﻿namespace ZMachineLib
+﻿namespace ZMachineLib.Content
 {
     public class VersionedOffsets
     {

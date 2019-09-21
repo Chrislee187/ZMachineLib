@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ZMachineLib.Extensions;
 
-namespace ZMachineLib
+namespace ZMachineLib.Content
 {
     public class ZsciiString
     {
