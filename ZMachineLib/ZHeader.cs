@@ -7,7 +7,7 @@ using ZMachineLib.Extensions;
 namespace ZMachineLib
 {
     [StructLayout(LayoutKind.Explicit)]
-    public struct Header
+    public struct ZHeader
     {
         [FieldOffset(0x00)] public readonly byte Version;
         [FieldOffset(0x01)] [MarshalAs(UnmanagedType.U2)] private readonly ushort Flags1Raw;
@@ -44,10 +44,10 @@ namespace ZMachineLib
         public ushort Pc => ProgramCounter;
         public ushort DynamicMemorySize => StaticMemoryBaseAddress;
 
-        public Header(Span<byte> headerBytes)
+        public ZHeader(Span<byte> headerBytes)
         {
             GCHandle handle = GCHandle.Alloc(headerBytes.ToArray(), GCHandleType.Pinned);
-            this = (Header)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(Header));
+            this = (ZHeader)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ZHeader));
             handle.Free();
         }
     }

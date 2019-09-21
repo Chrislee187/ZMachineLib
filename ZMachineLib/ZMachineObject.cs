@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using ZMachineLib.Extensions;
 
@@ -16,12 +17,13 @@ namespace ZMachineLib
         ushort Parent { get; set; }
         ushort Child { get; set; }
         ushort PropertyHeader { get; set; }
+        Dictionary<int, bool> AttributeFlags { get; set; }
     }
 
-    [DebuggerDisplay("{Name}")]
+    [DebuggerDisplay("[{ObjectNumber}] '{Name}'")]
     public class ZMachineObject : IZMachineObject
     {
-        public ulong Attributes { get; }
+        public ulong Attributes { get; set; }
         public string Name { get; }
 
         private readonly Func<ushort, ulong> _flagsProvider;
@@ -32,8 +34,69 @@ namespace ZMachineLib
         {
             
         }
+        public byte BytesRead { get; }
+        public ZMachineObject(ushort objNumber, ushort address, Span<byte> dynamicMemory, ZAbbreviations abbreviations)
+        {
+            ObjectNumber = objNumber;
+            Address = address;
+
+            var ptr = address;
+
+            var attrs = dynamicMemory.Slice(ptr, 4).GetUInt();
+            SetAttributes(attrs);
+            ptr += sizeof(uint);
+
+            Parent = dynamicMemory[ptr++];
+            Sibling = dynamicMemory[ptr++];
+            Child = dynamicMemory[ptr++];
+
+            PropertiesAddress = dynamicMemory.GetUShort(ptr);
+            ptr += 2;
+
+            BytesRead = (byte)(ptr - Address);
+            ptr = PropertiesAddress;
+            var len = dynamicMemory[ptr++];
+
+            if (len != 0)
+            {
+                var zStr = new ZsciiString(dynamicMemory.Slice(ptr), abbreviations);
+                Name = zStr.String;
+            }
+
+
+            //            var propIndex = 1;
+            //            var propSize = (dynamicMemory[ptr++] >> 5) + 1;
+            //            while (propSize != 0 && propIndex <= 32 )
+            //            {
+            //                //                var propValue = 
+            //                ptr += (ushort)propSize;
+            //                propSize = (dynamicMemory[ptr++] >> 5) + 1;
+            //                propIndex++;
+            //            }
+        }
+
+        private void SetAttributes(uint attrs)
+        {
+            Attributes = attrs;
+
+            AttributeFlags = new Dictionary<int, bool>();
+            for (int i = 1; i <= 32; i++)
+            {
+                var attrSet = (attrs & (ulong) (1 << i-1)) > 0;
+                AttributeFlags.Add(32 - i, attrSet);
+            }
+        }
+
+        public Dictionary<int, bool> AttributeFlags { get; set; }
+
+
+        public ushort PropertiesAddress { get; set; }
+
+        public ushort ObjectNumber { get; set; }
+
         public ZMachineObject(ushort obj, IObjectManager objectManager)
         {
+            ObjectNumber = obj;
             // TODO: This needs to be refactored to use a Span<bytes> approach, not the objectManager.GetXXX methods
             _objectManager = objectManager;
             // NOTE: Call doesn't seem to do anything and result not used!!
@@ -145,6 +208,7 @@ namespace ZMachineLib
             }
         }
 
-
+        public override string ToString() 
+            => $"[{ObjectNumber:D3}] ({Address:X4}) '{Name}' ";
     }
 }

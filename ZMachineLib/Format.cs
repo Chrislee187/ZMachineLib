@@ -68,5 +68,20 @@ namespace ZMachineLib
             
             return sb.ToString();
         }
+
+        public static string Attributes(Dictionary<int, bool> attributes)
+        {
+            var attr = attributes;
+            var attrs = new List<int>();
+            for (int i = 0; i < 32; i++)
+            {
+                if (attr[i])
+                {
+                    attrs.Add(i);
+                }
+            }
+
+            return string.Join(',', attrs);
+        }
     }
 }

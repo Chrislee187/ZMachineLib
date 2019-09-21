@@ -29,7 +29,7 @@ namespace ZMachineLib
         private Operations.Operations _operations;
         private readonly VariableManager _variableManager;
         private readonly MemoryManager _memoryManager;
-        public Header Header { get; private set; }
+        public ZHeader Header { get; private set; }
         internal VersionedOffsets VersionedOffsets;
 
         public ZMachine2(IUserIo io, IFileIo fileIo)
@@ -108,13 +108,13 @@ namespace ZMachineLib
             Memory = Read(stream);
             var machineContents = new ZMachineContents(Memory);
 
-            Header = machineContents.Header; // new Header(Memory[..0x3f]);
+            Header = machineContents.Header; // new ZHeader(Memory[..0x3f]);
             Abbreviations = machineContents.Abbreviations;
 
             Dictionary = machineContents.Dictionary;
             WordStart = (ushort)(Header.Dictionary + Dictionary.WordStart);
             EntryLength = Dictionary.EntryLength;
-            // NOTE: Need header to be read (mainly for the Version) before we can setup the Ops as few of them have header value dependencies
+            // NOTE: Need zHeader to be read (mainly for the Version) before we can setup the Ops as few of them have zHeader value dependencies
             SetupNewOperations();
 #if DEBUG
             DumpHeader();
@@ -133,7 +133,7 @@ namespace ZMachineLib
 
         private void SetupScreenParams()
         {
-            // TODO: These should be part of the header????
+            // TODO: These should be part of the zHeader????
             Memory[0x01] = 0x01; // Sets Flags1 to Status Line = hours:mins
             Memory[0x20] = _io.ScreenHeight; 
             Memory[0x21] = _io.ScreenWidth;

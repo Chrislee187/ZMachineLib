@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using ZMachineLib;
 
 namespace ZDump
@@ -35,7 +36,56 @@ namespace ZDump
 
             WriteAbbreviations(contents.Abbreviations);
             WriteDictionary(contents);
+            WriteObjects(contents);
         }
+
+        private static void WriteObjects(ZMachineContents contents)
+        {
+            var objs = contents.ObjectTree;
+            WriteHeading($"Object Tree ({objs.Count} objects)");
+
+            var sb = new StringBuilder();
+            foreach (var zObj in objs.Values)
+            {
+                sb.AppendLine(FormatObj(zObj, objs, true));
+            }
+
+            Console.WriteLine(sb);
+        }
+
+        private static string FormatObj(ZMachineObject zObj, ZObjectTree objs, bool showAttrs = false)
+        {
+            var sb = new StringBuilder();
+            sb.Append($"{zObj}");
+
+            if (showAttrs)
+            {
+                sb.Append($" Attributes: {Format.Attributes(zObj.AttributeFlags)}");
+            }
+
+            sb.AppendLine();
+
+            if (zObj.Parent != 0)
+            {
+                sb.AppendLine($"   Parent: {objs[zObj.Parent]}");
+//                sb.AppendLine(FormatObj(objs[zObj.Parent], objs));
+            }
+
+            if (zObj.Sibling != 0)
+            {
+                sb.AppendLine($"  Sibling: {objs[zObj.Sibling]}");
+//                sb.AppendLine(FormatObj(objs[zObj.Sibling], objs));
+            }
+
+            if (zObj.Child != 0)
+            {
+                sb.AppendLine($"    Child: {objs[zObj.Child]}");
+//                sb.AppendLine(FormatObj(objs[zObj.Child], objs));
+            }
+
+            return sb.ToString();
+        }
+
         private static void WriteDictionary(ZMachineContents contents)
         {
             WriteHeading("Dictionary");
@@ -88,6 +138,7 @@ namespace ZDump
             pairs.Add($"Object Table", Format.Word(h.ObjectTable));
             pairs.Add($"Globals", Format.Word(h.Globals));
             pairs.Add($"Abbreviations Table", Format.Word(h.AbbreviationsTable));
+            pairs.Add($"Dynamic Memory Size", Format.Word(h.DynamicMemorySize));
             pairs.Add($"Flags1", Format.Flags((byte) h.Flags1));
             pairs.Add("Flags2", Format.Flags(h.Flags2));
 
