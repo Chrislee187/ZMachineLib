@@ -9,7 +9,7 @@ namespace ZMachineLib.Operations.OPVAR
         private readonly IUserIo _io;
 
         public PrintTable(ZMachine2 machine, IUserIo io)
-            : base((ushort)OpCodes.PrintTable, machine)
+            : base((ushort)OpCodes.PrintTable, machine, machine.Contents)
         {
             _io = io;
         }

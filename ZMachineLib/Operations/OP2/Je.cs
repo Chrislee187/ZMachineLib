@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP2
 {
     public sealed class Je : ZMachineOperationBase
     {
-        public Je(ZMachine2 machine)
-            : base((ushort)OpCodes.Je, machine)
+        public Je(ZMachine2 machine, 
+            IZMemory contents)
+            : base((ushort)OpCodes.Je, machine, contents)
         {
         }
 

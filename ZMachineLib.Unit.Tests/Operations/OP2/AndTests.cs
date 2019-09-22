@@ -12,7 +12,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         public void SetUp()
         {
             Setup();
-            _op = new And(ZMachine2, VariableManagerMockery.Object);
+            _op = new And(MemoryMock);
             MockPeekNextByte(_op);
         }
 

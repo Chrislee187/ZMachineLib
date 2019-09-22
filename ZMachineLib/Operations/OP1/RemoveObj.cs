@@ -15,7 +15,7 @@ namespace ZMachineLib.Operations.OP1
     public sealed class RemoveObj : ZMachineOperationBase
     {
         public RemoveObj(ZMachine2 machine)
-            : base((ushort)OpCodes.RemoveObj, machine)
+            : base((ushort)OpCodes.RemoveObj, machine, machine.Contents)
         {
 
         }
@@ -32,7 +32,7 @@ namespace ZMachineLib.Operations.OP1
             // if object is the first child, set first child to the sibling
             if (zObj.Parent == operands[0])
             {
-                ObjectManager.SetObjectNumber((ushort)(parentZObj.Address + Machine.VersionedOffsets.Child), zObj.Sibling);
+                ObjectManager.SetObjectNumber((ushort)(parentZObj.Address + Machine.Contents.Offsets.Child), zObj.Sibling);
             }
             else if (parentZObj.Child != 0)
             {
@@ -40,7 +40,7 @@ namespace ZMachineLib.Operations.OP1
 
                 var addr = ObjectManager.GetObjectAddress(parentZObj.Child);
                 var currentZObj = ObjectManager.GetObject(parentZObj.Child);
-                var currentSibling = ObjectManager.GetObjectNumber((ushort)(addr + Machine.VersionedOffsets.Sibling));
+                var currentSibling = ObjectManager.GetObjectNumber((ushort)(addr + Machine.Contents.Offsets.Sibling));
                 Debug.Assert(currentSibling == currentZObj.Sibling);
                 Debug.Assert(parentChildZObj.Sibling == currentZObj.Sibling);
 
@@ -54,21 +54,21 @@ namespace ZMachineLib.Operations.OP1
                     if (currentSibling == operands[0])
                     {
                         // set the current object's sibling to the next sibling
-                        Debug.Assert(currentZObj.Sibling == (ushort)(addr + Machine.VersionedOffsets.Sibling));
-                        ObjectManager.SetObjectNumber((ushort)(addr + Machine.VersionedOffsets.Sibling), zObj.Sibling);
+                        Debug.Assert(currentZObj.Sibling == (ushort)(addr + Machine.Contents.Offsets.Sibling));
+                        ObjectManager.SetObjectNumber((ushort)(addr + Machine.Contents.Offsets.Sibling), zObj.Sibling);
                         break;
                     }
 
                     addr = ObjectManager.GetObjectAddress(currentSibling);
                     currentZObj = ObjectManager.GetObject(currentSibling);
-                    currentSibling = ObjectManager.GetObjectNumber((ushort)(addr + Machine.VersionedOffsets.Sibling));
+                    currentSibling = ObjectManager.GetObjectNumber((ushort)(addr + Machine.Contents.Offsets.Sibling));
                     Debug.Assert(currentSibling == currentZObj.Sibling);
                     throw new Exception("Been waiting to find something that hits this");
                 }
             }
 
             // set the object's parent to nothing
-            ObjectManager.SetObjectNumber((ushort)(zObj.Address + Machine.VersionedOffsets.Parent), 0);
+            ObjectManager.SetObjectNumber((ushort)(zObj.Address + Machine.Contents.Offsets.Parent), 0);
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using ZMachineLib.Managers;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP2
 {
@@ -9,16 +9,16 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class Add : ZMachineOperationBase
     {
-        public Add(ZMachine2 machine, IVariableManager variableManager = null)
-            : base((ushort)OpCodes.Add, machine, variableManager: variableManager)
+        public Add(IZMemory contents)
+            : base((ushort)OpCodes.Add, null, contents)
         {
         }
 
         public override void Execute(List<ushort> operands)
         {
-            var dest = PeekNextByte();
+            var dest = GetNextByte();
             var val = (short)(operands[0] + operands[1]);
-            VariableManager.StoreWord(
+            Contents.VariableManager.StoreWord(
                 dest, 
                 (ushort) val
                 );

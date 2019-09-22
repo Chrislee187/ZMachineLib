@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OPExtended
 {
     public sealed class LogShift : ZMachineOperationBase
     {
         public LogShift(ZMachine2 machine)
-            : base((ushort)KindExtOpCodes.LogShift, machine)
+            : base((ushort)KindExtOpCodes.LogShift, machine, machine.Contents)
         {
         }
 
@@ -18,8 +19,8 @@ namespace ZMachineLib.Operations.OPExtended
             else if ((short)operands[1] < 0)
                 val >>= -operands[1];
 
-            var dest = PeekNextByte();
-            VariableManager.StoreWord(dest, val);
+            var dest = GetNextByte();
+            Contents.VariableManager.StoreWord(dest, val);
         }
     }
 }

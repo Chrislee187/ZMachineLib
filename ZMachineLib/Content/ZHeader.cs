@@ -50,6 +50,7 @@ namespace ZMachineLib.Content
             this = (ZHeader)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(ZHeader));
             handle.Free();
         }
+
     }
 
     [Flags]

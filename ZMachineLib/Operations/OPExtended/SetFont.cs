@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OPExtended
 {
     public sealed class SetFont : ZMachineOperationBase
     {
         public SetFont(ZMachine2 machine)
-            : base((ushort)KindExtOpCodes.SetFont, machine)
+            : base((ushort)KindExtOpCodes.SetFont, machine, machine.Contents)
         {
         }
 
@@ -13,8 +14,8 @@ namespace ZMachineLib.Operations.OPExtended
         {
             // TODO
 
-            var dest = PeekNextByte();
-            VariableManager.StoreWord(dest, 0);
+            var dest = GetNextByte();
+            Contents.VariableManager.StoreWord(dest, 0);
         }
     }
 }

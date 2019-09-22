@@ -10,7 +10,7 @@ namespace ZMachineLib.Operations.OP1
     public sealed class GetParent : ZMachineOperationBase
     {
         public GetParent(ZMachine2 machine)
-            : base((ushort) OpCodes.GetParent, machine)
+            : base((ushort) OpCodes.GetParent, machine, machine.Contents)
         {
         }
 
@@ -18,15 +18,16 @@ namespace ZMachineLib.Operations.OP1
         {
             var zObj = ObjectManager.GetObject(operands[0]);
 
-            var dest = PeekNextByte();
+            var dest = GetNextByte();
 
-            if (Machine.Header.Version <= 3)
+            var variableManager = Contents.VariableManager;
+            if (Machine.Contents.Header.Version <= 3)
             {
-                VariableManager.StoreByte(dest, (byte)zObj.Parent);
+                variableManager.StoreByte(dest, (byte)zObj.Parent);
             }
             else
             {
-                VariableManager.StoreWord(dest, zObj.Parent);
+                variableManager.StoreWord(dest, zObj.Parent);
             }
         }
     }

@@ -14,7 +14,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         public void SetUp()
         {
             Setup();
-            _op = new IncCheck(ZMachine2, variableManager: VariableManagerMockery.Object);
+            _op = new IncCheck(ZMachine2, MemoryMock, objectManager: ObjectManagerMockery.Object);
             MockJump(_op);
         }
 

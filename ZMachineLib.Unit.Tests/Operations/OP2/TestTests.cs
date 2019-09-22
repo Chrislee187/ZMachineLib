@@ -13,7 +13,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         public void SetUp()
         {
             Setup();
-            _op = new Test(ZMachine2);
+            _op = new Test(ZMachine2, MemoryMock);
             MockJump(_op);
         }
 

@@ -16,29 +16,29 @@ namespace ZMachineLib.Operations
             IUserIo io, IFileIo fileIo)
         {
             // OP2
-            _operations.Add(OpCodes.Je, new Je(machine));
-            _operations.Add(OpCodes.Jl, new Jl(machine));
-            _operations.Add(OpCodes.Jg, new Jg(machine));
-            _operations.Add(OpCodes.DecCheck, new DecCheck(machine));
-            _operations.Add(OpCodes.IncCheck, new IncCheck(machine));
-            _operations.Add(OpCodes.Jin, new Jin(machine));
-            _operations.Add(OpCodes.Test, new Test(machine));
-            _operations.Add(OpCodes.Or, new Or(machine));
-            _operations.Add(OpCodes.And, new And(machine));
+            _operations.Add(OpCodes.Je, new Je(machine, machine.Contents));
+            _operations.Add(OpCodes.Jl, new Jl(machine, machine.Contents));
+            _operations.Add(OpCodes.Jg, new Jg(machine, machine.Contents));
+            _operations.Add(OpCodes.DecCheck, new DecCheck(machine, machine.Contents));
+            _operations.Add(OpCodes.IncCheck, new IncCheck(machine, machine.Contents));
+            _operations.Add(OpCodes.Jin, new Jin(machine, machine.Contents));
+            _operations.Add(OpCodes.Test, new Test(machine, machine.Contents));
+            _operations.Add(OpCodes.Or, new Or(machine, machine.Contents));
+            _operations.Add(OpCodes.And, new And(machine.Contents));
             _operations.Add(OpCodes.TestAttribute, new TestAttribute(machine));
             _operations.Add(OpCodes.SetAttribute, new SetAttribute(machine));
-            _operations.Add(OpCodes.ClearAttribute, new ClearAttribute(machine));
+            _operations.Add(OpCodes.ClearAttribute, new ClearAttribute(machine, machine.Contents));
             _operations.Add(OpCodes.Store, new Store(machine));
             _operations.Add(OpCodes.InsertObj, new InsertObj(machine));
             _operations.Add(OpCodes.LoadW, new LoadW(machine));
-            _operations.Add(OpCodes.LoadB, new LoadB(machine));
+            _operations.Add(OpCodes.LoadB, new LoadB(machine, machine.Contents));
             _operations.Add(OpCodes.GetProp, new GetProp(machine));
             _operations.Add(OpCodes.GetPropAddr, new GetPropAddr(machine));
             _operations.Add(OpCodes.GetNextProp, new GetNextProp(machine));
-            _operations.Add(OpCodes.Add, new Add(machine));
-            _operations.Add(OpCodes.Sub, new Sub(machine));
+            _operations.Add(OpCodes.Add, new Add(machine.Contents));
+            _operations.Add(OpCodes.Sub, new Sub(machine, machine.Contents));
             _operations.Add(OpCodes.Mul, new Mul(machine));
-            _operations.Add(OpCodes.Div, new Div(machine));
+            _operations.Add(OpCodes.Div, new Div(machine, machine.Contents));
             _operations.Add(OpCodes.Mod, new Mod(machine));
             _operations.Add(OpCodes.Call2S, new Call2S(machine));
             _operations.Add(OpCodes.Call2N, new Call2N(machine));
@@ -61,7 +61,7 @@ namespace ZMachineLib.Operations
             _operations.Add(OpCodes.PrintPAddr, new PrintPAddr(machine, io));
             _operations.Add(OpCodes.Load, new Load(machine));
 
-            if (machine.Header.Version <= 4)
+            if (machine.Contents.Header.Version <= 4)
             {
                 _operations.Add(OpCodes.Not, new Not(machine));
             }

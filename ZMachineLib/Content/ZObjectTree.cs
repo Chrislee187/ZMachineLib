@@ -3,18 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using ZMachineLib.Extensions;
+using ZMachineLib.Managers;
 
 namespace ZMachineLib.Content
 {
     public class ZObjectTree : IReadOnlyDictionary<ushort, ZMachineObject>
     {
         private readonly Dictionary<ushort, ZMachineObject> _dict;
+
         // ReSharper disable once UnusedAutoPropertyAccessor.Local
         private IReadOnlyList<ushort> DefaultPropAddresses { get; set; }
 
-        public ZObjectTree(Span<byte> dynamicMemory, ZHeader zHeader, ZAbbreviations abbreviations)
+        public ZObjectTree(ZHeader header, 
+            ZAbbreviations abbreviations,
+            IMemoryManager manager)
         {
-            var objectTableData = dynamicMemory.Slice(zHeader.ObjectTable);
+            var objectTableData = manager.AsSpan(header.ObjectTable);// memory.AsSpan(header.ObjectTable);
             var (defaultProps, ptr) = GetDefaultProps(objectTableData);
             DefaultPropAddresses = defaultProps;
 
@@ -25,13 +29,13 @@ namespace ZMachineLib.Content
             while (!lastObject && objNumber < 255)
             {
                 // Objects end when the properties start!
-                ushort objectAddress = (ushort) (zHeader.ObjectTable+ptr);
+                ushort objectAddress = (ushort) (header.ObjectTable+ptr);
 
                 var min = _dict.Values.Any() ? _dict.Values.Min(v => v.PropertiesAddress) : ushort.MaxValue;
                 lastObject = objectAddress >= min;
                 if (!lastObject)
                 {
-                    var zObj = new ZMachineObject(objNumber, objectAddress, dynamicMemory, abbreviations);
+                    var zObj = new ZMachineObject(objNumber, objectAddress, header, manager, abbreviations);
                     _dict.Add(objNumber, zObj);
                     ptr += zObj.BytesRead;
 

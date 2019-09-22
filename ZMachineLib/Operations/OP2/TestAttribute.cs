@@ -9,7 +9,7 @@ namespace ZMachineLib.Operations.OP2
     public sealed class TestAttribute : ZMachineOperationBase
     {
         public TestAttribute(ZMachine2 machine)
-            : base((ushort)OpCodes.TestAttribute, machine)
+            : base((ushort)OpCodes.TestAttribute, machine, machine.Contents)
         {
         }
 

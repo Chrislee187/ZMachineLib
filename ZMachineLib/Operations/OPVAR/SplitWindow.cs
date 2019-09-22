@@ -7,7 +7,7 @@ namespace ZMachineLib.Operations.OPVAR
         private readonly IUserIo _io;
 
         public SplitWindow(ZMachine2 machine, IUserIo io)
-            : base((ushort)OpCodes.SplitWindow, machine)
+            : base((ushort)OpCodes.SplitWindow, machine, machine.Contents)
         {
             _io = io;
         }

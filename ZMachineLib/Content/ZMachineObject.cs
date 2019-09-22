@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using ZMachineLib.Extensions;
 using ZMachineLib.Managers;
 
@@ -24,47 +26,81 @@ namespace ZMachineLib.Content
     [DebuggerDisplay("[{ObjectNumber}] '{Name}'")]
     public class ZMachineObject : IZMachineObject
     {
-        public ulong Attributes { get; set; }
-        public string Name { get; }
+        public static readonly ZMachineObject Object0 = new ZMachineObject(0, 0, default, null, null);
+        public ulong Attributes { get; private set; }
+        public string Name { get; private set; }
 
-        private readonly Func<ushort, ulong> _flagsProvider;
-        private readonly IObjectManager _objectManager;
+        private readonly Func<ushort, ulong> _flagsProviderV3 = attr => 0x80000000 >> attr;
+
+        private readonly IMemoryManager _manager;
+        private readonly ZAbbreviations _abbreviations;
+        private readonly ZHeader _header;
+
         public ushort Address { get; set; }
 
         public ZMachineObject()
         {
-            
+
         }
-        public byte BytesRead { get; }
-        public ZMachineObject(ushort objNumber, ushort address, Span<byte> dynamicMemory, ZAbbreviations abbreviations)
+        public byte BytesRead { get; private set; }
+
+        public ZMachineObject(ushort objNumber, ushort address,
+            ZHeader header,
+            IMemoryManager manager,
+            ZAbbreviations abbreviations)
         {
+            if (objNumber == 0) return;
+
+            _header = header;
+            _manager = manager;
+            _abbreviations = abbreviations;
+
             ObjectNumber = objNumber;
             Address = address;
 
-            var ptr = address;
+            HydrateObject();
 
-            var attrs = dynamicMemory.Slice(ptr, 4).GetUInt();
+        }
+
+        public ZMachineObject RefreshFromMemory()
+        {
+            HydrateObject();
+            return this;
+        }
+        private void HydrateObject()
+        {
+            var ptr = Address;
+
+            var attrs = _manager.AsSpan(ptr, 4).GetUInt();
             SetAttributes(attrs);
             ptr += sizeof(uint);
 
-            Parent = dynamicMemory[ptr++];
-            Sibling = dynamicMemory[ptr++];
-            Child = dynamicMemory[ptr++];
+            Parent = _manager.Get(ptr++);
+            Sibling = _manager.Get(ptr++);
+            Child = _manager.Get(ptr++);
 
-            PropertiesAddress = dynamicMemory.GetUShort(ptr);
+            PropertiesAddress = _manager.GetUShort(ptr);
             ptr += 2;
 
-            BytesRead = (byte)(ptr - Address);
+            BytesRead = (byte) (ptr - Address);
             ptr = PropertiesAddress;
-            var len = dynamicMemory[ptr++];
+            var len = _manager.Get(ptr++);
 
             if (len != 0)
             {
-                var zStr = new ZsciiString(dynamicMemory.Slice(ptr), abbreviations);
+                var zStr = new ZsciiString(_manager.AsSpan(ptr), _abbreviations);
                 Name = zStr.String;
             }
 
 
+            if (Sibling != 0)
+            {
+//                SiblingZObject = _objects[Sibling];
+            }
+            if (Child != 0)
+            {
+//                ChildZObject = _objects[Child];
+            }
             //            var propIndex = 1;
             //            var propSize = (dynamicMemory[ptr++] >> 5) + 1;
             //            while (propSize != 0 && propIndex <= 32 )
@@ -89,123 +125,67 @@ namespace ZMachineLib.Content
         }
 
         public Dictionary<int, bool> AttributeFlags { get; set; }
-
-
+        
         public ushort PropertiesAddress { get; set; }
 
         public ushort ObjectNumber { get; set; }
 
-        public ZMachineObject(ushort obj, IObjectManager objectManager)
-        {
-            ObjectNumber = obj;
-            // TODO: This needs to be refactored to use a Span<bytes> approach, not the objectManager.GetXXX methods
-            _objectManager = objectManager;
-            // NOTE: Call doesn't seem to do anything and result not used!!
-            //            ObjectManager.PrintObjectInfo(obj, false);
-            Address = objectManager.GetObjectAddress(obj);
-            Name = objectManager.GetObjectName(obj);
-
-            if (objectManager.Machine.Header.Version <= 3)
-            {
-                Attributes = objectManager.Machine.Memory.GetUInt(Address);
-                _flagsProvider = attr => 0x80000000 >> attr;
-            }
-            else
-            {
-                Attributes = (ulong)objectManager.Machine.Memory.GetUInt(Address) << 16 
-                             | objectManager.Machine.Memory.GetUShort(Address + 4);
-                _flagsProvider = attr => (ulong)(0x800000000000 >> attr);
-            }
-
-            Child = _objectManager
-                .GetObjectNumber((ushort)(
-                        Address +
-                        _objectManager.Machine.VersionedOffsets.Child)
-                );
-
-            if (Child != 0)
-            {
-                ChildZObject = _objectManager.GetObject(Child);
-            }
-            Parent =
-                _objectManager
-                    .GetObjectNumber((ushort)(
-                            Address +
-                            _objectManager.Machine.VersionedOffsets.Parent)
-                    );
-
-            // NOTE: Cannot do ParentZObject, as it blows the stack
-//            if (Parent != 0)
-//            {
-//                ParentZObject = _objectManager.GetObject(Parent);
-//            }
-
-            Sibling =
-                _objectManager
-                    .GetObjectNumber((ushort)(
-                            Address +
-                            _objectManager.Machine.VersionedOffsets.Sibling)
-                    );
-
-            if (Sibling != 0)
-            {
-                SiblingZObject = _objectManager.GetObject(Sibling);
-            }
-            //            var versionedOffsetsProperty = Address + _objectManager.Machine.VersionedOffsets.Property;
-            //            PropertyHeader = _objectManager.Machine.Memory.GetUShort((ushort) versionedOffsetsProperty);
-        }
-
-//        public IZMachineObject ParentZObject { get; set; }
-
-        public IZMachineObject SiblingZObject { get; private set; }
-
-        public ushort Sibling { get; set; }
-
         public ushort Parent { get; set; }
-
+        public ushort Sibling { get; set; }
         public ushort Child { get; set; }
-        public IZMachineObject ChildZObject { get; set; }
+
+        public IZMachineObject ParentZObject { get; }
+        public IZMachineObject SiblingZObject { get; }
+        public IZMachineObject ChildZObject { get; }
+
         public ushort PropertyHeader { get; set; }
 
         public bool TestAttribute(ushort attr)
         {
-            var flags = _flagsProvider(attr);
+            var flags = _flagsProviderV3(attr);
             return (flags & Attributes) == flags;
         }
 
         public void ClearAttribute(ushort attr)
         {
-            var flagMask = _flagsProvider(attr);
+            var flagMask = _flagsProviderV3(attr);
 
-            if (_objectManager.Machine.Header.Version <= 3)
+            if (_header.Version <= 3)
             {
                 var attributes = Attributes & ~flagMask;
-                _objectManager.Machine.Memory.SetWord(Address, (uint)attributes);
+                _manager.SetLong(Address, (uint)attributes);
             }
             else
             {
+                // TODO: _manager NOT tested in this section
                 var attributes = Attributes & ~flagMask;
                 uint val = (uint)attributes >> 16;
-                _objectManager.Machine.Memory.SetWord(Address, val);
+//                _objectManager.Machine.Memory.SetLong(Address, val);
+                _manager.SetLong(Address, val);
                 ushort value = (ushort)attributes;
-                _objectManager.Machine.Memory.SetWord((ushort)(Address + 4), value);
+//                _objectManager.Machine.Memory.SetWord((ushort)(Address + 4), value);
+                _manager.Set((ushort)(Address + 4), value);
             }
         }
 
         public void SetAttribute(ushort attr)
         {
-            var flagMask = _flagsProvider(attr);
+            var flagMask = _flagsProviderV3(attr);
 
-            if (_objectManager.Machine.Header.Version <= 3)
+            if (_header.Version <= 3)
             {
                 var attributes = Attributes | flagMask;
-                _objectManager.Machine.Memory.SetWord(Address, (uint)attributes);
+                _manager.SetLong(Address, (uint)attributes);
             }
             else
             {
+                // TODO: _manager NOT tested in this section
                 var attributes = Attributes | flagMask;
-                _objectManager.Machine.Memory.SetWord(Address, (uint)(attributes >> 16));
-                _objectManager.Machine.Memory.SetWord((ushort)(Address + 4), (ushort)attributes);
+//                _objectManager.Machine.Memory.SetLong(Address, (uint)(attributes >> 16));
+                _manager.SetLong(Address, (uint)(attributes >> 16));
+//                _objectManager.Machine.Memory.SetWord((ushort)(Address + 4), (ushort)attributes);
+                _manager.Set((ushort)(Address + 4), (ushort)attributes);
+
             }
         }
 

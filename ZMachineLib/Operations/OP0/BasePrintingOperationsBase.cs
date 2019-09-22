@@ -7,7 +7,7 @@
         protected BasePrintingOperationsBase(ushort code,
             ZMachine2 machine,
             IUserIo io) 
-            : base(code, machine)
+            : base(code, machine, machine.Contents)
         {
             Io = io;
         }

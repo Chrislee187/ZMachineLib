@@ -3,15 +3,16 @@ using ZMachineLib.Operations.OP2;
 
 namespace ZMachineLib.Unit.Tests.Operations.OP2
 {
-    public class DivTests : OperationsTestsBase
+    public class SubTests : OperationsTestsBase
     {
-        private Div _op;
-        
+        private Sub _op;
+
+
         [SetUp]
         public void SetUp()
         {
             Setup();
-            _op = new Div(ZMachine2, MemoryMock);
+            _op = new Sub(ZMachine2, MemoryMock);
             MockPeekNextByte(_op);
         }
 
@@ -27,7 +28,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
             _op.Execute(args);
 
             VariableManagerMockery
-                .VerifyStoreWord((ushort)(val1 / val2));
+                .VerifyStoreWord((ushort)(val1 - val2));
         }
     }
 }

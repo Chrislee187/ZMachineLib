@@ -1,18 +1,19 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OPVAR
 {
     public sealed class Pull : ZMachineOperationBase
     {
         public Pull(ZMachine2 machine)
-            : base((ushort)OpCodes.Pull, machine)
+            : base((ushort)OpCodes.Pull, machine, machine.Contents)
         {
         }
 
         public override void Execute(List<ushort> operands)
         {
             var val = Machine.Stack.Peek().RoutineStack.Pop();
-            VariableManager.StoreWord((byte)operands[0], val, false);
+            Contents.VariableManager.StoreWord((byte)operands[0], val, false);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace ZMachineLib.Operations.OP0
         private readonly IUserIo _io;
 
         public Quit(ZMachine2 machine, IUserIo io)
-            : base((ushort)OpCodes.Quit, machine)
+            : base((ushort)OpCodes.Quit, machine, machine.Contents)
         {
             _io = io;
         }

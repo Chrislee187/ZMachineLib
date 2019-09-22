@@ -7,7 +7,7 @@ namespace ZMachineLib.Operations.OPVAR
         private readonly IUserIo _io;
 
         public SetWindow(ZMachine2 machine, IUserIo io)
-            : base((ushort)OpCodes.SetWindow, machine)
+            : base((ushort)OpCodes.SetWindow, machine, machine.Contents)
         {
             _io = io;
         }

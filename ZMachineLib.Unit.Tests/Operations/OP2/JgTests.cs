@@ -6,7 +6,7 @@ using ZMachineLib.Operations.OP2;
 
 namespace ZMachineLib.Unit.Tests.Operations.OP2
 {
-    public class JgTests
+    public class JgTests : OperationsTestsBase
     {
         private Jg _op;
         private bool? _jumped;
@@ -16,7 +16,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         {
             var zMachine2 = new ZMachine2(null, null);
             _jumped = null;
-            _op = new Jg(zMachine2);
+            _op = new Jg(zMachine2, MemoryMock);
             _op.Jump = b => _jumped = b;
 
         }

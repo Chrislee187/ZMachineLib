@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OPVAR
 {
@@ -8,7 +9,7 @@ namespace ZMachineLib.Operations.OPVAR
         private readonly IUserIo _io;
 
         public Read(ZMachine2 machine, IUserIo io)
-            : base((ushort)OpCodes.Read, machine)
+            : base((ushort)OpCodes.Read, machine, machine.Contents)
         {
             _io = io;
         }
@@ -40,20 +41,20 @@ namespace ZMachineLib.Operations.OPVAR
 
                 var ix = 1;
 
-                if (Machine.Header.Version >= 5)
+                if (Machine.Contents.Header.Version >= 5)
                     MemoryManager.Set(Machine.ReadTextAddr + ix++, (byte)input.Length);
 
                 for (var j = 0; j < input.Length; j++, ix++)
                     MemoryManager.Set(Machine.ReadTextAddr + ix, (byte)input[j]);
 
-                if (Machine.Header.Version < 5)
+                if (Machine.Contents.Header.Version < 5)
                     MemoryManager.Set(Machine.ReadTextAddr + ++ix, 0);
 
                 var tokenised = input.Split(' ');
 
                 MemoryManager.Set(Machine.ReadParseAddr + 1,  (byte)tokenised.Length);
 
-                var len = ((ushort) Machine.Header.Version <= 3) ? 6 : 9;
+                var len = ((ushort) Machine.Contents.Header.Version <= 3) ? 6 : 9;
                 var last = 0;
                 var max = Math.Min(tokenised.Length, wordMax);
 
@@ -67,14 +68,14 @@ namespace ZMachineLib.Operations.OPVAR
                     MemoryManager.Set((ushort)(Machine.ReadParseAddr + 2 + i * 4), addr);
                     MemoryManager.Set(Machine.ReadParseAddr + 4 + i * 4, (byte)tokenised[i].Length);
                     var index = input.IndexOf(tokenised[i], last, StringComparison.Ordinal);
-                    MemoryManager.Set(Machine.ReadParseAddr + 5 + i * 4, (byte)(index + ((ushort) Machine.Header.Version < 5 ? 1 : 2)));
+                    MemoryManager.Set(Machine.ReadParseAddr + 5 + i * 4, (byte)(index + ((ushort) Machine.Contents.Header.Version < 5 ? 1 : 2)));
                     last = index + tokenised[i].Length;
                 }
 
-                if (Machine.Header.Version >= 5)
+                if (Machine.Contents.Header.Version >= 5)
                 {
-                    var dest = PeekNextByte();
-                    VariableManager.StoreByte(dest, 10);
+                    var dest = GetNextByte();
+                    Contents.VariableManager.StoreByte(dest, 10);
                 }
 
                 Machine.ReadTextAddr = 0;

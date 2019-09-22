@@ -5,7 +5,7 @@ namespace ZMachineLib.Operations.OP0
     public class Restart : ZMachineOperationBase
     {
         public Restart(ZMachine2 machine)
-            : base((ushort)OpCodes.Restart, machine)
+            : base((ushort)OpCodes.Restart, machine, machine.Contents)
         {
         }
         public override void Execute(List<ushort> operands)

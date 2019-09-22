@@ -7,7 +7,7 @@ namespace ZMachineLib.Operations.OPVAR
         private readonly IUserIo _io;
 
         public SetCursor(ZMachine2 machine, IUserIo io)
-            : base((ushort)OpCodes.SetCursor, machine)
+            : base((ushort)OpCodes.SetCursor, machine, machine.Contents)
         {
             _io = io;
         }

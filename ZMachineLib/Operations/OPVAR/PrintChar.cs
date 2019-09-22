@@ -8,7 +8,7 @@ namespace ZMachineLib.Operations.OPVAR
         private readonly IUserIo _io;
 
         public PrintChar(ZMachine2 machine, IUserIo io)
-            : base((ushort)OpCodes.PrintChar, machine)
+            : base((ushort)OpCodes.PrintChar, machine, machine.Contents)
         {
             _io = io;
         }

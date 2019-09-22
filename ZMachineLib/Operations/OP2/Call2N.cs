@@ -9,7 +9,7 @@ namespace ZMachineLib.Operations.OP2
     public sealed class Call2N : ZMachineOperationBase
     {
         public Call2N(ZMachine2 machine)
-            : base((ushort)OpCodes.Call2N, machine)
+            : base((ushort)OpCodes.Call2N, machine, machine.Contents)
         {
         }
 

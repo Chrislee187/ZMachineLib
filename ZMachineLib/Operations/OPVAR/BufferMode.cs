@@ -7,7 +7,7 @@ namespace ZMachineLib.Operations.OPVAR
         private readonly IUserIo _io;
 
         public BufferMode(ZMachine2 machine, IUserIo io)
-            : base((ushort)OpCodes.BufferMode, machine)
+            : base((ushort)OpCodes.BufferMode, machine, machine.Contents)
         {
             _io = io;
         }

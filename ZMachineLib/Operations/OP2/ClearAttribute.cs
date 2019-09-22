@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
 using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OP2
@@ -10,8 +11,9 @@ namespace ZMachineLib.Operations.OP2
     public sealed class ClearAttribute : ZMachineOperationBase
     {
         public ClearAttribute(ZMachine2 machine,
+            IZMemory contents,
             IObjectManager objectManager = null)
-            : base((ushort)OpCodes.ClearAttribute, machine, objectManager: objectManager)
+            : base((ushort)OpCodes.ClearAttribute, machine, contents, objectManager: objectManager)
         {
         }
 

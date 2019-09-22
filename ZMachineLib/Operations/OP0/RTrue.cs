@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OP0
 {
     public sealed class RTrue : ZMachineOperationBase
     {
         public RTrue(ZMachine2 machine)
-            : base((ushort)OpCodes.RTrue, machine)
+            : base((ushort)OpCodes.RTrue, machine, machine.Contents)
         {
         }
 
@@ -13,7 +14,7 @@ namespace ZMachineLib.Operations.OP0
         {
             if (Machine.Stack.Pop().StoreResult)
             {
-                VariableManager.StoreWord(PeekNextByte(), 1);
+                Contents.VariableManager.StoreWord(GetNextByte(), 1);
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
 using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OP2
@@ -12,18 +13,19 @@ namespace ZMachineLib.Operations.OP2
     public sealed class DecCheck : ZMachineOperationBase
     {
         public DecCheck(ZMachine2 machine,
+            IZMemory contents,
             IObjectManager objectManager = null,
             IVariableManager variableManager = null)
-            : base((ushort)OpCodes.DecCheck, machine, objectManager, variableManager)
+            : base((ushort)OpCodes.DecCheck, null, contents, objectManager)
         {
         }
 
         public override void Execute(List<ushort> operands)
         {
-            var val = (short)VariableManager.GetWord((byte)operands[0]);
+            var val = (short)Contents.VariableManager.GetWord((byte)operands[0]);
             val--;
             ushort value = (ushort)val;
-            VariableManager.StoreWord((byte)operands[0], value);
+            Contents.VariableManager.StoreWord((byte)operands[0], value);
             Jump(val < (short)operands[1]);
         }
     }

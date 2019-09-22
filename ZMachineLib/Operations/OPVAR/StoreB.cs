@@ -5,7 +5,7 @@ namespace ZMachineLib.Operations.OPVAR
     public sealed class StoreB : ZMachineOperationBase
     {
         public StoreB(ZMachine2 machine)
-            : base((ushort)OpCodes.StoreB, machine)
+            : base((ushort)OpCodes.StoreB, machine, machine.Contents)
         {
         }
 

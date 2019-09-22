@@ -9,7 +9,7 @@ namespace ZMachineLib.Operations.OP1
     public sealed class GetSibling : ZMachineOperationBase
     {
         public GetSibling(ZMachine2 machine)
-            : base((ushort)OpCodes.GetSibling, machine)
+            : base((ushort)OpCodes.GetSibling, machine, machine.Contents)
         {
         }
 
@@ -17,14 +17,15 @@ namespace ZMachineLib.Operations.OP1
         {
             var zObj = ObjectManager.GetObject(operands[0]);
 
-            var dest = PeekNextByte();
+            var dest = GetNextByte();
 
-            if (Machine.Header.Version <= 3)
+            var variableManager = Contents.VariableManager;
+            if (Machine.Contents.Header.Version <= 3)
             {
-                VariableManager.StoreByte(dest, (byte)zObj.Sibling);
+                variableManager.StoreByte(dest, (byte)zObj.Sibling);
             }
             else
-                VariableManager.StoreWord(dest, zObj.Sibling);
+                variableManager.StoreWord(dest, zObj.Sibling);
 
             Jump(zObj.Sibling != 0);
         }

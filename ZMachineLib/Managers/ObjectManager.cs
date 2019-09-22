@@ -1,13 +1,9 @@
-﻿using System;
-using ZMachineLib.Content;
-using ZMachineLib.Extensions;
+﻿using ZMachineLib.Content;
 
 namespace ZMachineLib.Managers
 {
     public interface IObjectManager
     {
-        ZMachine2 Machine { get; }
-
         void SetObjectNumber(ushort objectAddr, ushort obj);
         ushort GetObjectNumber(ushort objectAddr);
         ushort GetObjectAddress(ushort obj);
@@ -20,47 +16,58 @@ namespace ZMachineLib.Managers
         IZMachineObject GetObject(ushort obj);
     }
 
-    public class ObjectManager : ZMachineBase, IObjectManager
+    public class ObjectManager : IObjectManager
     {
-        private ZAbbreviations _abbreviations;
+        // TODO: Refactored in ZMachineObject???
+        private readonly IZMemory _memory;
 
-        public ObjectManager(ZMachine2 machine,
-            ZAbbreviations abbreviations,
-            IMemoryManager memoryManager = null) 
-            : base(machine, memoryManager)
+        public ObjectManager(IZMemory memory)
         {
-            _abbreviations = abbreviations;
+            _memory = memory;
         }
-        
+
+        public IZMachineObject GetObject(ushort obj)
+        {
+            if (obj == 0)
+            {
+                return ZMachineObject.Object0;
+            }
+
+            var zObj = _memory.ObjectTree[obj].RefreshFromMemory();
+
+            return zObj;
+        }
+
         public void SetObjectNumber(ushort objectAddr, ushort obj)
         {
-            if (Version <= 3)
+            if (_memory.Header.Version <= 3)
             {
-                MemoryManager.Set(objectAddr, (byte) obj);
+                _memory.Manager.Set(objectAddr, (byte) obj);
             }
             else
             {
-                MemoryManager.Set(objectAddr, obj);
+                _memory.Manager.Set(objectAddr, obj);
             }
         
         }
 
         public ushort GetObjectNumber(ushort objectAddr)
         {
-            if (Version <= 3)
-                return Memory[objectAddr];
-            return Memory.GetUShort(objectAddr);
+            if (_memory.Header.Version <= 3)
+                return _memory.Manager.Get(objectAddr);
+
+            return _memory.Manager.GetUShort(objectAddr);
         }
 
         public ushort GetObjectParent(ushort objectAddr) 
-            => GetObjectNumber((ushort) (objectAddr + Machine.VersionedOffsets.Parent));
+            => GetObjectNumber((ushort) (objectAddr + _memory.Offsets.Parent));
 
         public ushort GetObjectAddress(ushort obj)
         {
-            return (ushort)(ObjectTable 
-                            + Offsets.PropertyDefaultTableSize 
+            return (ushort)(_memory.Header.ObjectTable 
+                            + _memory.Offsets.PropertyDefaultTableSize 
                             + (obj - 1) 
-                            * Offsets.ObjectSize);
+                            * _memory.Offsets.ObjectSize);
         }
 
         public string GetObjectName(ushort obj)
@@ -70,9 +77,9 @@ namespace ZMachineLib.Managers
             if (obj != 0)
             {
                 var addr = GetPropertyHeaderAddress(obj);
-                if (Memory[addr] != 0)
+                if (_memory.Manager.Get(addr) != 0)
                 {
-                    s = ZsciiString.Get(Memory.AsSpan(addr +1), _abbreviations); 
+                    s = ZsciiString.Get(_memory.Manager.AsSpan((ushort) (addr + 0x01)), _memory.Abbreviations); 
                 }
             }
 
@@ -82,8 +89,8 @@ namespace ZMachineLib.Managers
         public ushort GetPropertyHeaderAddress(ushort obj)
         {
             var objectAddr = GetObjectAddress(obj);
-            var propAddr = (ushort)(objectAddr + Offsets.Property);
-            var prop = Memory.GetUShort(propAddr);
+            var propAddr = (ushort)(objectAddr + _memory.Offsets.Property);
+            var prop = _memory.Manager.GetUShort(propAddr);
             return prop;
         }
 
@@ -92,44 +99,44 @@ namespace ZMachineLib.Managers
             var propHeaderAddr = GetPropertyHeaderAddress(obj);
 
             // skip past text
-            var size = Memory[propHeaderAddr];
+            var size = _memory.Manager.Get(propHeaderAddr);
             propHeaderAddr += (ushort)(size * 2 + 1);
 
-            while (Memory[propHeaderAddr] != 0x00)
+            while (_memory.Manager.Get(propHeaderAddr) != 0x00)
             {
-                var propInfo = Memory[propHeaderAddr];
-                var propNum = (byte)(propInfo & (Version <= 3 ? 0x1f : 0x3f));
+                var propInfo = _memory.Manager.Get(propHeaderAddr);
+                var propNum = (byte)(propInfo & (_memory.Header.Version <= 3 ? 0x1f : 0x3f));
 
                 if (propNum == prop)
                     return propHeaderAddr;
 
                 byte len;
 
-                if (Version > 3 && (propInfo & 0x80) == 0x80)
+                if (_memory.Header.Version > 3 && (propInfo & 0x80) == 0x80)
                 {
-                    len = (byte)(Memory[++propHeaderAddr] & 0x3f);
+                    len = (byte)(_memory.Manager.Get(++propHeaderAddr) & 0x3f);
                     if (len == 0)
                         len = 64;
                 }
                 else
-                    len = (byte)((propInfo >> (Version <= 3 ? 5 : 6)) + 1);
+                    len = (byte)((propInfo >> (_memory.Header.Version <= 3 ? 5 : 6)) + 1);
 
                 propHeaderAddr += (ushort)(len + 1);
             }
 
             return 0;
         }
-        
+
         public uint GetPackedAddress(ushort address)
         {
-            if (Version <= 3)
+            if (_memory.Header.Version <= 3)
                 return (uint)(address * 2);
-            if (Version <= 5)
+            if (_memory.Header.Version <= 5)
                 return (uint)(address * 4);
 
             return 0;
         }
-        
+
         public ushort PrintObjectInfo(ushort obj, bool properties)
         {
             if (obj == 0)
@@ -137,19 +144,20 @@ namespace ZMachineLib.Managers
 
             var startAddr = GetObjectAddress(obj);
 
-            var attributes = (ulong)Memory.GetUInt(startAddr) << 16 | Memory.GetUShort(startAddr + 4);
-            var parent = GetObjectNumber((ushort)(startAddr + Offsets.Parent));
-            var sibling = GetObjectNumber((ushort)(startAddr + Offsets.Sibling));
-            var child = GetObjectNumber((ushort)(startAddr + Offsets.Child));
-            var propAddr = Memory.GetUShort(startAddr + Offsets.Property);
+            var attributes = (ulong)_memory.Manager.GetUInt(startAddr) << 16 
+                             | _memory.Manager.GetUShort(startAddr + 4);
+            var parent = GetObjectNumber((ushort)(startAddr + _memory.Offsets.Parent));
+            var sibling = GetObjectNumber((ushort)(startAddr + _memory.Offsets.Sibling));
+            var child = GetObjectNumber((ushort)(startAddr + _memory.Offsets.Child));
+            var propAddr = _memory.Manager.GetUShort(startAddr + _memory.Offsets.Property);
 
             Log.Write($"{obj} ({obj:X2}) at {propAddr:X5}: ");
 
-            var size = Memory[propAddr++];
+            var size = _memory.Manager.Get(propAddr++);
             var s = string.Empty;
             if (size > 0)
             {
-                s = ZsciiString.Get(Memory.AsSpan(propAddr), Machine.Contents.Abbreviations); // s = ZsciiString.GetZsciiString(propAddr);
+                s = ZsciiString.Get(_memory.Manager.AsSpan(propAddr), _memory.Abbreviations); // s = ZsciiString.GetZsciiString(propAddr);
             }
 
             propAddr += (ushort)(size * 2);
@@ -170,19 +178,19 @@ namespace ZMachineLib.Managers
 
                 Log.WriteLine("Attributes: " + ss);
 
-                while (Memory[propAddr] != 0x00)
+                while (_memory.Manager.Get(propAddr) != 0x00)
                 {
-                    var propInfo = Memory[propAddr];
+                    var propInfo = _memory.Manager.Get(propAddr);
                     byte len;
-                    if (Version > 3 && (propInfo & 0x80) == 0x80)
-                        len = (byte)(Memory[propAddr + 1] & 0x3f);
+                    if (_memory.Header.Version > 3 && (propInfo & 0x80) == 0x80)
+                        len = (byte)(_memory.Manager.Get(propAddr + 1) & 0x3f);
                     else
-                        len = (byte)((propInfo >> (Version <= 3 ? 5 : 6)) + 1);
-                    var propNum = (byte)(propInfo & (Version <= 3 ? 0x1f : 0x3f));
+                        len = (byte)((propInfo >> (_memory.Header.Version <= 3 ? 5 : 6)) + 1);
+                    var propNum = (byte)(propInfo & (_memory.Header.Version <= 3 ? 0x1f : 0x3f));
 
                     Log.Write($"  P:{propNum:X2} at {propAddr:X4}: ");
                     for (var i = 0; i < len; i++)
-                        Log.Write($"{Memory[propAddr++]:X2} ");
+                        Log.Write($"{_memory.Manager.Get(propAddr++):X2} ");
                     Log.WriteLine("");
                     propAddr++;
                 }
@@ -191,20 +199,6 @@ namespace ZMachineLib.Managers
             return propAddr;
         }
 
-        public IZMachineObject GetObject(ushort obj) 
-            => new ZMachineObject(obj, this);
 
-//        private readonly IDictionary<ushort, IZMachineObject> _objectCache = new Dictionary<ushort, IZMachineObject>();
-//
-//        public IZMachineObject GetObject(ushort obj)
-//        {
-//            if (!_objectCache.TryGetValue(obj, out var zObj))
-//            {
-//                zObj = new ZMachineObject(obj, this);
-//                _objectCache.Add(obj, zObj);
-//            }
-//
-//            return zObj;
-//        }
     }
 }

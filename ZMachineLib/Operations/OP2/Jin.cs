@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
 using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OP2
@@ -9,9 +10,9 @@ namespace ZMachineLib.Operations.OP2
     public sealed class Jin : ZMachineOperationBase
     {
         public Jin(ZMachine2 machine,
-            IObjectManager objectManager = null,
-            IVariableManager variableManager = null)
-            : base((ushort)OpCodes.Jin, machine, objectManager, variableManager)
+            IZMemory contents,
+            IObjectManager objectManager = null)
+            : base((ushort)OpCodes.Jin, machine, contents, objectManager)
         {
         }
 

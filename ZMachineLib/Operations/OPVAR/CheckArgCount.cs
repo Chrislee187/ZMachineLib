@@ -5,7 +5,7 @@ namespace ZMachineLib.Operations.OPVAR
     public sealed class CheckArgCount : ZMachineOperationBase
     {
         public CheckArgCount(ZMachine2 machine)
-            : base((ushort)OpCodes.CheckArgCount, machine)
+            : base((ushort)OpCodes.CheckArgCount, machine, machine.Contents)
         {
         }
 

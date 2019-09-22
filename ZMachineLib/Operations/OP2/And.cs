@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using ZMachineLib.Managers;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP2
 {
@@ -9,16 +9,15 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class And : ZMachineOperationBase
     {
-        public And(ZMachine2 machine,
-            IVariableManager variableManager = null)
-            : base((ushort)OpCodes.And, machine, variableManager: variableManager)
+        public And(IZMemory contents)
+            : base((ushort)OpCodes.And, null, contents)
         {
         }
 
         public override void Execute(List<ushort> operands)
         {
-            var dest = PeekNextByte();
-            VariableManager.StoreWord(dest, (ushort)(operands[0] & operands[1]));
+            var dest = GetNextByte();
+            Contents.VariableManager.StoreWord(dest, (ushort)(operands[0] & operands[1]));
         }
     }
 }

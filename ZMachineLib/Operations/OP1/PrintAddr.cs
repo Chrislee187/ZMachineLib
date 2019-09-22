@@ -10,7 +10,7 @@ namespace ZMachineLib.Operations.OP1
 
         public PrintAddr(ZMachine2 machine,
             IUserIo io)
-            : base((ushort)OpCodes.PrintAddr, machine)
+            : base((ushort)OpCodes.PrintAddr, machine, machine.Contents)
         {
             _io = io;
         }

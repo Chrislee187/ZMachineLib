@@ -6,7 +6,7 @@ namespace ZMachineLib.Operations.OP0
     public sealed class Pop : ZMachineOperationBase
     {
         public Pop(ZMachine2 machine)
-            : base((ushort)OpCodes.Pop, machine)
+            : base((ushort)OpCodes.Pop, machine, machine.Contents)
         {
         }
 

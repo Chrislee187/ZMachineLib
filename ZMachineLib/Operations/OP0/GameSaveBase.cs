@@ -9,7 +9,7 @@ namespace ZMachineLib.Operations.OP0
         protected GameSaveBase(OpCodes opCode,
             ZMachine2 machine,
             IFileIo io)
-            : base((ushort)opCode, machine)
+            : base((ushort)opCode, machine, machine.Contents)
         {
             Io = io;
         }

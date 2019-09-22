@@ -2,6 +2,7 @@
 using System.IO;
 using System.Runtime.Serialization.Json;
 using ZMachineLib.Content;
+using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OP0
 {
@@ -22,13 +23,13 @@ namespace ZMachineLib.Operations.OP0
             }
 
 
-            if (Machine.Header.Version < 5)
+            if (Machine.Contents.Header.Version < 5)
             {
                 Jump(true);
             }
             else
             {
-                VariableManager.StoreWord(PeekNextByte(), 1);
+                Contents.VariableManager.StoreWord(GetNextByte(), 1);
             }
         }
 
@@ -38,7 +39,7 @@ namespace ZMachineLib.Operations.OP0
             stream.Position = 0;
             Machine.ReadParseAddr = br.ReadUInt16();
             Machine.ReadTextAddr = br.ReadUInt16();
-            stream.Read(Machine.Memory, 0, Machine.Header.DynamicMemorySize - 1);
+            stream.Read(Machine.Memory, 0, Machine.Contents.Header.DynamicMemorySize - 1);
             var dcs = new DataContractJsonSerializer(typeof(Stack<ZStackFrame>));
             Machine.Stack = (Stack<ZStackFrame>)dcs.ReadObject(stream);
             stream.Dispose();

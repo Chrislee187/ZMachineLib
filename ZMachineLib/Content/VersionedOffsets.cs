@@ -12,6 +12,11 @@
 
             return of;
         }
+
+        protected VersionedOffsets()
+        {
+            
+        }
         public int Parent { get; protected set; }
         public int Sibling { get; protected set; }
         public int Child { get; protected set; }

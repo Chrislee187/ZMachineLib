@@ -13,7 +13,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         public void SetUp()
         {
             Setup();
-            _op = new ClearAttribute(ZMachine2, ObjectManagerMockery.Object);
+            _op = new ClearAttribute(ZMachine2, MemoryMock, ObjectManagerMockery.Object);
             MockPeekNextByte(_op);
         }
 

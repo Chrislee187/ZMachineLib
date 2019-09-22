@@ -12,24 +12,26 @@ namespace ZMachineLib
         public ushort Code { get; }
         
         protected readonly ZMachine2 Machine;
-        protected readonly IVariableManager VariableManager;
         protected readonly IObjectManager ObjectManager;
         protected readonly IMemoryManager MemoryManager;
 
+        protected IZMemory Contents { get; }
+
         protected ZMachineOperationBase(ushort code,
             ZMachine2 machine,
+            IZMemory contents,
             IObjectManager objectManager = null,
-            IVariableManager variableManager = null,
             IMemoryManager memoryManager = null)
         {
             Code = code;
             Machine = machine;
-            if (Machine != null)
+            Contents = contents;
+
+            if (Contents != null)
             {
-                var contents = machine.Contents;
-                MemoryManager = memoryManager ?? contents?.MemoryManager;
-                ObjectManager = objectManager ?? new ObjectManager(Machine, contents?.Abbreviations, MemoryManager);
-                VariableManager = variableManager ?? contents?.VariableManager;
+
+                MemoryManager = memoryManager ?? Contents?.Manager;
+                ObjectManager = objectManager ?? new ObjectManager(Contents);
             }
         }
 
@@ -41,8 +43,8 @@ namespace ZMachineLib
             {
                 if (storeResult)
                 {
-                    var dest = PeekNextByte();
-                    VariableManager.StoreWord(dest, 0);
+                    var dest = GetNextByte();
+                    Contents.VariableManager.StoreWord(dest, 0);
                 }
 
                 return;
@@ -52,17 +54,17 @@ namespace ZMachineLib
             Log.Write($"New PC: {pc:X5}");
 
             var zsf = new ZStackFrame { PC = pc, StoreResult = storeResult };
-            Machine.Stack.Push(zsf);
+            Contents.Stack.Push(zsf);
 
-            var count = PeekNextByte();
+            var count = GetNextByte();
 
-            if (Machine.Header.Version <= 4)
+            if (Contents.Header.Version <= 4)
             {
                 for (var i = 0; i < count; i++)
                 {
-                    uint address = Machine.Stack.Peek().PC;
-                    zsf.Variables[i] = Machine.Memory.GetUShort((int) address);
-                    Machine.Stack.Peek().PC += 2;
+                    uint address = Contents.Stack.Peek().PC;
+                    zsf.Variables[i] = Contents.Manager.GetUShort((int) address);
+                    Contents.Stack.Peek().PC += 2;
                 }
             }
 
@@ -73,7 +75,7 @@ namespace ZMachineLib
         }
 
 
-        // NOTE: Slightly funky setup for Jump and PeekNextByte
+        // NOTE: Slightly funky setup for Jump and GetNextByte
         // so we can replace them when testing
         private Action<bool> _customJump;
         public Action<bool> Jump
@@ -85,7 +87,7 @@ namespace ZMachineLib
         {
             bool branch;
 
-            var offset = PeekNextByte();
+            var offset = GetNextByte();
             short newOffset;
 
             if ((offset & 0x80) == 0x80)
@@ -123,7 +125,7 @@ namespace ZMachineLib
             }
             else
             {
-                var offset2 = PeekNextByte();
+                var offset2 = GetNextByte();
                 var final = (ushort)((offset & 0x3f) << 8 | offset2);
 
                 // this is a 14-bit number, so set the sign bit properly because we can jump backwards
@@ -134,18 +136,19 @@ namespace ZMachineLib
             }
 
             if (executeBranch)
-                Machine.Stack.Peek().PC += (uint)newOffset;
+                Contents.Stack.Peek().PC += (uint)newOffset;
 
-            Log.Write($"-> { Machine.Stack.Peek().PC:X5}");
+            Log.Write($"-> { Contents.Stack.Peek().PC:X5}");
         }
 
         private Func<byte> _customPeekNextByte;
-        public Func<byte> PeekNextByte
+        public Func<byte> GetNextByte
         {
-            protected get => _customPeekNextByte ?? PeekNextByteImpl;
+            protected get => _customPeekNextByte ?? GeteNextByteImpl;
             set => _customPeekNextByte = value;
         }
-        private byte PeekNextByteImpl()
-            => MemoryManager.Get( Machine.Stack.Peek().PC++ );
+
+        private byte GeteNextByteImpl()
+            => Contents.GetNextByte(); // MemoryManager.Get( Machine.Stack.Peek().PC++ );
     }
 }

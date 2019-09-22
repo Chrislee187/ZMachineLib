@@ -5,15 +5,16 @@ namespace ZMachineLib.Operations.OP1
     public sealed class Dec : ZMachineOperationBase
     {
         public Dec(ZMachine2 machine)
-            : base((ushort)OpCodes.Dec, machine)
+            : base((ushort)OpCodes.Dec, machine, machine.Contents)
         {
         }
 
         public override void Execute(List<ushort> operands)
         {
-            var val = (short)(VariableManager.GetWord((byte)operands[0]) - 1);
+            var variableManager = Contents.VariableManager;
+            var val = (short)(variableManager.GetWord((byte)operands[0]) - 1);
             ushort value = (ushort)val;
-            VariableManager.StoreWord((byte)operands[0], value);
+            variableManager.StoreWord((byte)operands[0], value);
         }
     }
 }

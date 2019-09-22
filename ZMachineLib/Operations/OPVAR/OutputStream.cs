@@ -5,7 +5,7 @@ namespace ZMachineLib.Operations.OPVAR
     public sealed class OutputStream : ZMachineOperationBase
     {
         public OutputStream(ZMachine2 machine)
-            : base((ushort)OpCodes.OutputStream, machine)
+            : base((ushort)OpCodes.OutputStream, machine, machine.Contents)
         {
         }
 

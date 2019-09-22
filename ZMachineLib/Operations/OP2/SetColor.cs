@@ -8,7 +8,7 @@ namespace ZMachineLib.Operations.OP2
 
         public SetColor(ZMachine2 machine,
             IUserIo io)
-            : base((ushort)OpCodes.SetColor, machine)
+            : base((ushort)OpCodes.SetColor, machine, machine.Contents)
         {
             _io = io;
         }

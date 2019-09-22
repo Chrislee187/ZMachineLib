@@ -5,7 +5,7 @@ namespace ZMachineLib.Operations.OPVAR
     public sealed class Call : ZMachineOperationBase
     {
         public Call(ZMachine2 machine)
-            : base((ushort)OpCodes.Call	, machine)
+            : base((ushort)OpCodes.Call	, machine, machine.Contents)
         {
         }
 

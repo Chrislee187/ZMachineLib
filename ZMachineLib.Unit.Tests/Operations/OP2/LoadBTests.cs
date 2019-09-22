@@ -12,7 +12,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         public void SetUp()
         {
             Setup();
-            _op = new LoadB(ZMachine2, VariableManagerMockery.Object);
+            _op = new LoadB(ZMachine2, MemoryMock);
             MockPeekNextByte(_op);
         }
 
@@ -24,7 +24,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
                 .WithValue(index)
                 .Build();
 
-            // TODO: Need a "MemoryManager" so we can mock/expect operations directly on the byte-array
+            // TODO: Need a "Manager" so we can mock/expect operations directly on the byte-array
             _op.Execute(args);
 
             var expectedValue = (byte) 0;

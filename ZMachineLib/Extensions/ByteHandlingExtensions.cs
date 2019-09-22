@@ -7,12 +7,12 @@ namespace ZMachineLib.Extensions
         public static ushort SwapBytes(this ushort value) 
             => (ushort)((value >> 8) | ((value & 0xFF) << 8));
 
-        public static void SetWord(this byte[] buffer, uint address, uint value)
+        public static void SetLong(this byte[] buffer, uint address, uint value)
         {
-            buffer[address + 0] = (byte)(value >> 24);
-            buffer[address + 1] = (byte)(value >> 16);
-            buffer[address + 2] = (byte)(value >> 8);
-            buffer[address + 3] = (byte)(value >> 0);
+            buffer[(ushort) address + 0] = (byte)(value >> 24);
+            buffer[(ushort) address + 1] = (byte)(value >> 16);
+            buffer[(ushort) address + 2] = (byte)(value >> 8);
+            buffer[(ushort) address + 3] = (byte)(value >> 0);
         }
 
         public static void SetWord(this byte[] buffer, uint address, ushort value)
@@ -27,9 +27,9 @@ namespace ZMachineLib.Extensions
         }
 
         public static void StoreAt(this byte[] buffer, int address, params byte[] value)
-            => StoreAt(buffer, (uint) address, value);
+            => Set(buffer, (uint) address, value);
 
-        public static void StoreAt(this byte[] buffer, uint address, params byte[] value)
+        public static void Set(this byte[] buffer, uint address, params byte[] value)
         {
             uint idx = 0;
 

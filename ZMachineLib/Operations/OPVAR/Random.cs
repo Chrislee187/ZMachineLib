@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OPVAR
 {
@@ -6,7 +7,7 @@ namespace ZMachineLib.Operations.OPVAR
     {
         private static System.Random _random = new System.Random();
         public Random(ZMachine2 machine)
-            : base((ushort)OpCodes.Random, machine)
+            : base((ushort)OpCodes.Random, machine, machine.Contents)
         {
         }
 
@@ -19,8 +20,8 @@ namespace ZMachineLib.Operations.OPVAR
             else
                 val = (ushort)(_random.Next(0, operands[0]) + 1);
 
-            var dest = PeekNextByte();
-            VariableManager.StoreWord(dest, val);
+            var dest = GetNextByte();
+            Contents.VariableManager.StoreWord(dest, val);
         }
     }
 }

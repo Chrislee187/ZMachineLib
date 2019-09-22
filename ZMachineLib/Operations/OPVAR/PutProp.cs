@@ -5,7 +5,7 @@ namespace ZMachineLib.Operations.OPVAR
     public sealed class PutProp : ZMachineOperationBase
     {
         public PutProp(ZMachine2 machine)
-            : base((ushort)OpCodes.PutProp, machine)
+            : base((ushort)OpCodes.PutProp, machine, machine.Contents)
         {
         }
 
@@ -19,16 +19,16 @@ namespace ZMachineLib.Operations.OPVAR
             {
                 var propInfo = MemoryManager.Get(prop++);
                 byte len;
-                if (Machine.Header.Version > 3 && (propInfo & 0x80) == 0x80)
+                if (Machine.Contents.Header.Version > 3 && (propInfo & 0x80) == 0x80)
                 {
                     len = (byte)(MemoryManager.Get(prop++) & 0x3f);
                     if (len == 0)
                         len = 64;
                 }
                 else
-                    len = (byte)((propInfo >> ((ushort) Machine.Header.Version <= 3 ? 5 : 6)) + 1);
+                    len = (byte)((propInfo >> ((ushort) Machine.Contents.Header.Version <= 3 ? 5 : 6)) + 1);
 
-                var propNum = (byte)(propInfo & ((ushort) Machine.Header.Version <= 3 ? 0x1f : 0x3f));
+                var propNum = (byte)(propInfo & ((ushort) Machine.Contents.Header.Version <= 3 ? 0x1f : 0x3f));
                 if (propNum == operands[1])
                 {
                     if (len == 1)

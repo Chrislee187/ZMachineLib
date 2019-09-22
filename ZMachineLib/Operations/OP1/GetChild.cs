@@ -13,7 +13,7 @@ namespace ZMachineLib.Operations.OP1
     {
         public GetChild(ZMachine2 machine, 
             IVariableManager variableManager = null)
-            : base((ushort)OpCodes.GetChild, machine, variableManager: variableManager)
+            : base((ushort)OpCodes.GetChild, machine, machine.Contents)
         {
         }
 
@@ -21,16 +21,17 @@ namespace ZMachineLib.Operations.OP1
         {
             var zObj = ObjectManager.GetObject(operands[0]);
 
-            var dest = PeekNextByte();
+            var dest = GetNextByte();
 
             // NOTE: Do we need to store if Child == 0 ???
-            if (Machine.Header.Version <= 3)
+            var variableManager = Contents.VariableManager;
+            if (Machine.Contents.Header.Version <= 3)
             {
-                VariableManager.StoreByte(dest, (byte) zObj.Child);
+                variableManager.StoreByte(dest, (byte) zObj.Child);
             }
             else
             {
-                VariableManager.StoreWord(dest, zObj.Child);
+                variableManager.StoreWord(dest, zObj.Child);
             }
 
             Jump(zObj.Child != 0);

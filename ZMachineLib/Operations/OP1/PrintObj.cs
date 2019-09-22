@@ -9,7 +9,7 @@ namespace ZMachineLib.Operations.OP1
 
         public PrintObj(ZMachine2 machine,
             IUserIo io)
-            : base((ushort)OpCodes.PrintObj, machine)
+            : base((ushort)OpCodes.PrintObj, machine, machine.Contents)
         {
             _io = io;
         }

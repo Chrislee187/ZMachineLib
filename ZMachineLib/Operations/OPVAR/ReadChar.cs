@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OPVAR
 {
@@ -7,7 +8,7 @@ namespace ZMachineLib.Operations.OPVAR
         private readonly IUserIo _io;
 
         public ReadChar(ZMachine2 machine, IUserIo io)
-            : base((ushort)OpCodes.ReadChar, machine)
+            : base((ushort)OpCodes.ReadChar, machine, machine.Contents)
         {
             _io = io;
         }
@@ -16,9 +17,9 @@ namespace ZMachineLib.Operations.OPVAR
         {
             var key = _io.ReadChar();
 
-            var dest = PeekNextByte();
+            var dest = GetNextByte();
             byte value = (byte)key;
-            VariableManager.StoreByte(dest, value);
+            Contents.VariableManager.StoreByte(dest, value);
         }
     }
 }

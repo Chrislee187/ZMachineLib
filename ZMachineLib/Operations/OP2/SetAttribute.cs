@@ -5,7 +5,7 @@ namespace ZMachineLib.Operations.OP2
     public sealed class SetAttribute : ZMachineOperationBase
     {
         public SetAttribute(ZMachine2 machine)
-            : base((ushort)OpCodes.SetAttribute, machine)
+            : base((ushort)OpCodes.SetAttribute, machine, machine.Contents)
         {
         }
 

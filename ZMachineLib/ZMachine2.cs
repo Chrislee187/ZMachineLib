@@ -4,6 +4,7 @@ using System.IO;
 using ZMachineLib.Operations;
 using System.Text.Json;
 using ZMachineLib.Content;
+using ZMachineLib.Managers;
 using ZMachineLib.Operations.OPExtended;
 
 namespace ZMachineLib
@@ -11,10 +12,9 @@ namespace ZMachineLib
     public class ZMachine2
     {
         internal byte[] Memory;
+        public IZMemory Contents { get; private set; }
+
         internal Stack<ZStackFrame> Stack = new Stack<ZStackFrame>();
-
-
-        public ZMachineContents Contents { get; set; }
 
         internal ushort ReadTextAddr;
         internal ushort ReadParseAddr;
@@ -28,15 +28,11 @@ namespace ZMachineLib
         private readonly IFileIo _fileIo;
         private KindExtOperations _extendedOperations;
         private Operations.Operations _operations;
-        public ZHeader Header => Contents.Header;
-        internal VersionedOffsets VersionedOffsets;
 
         public ZMachine2(IUserIo io, IFileIo fileIo)
         {
             _fileIo = fileIo;
             _io = io;
-
-            VersionedOffsets = new VersionedOffsets();
         }
 
         public void RunFile(Stream stream, bool terminateOnInput = false)
@@ -61,7 +57,7 @@ namespace ZMachineLib
             while (Running)
             {
                 Log.Write($"PC: {Stack.Peek().PC:X5}");
-                var opCode = Memory[Stack.Peek().PC++];
+                var opCode = Contents.GetNextByte(); 
                 IOperation operation;
                 OpCodes opCodeEnum;
                 (opCode, opCodeEnum, operation) = GetOperation(opCode);
@@ -84,7 +80,7 @@ namespace ZMachineLib
             if (opCode == (byte)OpCodes.Extended) // 0OP:190 - special op, indicates next byte contains Extended Op
             {
                 opCodeEnum = OpCodes.Extended;
-                opCode = Memory[Stack.Peek().PC++];
+                opCode = Contents.GetNextByte();
                 _extendedOperations.TryGetValue((KindExtOpCodes)(opCode & 0x1f), out operation);
                 // TODO: hack to make this a VAR opcode...
                 opCode |= 0xc0;
@@ -104,7 +100,7 @@ namespace ZMachineLib
         private void LoadFile(Stream stream)
         {
             Memory = Read(stream);
-            Contents = new ZMachineContents(Memory, Stack);
+            Contents = new ZMemory(Memory, Stack);
 
             SetupNewOperations();
 #if DEBUG
@@ -113,25 +109,24 @@ namespace ZMachineLib
 
             SetupScreenParams();
 
-            VersionedOffsets = VersionedOffsets.For(Header.Version);
 
-            var zsf = new ZStackFrame {PC = Header.Pc };
+            var zsf = new ZStackFrame {PC = Contents.Header.Pc };
             Stack.Push(zsf);
         }
 
         private void SetupScreenParams()
         {
-            // TODO: These should be part of the zHeader????
-            Memory[0x01] = 0x01; // Sets Flags1 to Status Line = hours:mins
-            Memory[0x20] = _io.ScreenHeight; 
-            Memory[0x21] = _io.ScreenWidth;
+            // NOTE: These don't seem to do anything on a standard console window
+            Contents.Manager.Set(0, 0x01);
+            Contents.Manager.Set(0x20, _io.ScreenHeight);
+            Contents.Manager.Set(0x21, _io.ScreenWidth);
         }
 
 #if DEBUG
         private void DumpHeader()
         {
             var jsonSerializerOptions = new JsonSerializerOptions {WriteIndented = true};
-            Console.WriteLine(JsonSerializer.Serialize(Header, jsonSerializerOptions));
+            Console.WriteLine(JsonSerializer.Serialize(Contents.Header, jsonSerializerOptions));
         }
 #endif
 

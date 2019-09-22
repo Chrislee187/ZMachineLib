@@ -5,7 +5,7 @@ using ZMachineLib.Operations.OP2;
 // ReSharper disable PossibleInvalidOperationException
 namespace ZMachineLib.Unit.Tests.Operations.OP2
 {
-    public class JlTests
+    public class JlTests : OperationsTestsBase
     {
         private Jl _op;
         private bool? _jumped;
@@ -15,7 +15,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         {
             var zMachine2 = new ZMachine2(null, null);
             _jumped = null;
-            _op = new Jl(zMachine2);
+            _op = new Jl(zMachine2, MemoryMock);
             _op.Jump = b => _jumped = b;
 
         }

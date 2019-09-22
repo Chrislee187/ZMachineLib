@@ -24,13 +24,13 @@ namespace ZDump
 
             var bytes = Read(File.OpenRead(filename));
 
-            var contents = new ZMachineContents(bytes, null);
+            var contents = new ZMemory(bytes, null);
 
             WriteContents(filename, contents);
 
         }
 
-        private static void WriteContents(string filename, ZMachineContents contents)
+        private static void WriteContents(string filename, ZMemory contents)
         {
             WriteHeading("Header");
             WriteHeader(filename, contents);
@@ -40,7 +40,7 @@ namespace ZDump
             WriteObjects(contents);
         }
 
-        private static void WriteObjects(ZMachineContents contents)
+        private static void WriteObjects(ZMemory contents)
         {
             var objs = contents.ObjectTree;
             WriteHeading($"Object Tree ({objs.Count} objects)");
@@ -87,7 +87,7 @@ namespace ZDump
             return sb.ToString();
         }
 
-        private static void WriteDictionary(ZMachineContents contents)
+        private static void WriteDictionary(ZMemory contents)
         {
             WriteHeading("Dictionary");
 
@@ -123,7 +123,7 @@ namespace ZDump
             Console.WriteLine(header);
             Console.ForegroundColor = origColour;
         }
-        private static void WriteHeader(string filename, ZMachineContents contents)
+        private static void WriteHeader(string filename, ZMemory contents)
         {
             var h = contents.Header;
 
