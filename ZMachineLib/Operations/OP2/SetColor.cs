@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP2
 {
@@ -6,9 +7,9 @@ namespace ZMachineLib.Operations.OP2
     {
         private IUserIo _io;
 
-        public SetColor(ZMachine2 machine,
+        public SetColor(IZMemory contents,
             IUserIo io)
-            : base((ushort)OpCodes.SetColor, machine, machine.Contents)
+            : base((ushort)OpCodes.SetColor, null, contents)
         {
             _io = io;
         }

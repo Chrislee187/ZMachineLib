@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
-using ZMachineLib.Managers;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP2
 {
     public sealed class Mul : ZMachineOperationBase
     {
-        public Mul(ZMachine2 machine)
-            : base((ushort)OpCodes.Mul, machine, machine.Contents)
+        public Mul(IZMemory contents)
+            : base((ushort)OpCodes.Mul, null, contents)
         {
         }
 

@@ -1,3 +1,4 @@
+using Moq;
 using NUnit.Framework;
 using ZMachineLib.Content;
 using ZMachineLib.Operations.OP2;
@@ -16,7 +17,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         public void SetUp()
         {
             Setup();
-            _op = new Jin(ZMachine2, MemoryMock, objectManager: ObjectManagerMockery.Object);
+            _op = new Jin(MemoryMock);
             MockJump(_op);
         }
 
@@ -24,15 +25,17 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         public void Should_jump_if_objectA_is_child_of_objectB()
         {
             ushort parent = 1234;
-            ObjectManagerMockery
-                .SetupSequenceGetObject(new ZMachineObject
-                {
-                    Parent = parent
-                });
 
-            _op.Execute(new OpArgBuilder()
-                .WithValues(1, parent)
-                .Build());
+            // TODO: Create an ObjectTreeMockery for this;
+            _objectTreeMock
+                .Setup(m => m[It.IsAny<ushort>()])
+                .Returns(new ZMachineObjectBuilder().WithParent(parent).Build());
+
+            var operands = new OpArgBuilder()
+                .WithAnyValue()
+                .WithValue(parent)
+                .Build();
+            _op.Execute(operands);
 
             JumpedWith(true);
         }
@@ -40,17 +43,16 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         [Test]
         public void Should_not_jump_if_objectA_is_NOT_child_of_objectB()
         {
-            const ushort address = 1111;
             const ushort parent = 1234;
             const ushort notParent = 4321;
 
-            ObjectManagerMockery
-                .SetupSequenceGetObject(new ZMachineObjectBuilder()
-                    .WithAddress(address)
-                    .WithParent(parent).Build());
+            // TODO: Create an ObjectTreeMockery for this;
+            _objectTreeMock
+                .Setup(m => m[It.IsAny<ushort>()])
+                .Returns(new ZMachineObjectBuilder().WithParent(parent).Build());
 
             _op.Execute(new OpArgBuilder()
-                .WithValues(address, notParent)
+                .WithValues(parent, notParent)
                 .Build());
 
             JumpedWith(false);

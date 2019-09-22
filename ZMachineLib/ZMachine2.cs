@@ -138,14 +138,9 @@ namespace ZMachineLib
             return buffer;
         }
 
-        public IOperation RTrue { get; private set; }
-        public IOperation RFalse { get; private set; }
-
         private void SetupNewOperations()
         {
             _operations = new Operations.Operations(this, _io, _fileIo);
-            RTrue = _operations[OpCodes.RTrue];
-            RFalse = _operations[OpCodes.RFalse];
             _extendedOperations = new KindExtOperations(this, _operations);
         }
 

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using ZMachineLib.Content;
-using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OP2
 {
@@ -9,16 +8,14 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class Jin : ZMachineOperationBase
     {
-        public Jin(ZMachine2 machine,
-            IZMemory contents,
-            IObjectManager objectManager = null)
-            : base((ushort)OpCodes.Jin, machine, contents, objectManager)
+        public Jin(IZMemory contents)
+            : base((ushort)OpCodes.Jin, null, contents)
         {
         }
 
         public override void Execute(List<ushort> operands)
         {
-            var zObj = ObjectManager.GetObject(operands[0]);
+            var zObj = Contents.ObjectTree[operands[0]]; // ObjectManager.GetObject(operands[0]);
 
             Jump(zObj.Parent == operands[1]);
         }

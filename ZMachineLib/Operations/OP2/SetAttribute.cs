@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP2
 {
     public sealed class SetAttribute : ZMachineOperationBase
     {
-        public SetAttribute(ZMachine2 machine)
-            : base((ushort)OpCodes.SetAttribute, machine, machine.Contents)
+        public SetAttribute(ZMachine2 machine, IZMemory contents)
+            : base((ushort)OpCodes.SetAttribute, null, contents)
         {
         }
 
@@ -18,6 +19,7 @@ namespace ZMachineLib.Operations.OP2
                 return;
 
             var zObj = ObjectManager.GetObject(obj);
+//            var zObj = Contents.ObjectTree[obj];
             zObj.SetAttribute(attr);
         }
     }

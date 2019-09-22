@@ -10,9 +10,8 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class LoadB : ZMachineOperationBase
     {
-        public LoadB(ZMachine2 machine,
-            IZMemory contents)
-            : base((ushort)OpCodes.LoadB, machine, contents)
+        public LoadB(IZMemory contents)
+            : base((ushort)OpCodes.LoadB, null, contents)
         {
         }
 

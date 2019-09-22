@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP2
 {
@@ -8,8 +9,8 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class TestAttribute : ZMachineOperationBase
     {
-        public TestAttribute(ZMachine2 machine)
-            : base((ushort)OpCodes.TestAttribute, machine, machine.Contents)
+        public TestAttribute(IZMemory contents)
+            : base((ushort)OpCodes.TestAttribute, null, contents)
         {
         }
 
@@ -17,7 +18,7 @@ namespace ZMachineLib.Operations.OP2
         {
             var obj = operands[0];
             var attr = operands[1];
-            var zObj = ObjectManager.GetObject(obj);
+            var zObj = Contents.ObjectTree[obj];;
 
             Jump(zObj.TestAttribute(attr));
         }

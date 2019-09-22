@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
 using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OP2
 {
     public sealed class Store : ZMachineOperationBase
     {
-        public Store(ZMachine2 machine)
-            : base((ushort)OpCodes.Store, machine, machine.Contents)
+        public Store(IZMemory contents)
+            : base((ushort)OpCodes.Store, null, contents)
         {
         }
 

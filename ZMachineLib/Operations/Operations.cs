@@ -16,33 +16,33 @@ namespace ZMachineLib.Operations
             IUserIo io, IFileIo fileIo)
         {
             // OP2
-            _operations.Add(OpCodes.Je, new Je(machine, machine.Contents));
-            _operations.Add(OpCodes.Jl, new Jl(machine, machine.Contents));
-            _operations.Add(OpCodes.Jg, new Jg(machine, machine.Contents));
-            _operations.Add(OpCodes.DecCheck, new DecCheck(machine, machine.Contents));
-            _operations.Add(OpCodes.IncCheck, new IncCheck(machine, machine.Contents));
-            _operations.Add(OpCodes.Jin, new Jin(machine, machine.Contents));
-            _operations.Add(OpCodes.Test, new Test(machine, machine.Contents));
-            _operations.Add(OpCodes.Or, new Or(machine, machine.Contents));
+            _operations.Add(OpCodes.Je, new Je(machine.Contents));
+            _operations.Add(OpCodes.Jl, new Jl(machine.Contents));
+            _operations.Add(OpCodes.Jg, new Jg(machine.Contents));
+            _operations.Add(OpCodes.DecCheck, new DecCheck(machine.Contents));
+            _operations.Add(OpCodes.IncCheck, new IncCheck(machine.Contents));
+            _operations.Add(OpCodes.Jin, new Jin(machine.Contents));
+            _operations.Add(OpCodes.Test, new Test(machine.Contents));
+            _operations.Add(OpCodes.Or, new Or(machine.Contents));
             _operations.Add(OpCodes.And, new And(machine.Contents));
-            _operations.Add(OpCodes.TestAttribute, new TestAttribute(machine));
-            _operations.Add(OpCodes.SetAttribute, new SetAttribute(machine));
+            _operations.Add(OpCodes.TestAttribute, new TestAttribute(machine.Contents));
+            _operations.Add(OpCodes.SetAttribute, new SetAttribute(machine, machine.Contents));
             _operations.Add(OpCodes.ClearAttribute, new ClearAttribute(machine, machine.Contents));
-            _operations.Add(OpCodes.Store, new Store(machine));
-            _operations.Add(OpCodes.InsertObj, new InsertObj(machine));
-            _operations.Add(OpCodes.LoadW, new LoadW(machine));
-            _operations.Add(OpCodes.LoadB, new LoadB(machine, machine.Contents));
+            _operations.Add(OpCodes.Store, new Store(machine.Contents));
+            _operations.Add(OpCodes.InsertObj, new InsertObj(machine, machine.Contents));
+            _operations.Add(OpCodes.LoadW, new LoadW(machine.Contents));
+            _operations.Add(OpCodes.LoadB, new LoadB(machine.Contents));
             _operations.Add(OpCodes.GetProp, new GetProp(machine));
             _operations.Add(OpCodes.GetPropAddr, new GetPropAddr(machine));
             _operations.Add(OpCodes.GetNextProp, new GetNextProp(machine));
             _operations.Add(OpCodes.Add, new Add(machine.Contents));
-            _operations.Add(OpCodes.Sub, new Sub(machine, machine.Contents));
-            _operations.Add(OpCodes.Mul, new Mul(machine));
-            _operations.Add(OpCodes.Div, new Div(machine, machine.Contents));
-            _operations.Add(OpCodes.Mod, new Mod(machine));
-            _operations.Add(OpCodes.Call2S, new Call2S(machine));
-            _operations.Add(OpCodes.Call2N, new Call2N(machine));
-            _operations.Add(OpCodes.SetColor, new SetColor(machine, io));
+            _operations.Add(OpCodes.Sub, new Sub(machine.Contents));
+            _operations.Add(OpCodes.Mul, new Mul(machine.Contents));
+            _operations.Add(OpCodes.Div, new Div(machine.Contents));
+            _operations.Add(OpCodes.Mod, new Mod(machine.Contents));
+            _operations.Add(OpCodes.Call2S, new Call2S(machine.Contents));
+            _operations.Add(OpCodes.Call2N, new Call2N(machine.Contents));
+            _operations.Add(OpCodes.SetColor, new SetColor(machine.Contents, io));
 
             // OP1
             _operations.Add(OpCodes.Jz, new Jz(machine));
@@ -80,7 +80,7 @@ namespace ZMachineLib.Operations
             _operations.Add(OpCodes.Restore, new Restore(machine, fileIo));
             _operations.Add(OpCodes.Restart, new Restart(machine));
             _operations.Add(OpCodes.RetPopped, new RetPopped(machine));
-            _operations.Add(OpCodes.Pop, new Pop(machine));
+            _operations.Add(OpCodes.Pop, new Pop(machine, machine.Contents));
             _operations.Add(OpCodes.Quit, new Quit(machine, io));
             _operations.Add(OpCodes.NewLine, new Newline(machine, io));
             _operations.Add(OpCodes.ShowStatus, new ShowStatus(machine, io));

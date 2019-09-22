@@ -8,9 +8,8 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class Or : ZMachineOperationBase
     {
-        public Or(ZMachine2 machine,
-            IZMemory contents)
-            : base((ushort)OpCodes.Or, machine, contents)
+        public Or(IZMemory contents)
+            : base((ushort)OpCodes.Or, null, contents)
         {
         }
 

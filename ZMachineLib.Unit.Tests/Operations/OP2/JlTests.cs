@@ -15,7 +15,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         {
             var zMachine2 = new ZMachine2(null, null);
             _jumped = null;
-            _op = new Jl(zMachine2, MemoryMock);
+            _op = new Jl(MemoryMock);
             _op.Jump = b => _jumped = b;
 
         }

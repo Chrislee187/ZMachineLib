@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using ZMachineLib.Managers;
+using ZMachineLib.Operations;
+using ZMachineLib.Operations.OPExtended;
 
 namespace ZMachineLib.Content
 {
@@ -10,7 +12,7 @@ namespace ZMachineLib.Content
         ZHeader Header { get; }
         ZDictionary Dictionary { get; }
         ZAbbreviations Abbreviations { get; }
-        ZObjectTree ObjectTree { get; }
+        IReadOnlyDictionary<ushort, ZMachineObject> ObjectTree { get; }
         IMemoryManager Manager { get; }
         IVariableManager VariableManager { get; }
         OperandManager OperandManager { get; }
@@ -26,7 +28,7 @@ namespace ZMachineLib.Content
         public ZHeader Header { get; }
         public ZDictionary Dictionary { get; }
         public ZAbbreviations Abbreviations { get; }
-        public ZObjectTree ObjectTree { get; }
+        public IReadOnlyDictionary<ushort, ZMachineObject> ObjectTree { get; }
         public IMemoryManager Manager { get; }
         public IVariableManager VariableManager { get; }
         public OperandManager OperandManager { get; }
@@ -66,6 +68,33 @@ namespace ZMachineLib.Content
         public byte GetNextByte()
         {
             return Memory[Stack.Peek().PC++];
+        }
+        private KindExtOperations _extendedOperations;
+        private Operations.Operations _operations;
+        
+        public (byte opCode, OpCodes opCodeEnum, IOperation operation) GetOperation(byte opCode)
+        {
+            //NOTE: http://inform-fiction.org/zmachine/standards/z1point1/sect14.html
+            IOperation operation;
+            OpCodes opCodeEnum;
+            if (opCode == (byte)OpCodes.Extended) // 0OP:190 - special op, indicates next byte contains Extended Op
+            {
+                opCodeEnum = OpCodes.Extended;
+                opCode = GetNextByte();
+                _extendedOperations.TryGetValue((KindExtOpCodes)(opCode & 0x1f), out operation);
+                // TODO: hack to make this a VAR opcode...
+                opCode |= 0xc0;
+
+                Log.Write($" Ext ");
+            }
+            else
+            {
+                opCodeEnum = opCode.ToOpCode();
+
+                _operations.TryGetValue(opCodeEnum, out operation);
+            }
+
+            return (opCode, opCodeEnum, operation);
         }
     }
 }

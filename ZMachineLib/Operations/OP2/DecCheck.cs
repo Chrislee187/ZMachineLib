@@ -12,11 +12,8 @@ namespace ZMachineLib.Operations.OP2
     /// 
     public sealed class DecCheck : ZMachineOperationBase
     {
-        public DecCheck(ZMachine2 machine,
-            IZMemory contents,
-            IObjectManager objectManager = null,
-            IVariableManager variableManager = null)
-            : base((ushort)OpCodes.DecCheck, null, contents, objectManager)
+        public DecCheck(IZMemory contents)
+            : base((ushort)OpCodes.DecCheck, null, contents, null)
         {
         }
 

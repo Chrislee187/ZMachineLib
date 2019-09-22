@@ -5,9 +5,8 @@ namespace ZMachineLib.Operations.OP2
 {
     public sealed class Je : ZMachineOperationBase
     {
-        public Je(ZMachine2 machine, 
-            IZMemory contents)
-            : base((ushort)OpCodes.Je, machine, contents)
+        public Je(IZMemory contents)
+            : base((ushort)OpCodes.Je, null, contents)
         {
         }
 

@@ -9,8 +9,7 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class Sub : ZMachineOperationBase
     {
-        public Sub(ZMachine2 machine,
-            IZMemory contents)
+        public Sub(IZMemory contents)
             : base((ushort)OpCodes.Sub, null, contents)
         {
         }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP2
 {
@@ -8,8 +9,8 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class Call2N : ZMachineOperationBase
     {
-        public Call2N(ZMachine2 machine)
-            : base((ushort)OpCodes.Call2N, machine, machine.Contents)
+        public Call2N(IZMemory contents)
+            : base((ushort)OpCodes.Call2N, null, contents)
         {
         }
 

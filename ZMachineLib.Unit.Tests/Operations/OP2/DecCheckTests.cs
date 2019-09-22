@@ -12,7 +12,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         public void SetUp()
         {
             Setup();
-            _op = new DecCheck(ZMachine2, MemoryMock, variableManager: VariableManagerMockery.Object);
+            _op = new DecCheck(MemoryMock);
             MockJump(_op);
         }
 

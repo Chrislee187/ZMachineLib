@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
-using ZMachineLib.Managers;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP2
 {
     public sealed class Mod : ZMachineOperationBase
     {
-        public Mod(ZMachine2 machine)
-            : base((ushort)OpCodes.Mod, machine, machine.Contents)
+        public Mod(IZMemory contents)
+            : base((ushort)OpCodes.Mod, null, contents)
         {
         }
 

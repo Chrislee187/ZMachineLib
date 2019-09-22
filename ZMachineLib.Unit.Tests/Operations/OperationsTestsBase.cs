@@ -17,20 +17,33 @@ namespace ZMachineLib.Unit.Tests.Operations
         protected List<ushort> AnyArgs = new OpArgBuilder().Build();
         protected const ushort AnyValue = 1;
         protected IZMemory MemoryMock;
+        protected Mock<IReadOnlyDictionary<ushort, ZMachineObject>> _objectTreeMock;
+
         protected void Setup()
         {
             ZMachine2 = new ZMachine2(null, null);
             VariableManagerMockery = new VariableManagerMockery();
             ObjectManagerMockery = new ObjectManagerMockery();
 
+            _objectTreeMock = new Mock<IReadOnlyDictionary<ushort, ZMachineObject>>();
+            _objectTreeMock
+                .Setup(m => m[It.IsAny<ushort>()])
+                .Returns(new ZMachineObjectBuilder().Build());
+
             var memoryMock = new Mock<IZMemory>();
-            memoryMock.SetupGet(m => m.VariableManager)
+            memoryMock
+                .SetupGet(m => m.VariableManager)
                 .Returns(VariableManagerMockery.Object);
 
-            memoryMock.SetupGet(m => m.Manager)
+            memoryMock
+                .SetupGet(m => m.Manager)
                 .Returns(new Mock<IMemoryManager>().Object);
 
+            memoryMock
+                .SetupGet(m => m.ObjectTree)
+                .Returns(_objectTreeMock.Object);
             MemoryMock = memoryMock.Object;
+
         }
         protected void MockJump(IOperation op)
         {

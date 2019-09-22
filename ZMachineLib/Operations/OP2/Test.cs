@@ -8,8 +8,8 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class Test : ZMachineOperationBase
     {
-        public Test(ZMachine2 machine, IZMemory contents)
-            : base((ushort)OpCodes.Test, machine, contents)
+        public Test(IZMemory contents)
+            : base((ushort)OpCodes.Test, null, contents)
         {
         }
 

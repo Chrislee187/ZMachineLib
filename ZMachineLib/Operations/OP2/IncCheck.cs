@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using ZMachineLib.Content;
-using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OP2
 {
@@ -9,10 +8,8 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class IncCheck : ZMachineOperationBase
     {
-        public IncCheck(ZMachine2 machine,
-            IZMemory contents,
-            IObjectManager objectManager = null)
-            : base((ushort)OpCodes.IncCheck, machine, contents, objectManager: objectManager)
+        public IncCheck(IZMemory contents)
+            : base((ushort)OpCodes.IncCheck, null, contents)
         {
         }
 

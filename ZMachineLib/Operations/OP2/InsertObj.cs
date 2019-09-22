@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP2
 {
@@ -11,8 +12,8 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class InsertObj : ZMachineOperationBase
     {
-        public InsertObj(ZMachine2 machine)
-            : base((ushort)OpCodes.InsertObj, machine, machine.Contents)
+        public InsertObj(ZMachine2 machine, IZMemory contents)
+            : base((ushort)OpCodes.InsertObj, machine, contents)
         {
         }
 

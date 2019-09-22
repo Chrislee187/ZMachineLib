@@ -110,14 +110,16 @@ namespace ZMachineLib
                 if (offset == 0 && executeBranch)
                 {
                     Log.Write(" RFALSE ");
-                    Machine.RFalse.Execute(null);
+                    OpCodeRBoolean(false);
+//                    Machine.RFalse.Execute(null);
                     return;
                 }
 
                 if (offset == 1 && executeBranch)
                 {
                     Log.Write(" RTRUE ");
-                    Machine.RTrue.Execute(null);
+                    OpCodeRBoolean(true);
+//                    Machine.RTrue.Execute(null);
                     return;
                 }
 
@@ -141,14 +143,22 @@ namespace ZMachineLib
             Log.Write($"-> { Contents.Stack.Peek().PC:X5}");
         }
 
+        private void OpCodeRBoolean(bool val)
+        {
+            if (Contents.Stack.Pop().StoreResult)
+            {
+                Contents.VariableManager.StoreWord(GetNextByte(), (ushort) (val ? 1 : 0));
+            }
+        }
+
         private Func<byte> _customPeekNextByte;
         public Func<byte> GetNextByte
         {
-            protected get => _customPeekNextByte ?? GeteNextByteImpl;
+            protected get => _customPeekNextByte ?? GetNextByteImpl;
             set => _customPeekNextByte = value;
         }
 
-        private byte GeteNextByteImpl()
+        private byte GetNextByteImpl()
             => Contents.GetNextByte(); // MemoryManager.Get( Machine.Stack.Peek().PC++ );
     }
 }

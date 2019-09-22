@@ -15,6 +15,11 @@ namespace ZMachineLib.Unit.Tests
             _values.Add(value);
             return this;
         }
+        public OpArgBuilder WithAnyValue()
+        {
+            _values.Add(0);
+            return this;
+        }
         public OpArgBuilder WithValues(params ushort[] values)
         {
             _values.AddRange(values);
