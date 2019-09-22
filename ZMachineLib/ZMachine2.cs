@@ -29,8 +29,8 @@ namespace ZMachineLib
         private readonly IFileIo _fileIo;
         private KindExtOperations _extendedOperations;
         private Operations.Operations _operations;
-        private readonly VariableManager _variableManager;
-        private readonly MemoryManager _memoryManager;
+        private VariableManager _variableManager;
+        private MemoryManager _memoryManager;
         private IOperandManager _operandManager;
         public ZHeader Header { get; private set; }
         internal VersionedOffsets VersionedOffsets;
@@ -39,8 +39,7 @@ namespace ZMachineLib
         {
             _fileIo = fileIo;
             _io = io;
-            _memoryManager = new MemoryManager(this);
-            _variableManager = new VariableManager(this, _memoryManager);
+
             VersionedOffsets = new VersionedOffsets();
         }
 
@@ -110,6 +109,8 @@ namespace ZMachineLib
         {
             Memory = Read(stream);
             Contents = new ZMachineContents(Memory);
+            _memoryManager = new MemoryManager(Memory);
+            _variableManager = new VariableManager(this, _memoryManager);
             _operandManager = new OperandManager(_memoryManager, _variableManager, Stack);
             Header = Contents.Header; // new ZHeader(Memory[..0x3f]);
             Abbreviations = Contents.Abbreviations;

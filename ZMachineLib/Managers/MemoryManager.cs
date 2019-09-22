@@ -15,25 +15,26 @@ namespace ZMachineLib.Managers
 
     public class MemoryManager : IMemoryManager
     {
-        private readonly ZMachine2 _machine;
+        private readonly byte[] _memory;
 
-        public MemoryManager(ZMachine2 machine)
+        public MemoryManager(byte[] memory)
         {
-            _machine = machine;
+            _memory = memory;
         }
 
 
-        public byte Get(uint address) => _machine.Memory[address];
-        public byte Get(int address) => _machine.Memory[address];
-        public byte Get(ushort address) => _machine.Memory[address];
-        public ushort GetUShort(int address) => _machine.Memory.GetUShort(address);
+        public byte Get(uint address) => _memory[address];
+        public byte Get(int address) => _memory[address];
+        public byte Get(ushort address) => _memory[address];
+        public ushort GetUShort(int address) => _memory.GetUShort(address);
 
-        public void Set(int address, byte value) => _machine.Memory[address] = value;
-        public void Set(ushort address, byte value) => _machine.Memory[address] = value;
+        public void Set(int address, byte value) => _memory[address] = value;
+        public void Set(ushort address, byte value) => _memory[address] = value;
+
         public void Set(ushort address, ushort value)
         {
-            _machine.Memory[address] = (byte)(value >> 8);
-            _machine.Memory[address+1] = (byte)(value >> 0);
+            Set(address, (byte)(value >> 8));
+            Set(address + 1, (byte)(value >> 0));
         }
     }
 }
