@@ -12,7 +12,7 @@ namespace ZMachineLib.Content
         ZHeader Header { get; }
         ZDictionary Dictionary { get; }
         ZAbbreviations Abbreviations { get; }
-        IReadOnlyDictionary<ushort, ZMachineObject> ObjectTree { get; }
+        IZObjectTree ObjectTree { get; }
         IMemoryManager Manager { get; }
         IVariableManager VariableManager { get; }
         OperandManager OperandManager { get; }
@@ -28,7 +28,7 @@ namespace ZMachineLib.Content
         public ZHeader Header { get; }
         public ZDictionary Dictionary { get; }
         public ZAbbreviations Abbreviations { get; }
-        public IReadOnlyDictionary<ushort, ZMachineObject> ObjectTree { get; }
+        public IZObjectTree ObjectTree { get; }
         public IMemoryManager Manager { get; }
         public IVariableManager VariableManager { get; }
         public OperandManager OperandManager { get; }

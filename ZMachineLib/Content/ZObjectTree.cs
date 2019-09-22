@@ -7,9 +7,13 @@ using ZMachineLib.Managers;
 
 namespace ZMachineLib.Content
 {
-    public class ZObjectTree : IReadOnlyDictionary<ushort, ZMachineObject>
+    public interface IZObjectTree : IReadOnlyDictionary<ushort, IZMachineObject>
     {
-        private readonly Dictionary<ushort, ZMachineObject> _dict;
+        IZMachineObject GetOrDefault(ushort key);
+    }
+    public class ZObjectTree : IZObjectTree
+    {
+        private readonly Dictionary<ushort, IZMachineObject> _dict;
 
         // ReSharper disable once UnusedAutoPropertyAccessor.Local
         private IReadOnlyList<ushort> DefaultPropAddresses { get; set; }
@@ -25,7 +29,8 @@ namespace ZMachineLib.Content
             var lastObject = false;
 
             ushort objNumber = 1;
-            _dict = new Dictionary<ushort, ZMachineObject>();
+            _dict = new Dictionary<ushort, IZMachineObject>();
+
             while (!lastObject && objNumber < 255)
             {
                 // Objects end when the properties start!
@@ -44,6 +49,20 @@ namespace ZMachineLib.Content
             }
 
         }
+
+        public IZMachineObject GetOrDefault(ushort key)
+        {
+            if (_dict.ContainsKey(key))
+            {
+                return _dict[key];
+            }
+            else
+            {
+                return ZMachineObject.Object0;
+            }
+        }
+
+
         #region IReadOnlyDictionary<>
 
         private (IReadOnlyList<ushort> defaultProps, ushort bytesRead) GetDefaultProps(Span<byte> data)
@@ -60,7 +79,7 @@ namespace ZMachineLib.Content
             return (defaultProps, propCountV3 * 2);
         }
 
-        public IEnumerator<KeyValuePair<ushort, ZMachineObject>> GetEnumerator()
+        public IEnumerator<KeyValuePair<ushort, IZMachineObject>> GetEnumerator()
         {
             return _dict.GetEnumerator();
         }
@@ -77,16 +96,16 @@ namespace ZMachineLib.Content
             return _dict.ContainsKey(key);
         }
 
-        public bool TryGetValue(ushort key, out ZMachineObject value)
+        public bool TryGetValue(ushort key, out IZMachineObject value)
         {
             return _dict.TryGetValue(key, out value);
         }
 
-        public ZMachineObject this[ushort key] => _dict[key];
+        public IZMachineObject this[ushort key] => GetOrDefault(key);
 
         public IEnumerable<ushort> Keys => _dict.Keys;
 
-        public IEnumerable<ZMachineObject> Values => _dict.Values; 
+        public IEnumerable<IZMachineObject> Values => _dict.Values; 
         #endregion
     }
 }

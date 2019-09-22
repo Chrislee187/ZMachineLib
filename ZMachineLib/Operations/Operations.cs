@@ -26,8 +26,8 @@ namespace ZMachineLib.Operations
             _operations.Add(OpCodes.Or, new Or(machine.Contents));
             _operations.Add(OpCodes.And, new And(machine.Contents));
             _operations.Add(OpCodes.TestAttribute, new TestAttribute(machine.Contents));
-            _operations.Add(OpCodes.SetAttribute, new SetAttribute(machine, machine.Contents));
-            _operations.Add(OpCodes.ClearAttribute, new ClearAttribute(machine, machine.Contents));
+            _operations.Add(OpCodes.SetAttribute, new SetAttribute(machine.Contents));
+            _operations.Add(OpCodes.ClearAttribute, new ClearAttribute(machine.Contents));
             _operations.Add(OpCodes.Store, new Store(machine.Contents));
             _operations.Add(OpCodes.InsertObj, new InsertObj(machine, machine.Contents));
             _operations.Add(OpCodes.LoadW, new LoadW(machine.Contents));

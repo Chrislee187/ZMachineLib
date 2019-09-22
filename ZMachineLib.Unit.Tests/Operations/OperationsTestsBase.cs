@@ -12,23 +12,19 @@ namespace ZMachineLib.Unit.Tests.Operations
     {
         protected VariableManagerMockery VariableManagerMockery;
         protected ObjectManagerMockery ObjectManagerMockery;
+        protected ObjectTreeMockery ObjectTreeMockery;
         protected ZMachine2 ZMachine2;
         private bool? _jumped;
         protected List<ushort> AnyArgs = new OpArgBuilder().Build();
         protected const ushort AnyValue = 1;
         protected IZMemory MemoryMock;
-        protected Mock<IReadOnlyDictionary<ushort, ZMachineObject>> _objectTreeMock;
 
         protected void Setup()
         {
             ZMachine2 = new ZMachine2(null, null);
             VariableManagerMockery = new VariableManagerMockery();
             ObjectManagerMockery = new ObjectManagerMockery();
-
-            _objectTreeMock = new Mock<IReadOnlyDictionary<ushort, ZMachineObject>>();
-            _objectTreeMock
-                .Setup(m => m[It.IsAny<ushort>()])
-                .Returns(new ZMachineObjectBuilder().Build());
+            ObjectTreeMockery = new ObjectTreeMockery();
 
             var memoryMock = new Mock<IZMemory>();
             memoryMock
@@ -41,7 +37,7 @@ namespace ZMachineLib.Unit.Tests.Operations
 
             memoryMock
                 .SetupGet(m => m.ObjectTree)
-                .Returns(_objectTreeMock.Object);
+                .Returns(ObjectTreeMockery.Object);
             MemoryMock = memoryMock.Object;
 
         }

@@ -55,7 +55,7 @@ namespace ZDump
             Console.WriteLine(sb);
         }
         
-        private static string FormatObj(ZMachineObject zObj, IReadOnlyDictionary<ushort, ZMachineObject> objs, bool showAttrs = false)
+        private static string FormatObj(IZMachineObject zObj, IZObjectTree objs, bool showAttrs = false)
         {
             var sb = new StringBuilder();
             sb.Append($"{zObj}");

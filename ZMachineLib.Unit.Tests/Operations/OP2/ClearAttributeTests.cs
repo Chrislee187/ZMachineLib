@@ -13,7 +13,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         public void SetUp()
         {
             Setup();
-            _op = new ClearAttribute(ZMachine2, MemoryMock, ObjectManagerMockery.Object);
+            _op = new ClearAttribute(MemoryMock);
             MockPeekNextByte(_op);
         }
 
@@ -28,15 +28,13 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
                 .Build();
             var zObj = new Mock<IZMachineObject>();
 
-            ObjectManagerMockery.SetupSequenceGetObject(zObj.Object);
+            ObjectTreeMockery.SetupGetIndexerReturns(zObj.Object);
+//            ObjectManagerMockery.SetupSequenceGetObject(zObj.Object);
 
             _op.Execute(args);
-
-            ObjectManagerMockery.VerifyGetObject(obj);
-
+            
             zObj.Verify(o => o.ClearAttribute(It.Is<ushort>(v => v == attribute)));
 
         }
-
     }
 }

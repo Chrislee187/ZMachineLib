@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP2
@@ -23,26 +24,31 @@ namespace ZMachineLib.Operations.OP2
                 return;
 
 
-            var obj1 = operands[0];
-            var obj2 = operands[1];
+            var obj1Number = operands[0];
+            var obj2Number = operands[1];
 
-            var zObj1 = ObjectManager.GetObject(obj1);
-            var zObj2 = ObjectManager.GetObject(obj2);
+            var zObj1 = Contents.ObjectTree[obj1Number];
+            var zObj2 = Contents.ObjectTree[obj2Number];
 
-            if (zObj1.Parent == obj2 && zObj2.Child == obj1)
+
+            if (zObj1.Parent == obj2Number && zObj2.Child == obj1Number)
                 return;
 
-            var parent1ZObj = ObjectManager.GetObject(zObj1.Parent);
+            var parent1ZObj = Contents.ObjectTree[zObj1.Parent];
 
             // if parent1's child is obj1 we need to assign the sibling
-            if (parent1ZObj.Child == obj1)
+            if (parent1ZObj.Child == obj1Number)
             {
                 // set parent1's child to obj1's sibling
-                ObjectManager.SetObjectNumber((ushort)(parent1ZObj.Address + Machine.Contents.Offsets.Child), zObj1.Sibling);
+                parent1ZObj.Child = zObj1.Sibling;
+//                ObjectManager.SetObjectNumber(
+//                    (ushort)(parent1ZObj.Address + Machine.Contents.Offsets.Child), 
+//                    zObj1.Sibling
+//                    );
             }
             else // else if I'm not the child but there is a child, we need to link the broken sibling chain
             {
-                var parent1ChildZObj = ObjectManager.GetObject(parent1ZObj.Child);
+                var parent1ChildZObj = Contents.ObjectTree[parent1ZObj.Child];
                 var addr = parent1ChildZObj.Address;
                 var currentSibling = parent1ChildZObj.Sibling;
 
@@ -50,24 +56,27 @@ namespace ZMachineLib.Operations.OP2
                 while (currentSibling != 0)
                 {
                     // if obj1 is the sibling of the current object
-                    if (currentSibling == obj1)
+                    if (currentSibling == obj1Number)
                     {
                         // set the current object's sibling to the next sibling
-                        ObjectManager.SetObjectNumber((ushort)(addr + Machine.Contents.Offsets.Sibling), zObj1.Sibling);
+                        ObjectManager.SetObjectNumber(
+                            (ushort)(addr + Machine.Contents.Offsets.Sibling)
+                            , zObj1.Sibling);
+//                        parent1ZObj.Sibling = zObj1.Sibling;
                         break;
                     }
 
-                    addr = ObjectManager.GetObject(currentSibling).Address; // ObjectManager.GetObjectAddress(currentSibling);
+                    addr = Contents.ObjectTree[currentSibling].Address; // ObjectManager.GetObjectAddress(currentSibling);
                     
                     currentSibling = ObjectManager.GetObjectNumber((ushort)(addr + Machine.Contents.Offsets.Sibling));
                 }
             }
 
             // set obj1's parent to obj2
-            ObjectManager.SetObjectNumber((ushort)(zObj1.Address + Machine.Contents.Offsets.Parent), obj2);
+            ObjectManager.SetObjectNumber((ushort)(zObj1.Address + Machine.Contents.Offsets.Parent), obj2Number);
 
             // set obj2's child to obj1
-            ObjectManager.SetObjectNumber((ushort)(zObj2.Address + Machine.Contents.Offsets.Child), obj1);
+            ObjectManager.SetObjectNumber((ushort)(zObj2.Address + Machine.Contents.Offsets.Child), obj1Number);
 
             // set obj1's sibling to obj2's child
             ObjectManager.SetObjectNumber((ushort)(zObj1.Address + Machine.Contents.Offsets.Sibling), zObj2.Child);

@@ -21,12 +21,15 @@ namespace ZMachineLib.Content
         ushort Child { get; set; }
         ushort PropertyHeader { get; set; }
         Dictionary<int, bool> AttributeFlags { get; set; }
+        ushort PropertiesAddress { get; set; }
+        ZMachineObject RefreshFromMemory();
     }
 
     [DebuggerDisplay("[{ObjectNumber}] '{Name}'")]
     public class ZMachineObject : IZMachineObject
     {
         public static readonly ZMachineObject Object0 = new ZMachineObject(0, 0, default, null, null);
+        public static readonly ZMachineObject Object64 = new ZMachineObject(0, 0, default, null, null);
         public ulong Attributes { get; private set; }
         public string Name { get; private set; }
 
@@ -130,10 +133,44 @@ namespace ZMachineLib.Content
 
         public ushort ObjectNumber { get; set; }
 
-        public ushort Parent { get; set; }
-        public ushort Sibling { get; set; }
-        public ushort Child { get; set; }
 
+
+
+
+        private VersionedOffsets Offsets => VersionedOffsets.For(_header.Version);
+
+        private ushort _parentObjectNumber;
+        public ushort Parent
+        {
+            get => _parentObjectNumber;
+            set
+            {
+                _parentObjectNumber = value;
+                _manager?.Set((ushort)(Address + Offsets.Parent), (byte)value);
+            }
+        }
+
+        private ushort _childObjectNumber;
+        public ushort Child
+        {
+            get => _childObjectNumber;
+            set
+            {
+                _childObjectNumber = value;
+                _manager?.Set((ushort)(Address + Offsets.Child), (byte)value);
+            }
+        }
+
+        private ushort _siblingObjectNumber;
+        public ushort Sibling
+        {
+            get => _siblingObjectNumber;
+            set
+            {
+                _siblingObjectNumber = value;
+                _manager?.Set((ushort)(Address + Offsets.Sibling), (byte)value);
+            }
+        }
         public IZMachineObject ParentZObject { get; }
         public IZMachineObject SiblingZObject { get; }
         public IZMachineObject ChildZObject { get; }
@@ -174,22 +211,56 @@ namespace ZMachineLib.Content
 
             if (_header.Version <= 3)
             {
-                var attributes = Attributes | flagMask;
-                _manager.SetLong(Address, (uint)attributes);
+                Attributes |= flagMask;
+                _manager.SetLong(Address, (uint)Attributes);
+
             }
             else
             {
                 // TODO: _manager NOT tested in this section
-                var attributes = Attributes | flagMask;
+                Attributes |= flagMask;
 //                _objectManager.Machine.Memory.SetLong(Address, (uint)(attributes >> 16));
-                _manager.SetLong(Address, (uint)(attributes >> 16));
+                _manager.SetLong(Address, (uint)(Attributes >> 16));
 //                _objectManager.Machine.Memory.SetWord((ushort)(Address + 4), (ushort)attributes);
-                _manager.Set((ushort)(Address + 4), (ushort)attributes);
+                _manager.Set((ushort)(Address + 4), (ushort)Attributes);
 
             }
         }
-
         public override string ToString() 
             => $"[{ObjectNumber:D3}] ({Address:X4}) '{Name}' ";
+
+        public bool Equals(ZMachineObject other)
+        {
+            return Attributes == other.Attributes
+                   && string.Equals(Name, other.Name)
+                   && Address == other.Address 
+                   && ObjectNumber == other.ObjectNumber 
+                   && Parent == other.Parent 
+                   && Sibling == other.Sibling 
+                   && Child == other.Child;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((ZMachineObject) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = Attributes.GetHashCode();
+                hashCode = (hashCode * 397) ^ (Name != null ? Name.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ Address.GetHashCode();
+                hashCode = (hashCode * 397) ^ ObjectNumber.GetHashCode();
+                hashCode = (hashCode * 397) ^ Parent.GetHashCode();
+                hashCode = (hashCode * 397) ^ Sibling.GetHashCode();
+                hashCode = (hashCode * 397) ^ Child.GetHashCode();
+                return hashCode;
+            }
+        }
     }
 }
