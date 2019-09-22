@@ -20,7 +20,7 @@ namespace ZMachineLib.Operations.OP0
         {
             var array = Machine.Memory.AsSpan((int)Machine.Stack.Peek().PC);
 
-            var s = ZsciiString.Get(array, Machine.Abbreviations);
+            var s = ZsciiString.Get(array, Machine.Contents.Abbreviations);
 
             Io.Print(s + Environment.NewLine);
 

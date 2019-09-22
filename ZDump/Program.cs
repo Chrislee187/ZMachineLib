@@ -24,7 +24,7 @@ namespace ZDump
 
             var bytes = Read(File.OpenRead(filename));
 
-            var contents = new ZMachineContents(bytes);
+            var contents = new ZMachineContents(bytes, null);
 
             WriteContents(filename, contents);
 

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using ZMachineLib.Extensions;
 using ZMachineLib.Operations;
 using System.Text.Json;
 using ZMachineLib.Content;
-using ZMachineLib.Managers;
 using ZMachineLib.Operations.OPExtended;
 
 namespace ZMachineLib
@@ -15,13 +13,14 @@ namespace ZMachineLib
         internal byte[] Memory;
         internal Stack<ZStackFrame> Stack = new Stack<ZStackFrame>();
 
+
+        public ZMachineContents Contents { get; set; }
+
         internal ushort ReadTextAddr;
         internal ushort ReadParseAddr;
 
         internal bool TerminateOnInput;
         internal bool Running;
-        internal byte EntryLength;
-        internal ushort WordStart;
 
         private Stream _gameFileStream;
 
@@ -29,10 +28,7 @@ namespace ZMachineLib
         private readonly IFileIo _fileIo;
         private KindExtOperations _extendedOperations;
         private Operations.Operations _operations;
-        private VariableManager _variableManager;
-        private MemoryManager _memoryManager;
-        private IOperandManager _operandManager;
-        public ZHeader Header { get; private set; }
+        public ZHeader Header => Contents.Header;
         internal VersionedOffsets VersionedOffsets;
 
         public ZMachine2(IUserIo io, IFileIo fileIo)
@@ -74,7 +70,7 @@ namespace ZMachineLib
 
                 Log.WriteLine($" OP: {opCodeEnum:D} ({(byte)opCodeEnum:X2}) - {operation.GetType().Name})");
 
-                operation.Execute(_operandManager.GetOperands(opCode));
+                operation.Execute(Contents.OperandManager.GetOperands(opCode));
 
                 Log.Flush();
             }
@@ -108,17 +104,8 @@ namespace ZMachineLib
         private void LoadFile(Stream stream)
         {
             Memory = Read(stream);
-            Contents = new ZMachineContents(Memory);
-            _memoryManager = new MemoryManager(Memory);
-            _variableManager = new VariableManager(this, _memoryManager);
-            _operandManager = new OperandManager(_memoryManager, _variableManager, Stack);
-            Header = Contents.Header; // new ZHeader(Memory[..0x3f]);
-            Abbreviations = Contents.Abbreviations;
+            Contents = new ZMachineContents(Memory, Stack);
 
-            Dictionary = Contents.Dictionary;
-            WordStart = (ushort)(Header.Dictionary + Dictionary.WordStart);
-            EntryLength = Dictionary.EntryLength;
-            // NOTE: Need zHeader to be read (mainly for the Version) before we can setup the Ops as few of them have zHeader value dependencies
             SetupNewOperations();
 #if DEBUG
             DumpHeader();
@@ -131,11 +118,6 @@ namespace ZMachineLib
             var zsf = new ZStackFrame {PC = Header.Pc };
             Stack.Push(zsf);
         }
-
-        public ZMachineContents Contents { get; set; }
-
-        public ZAbbreviations Abbreviations { get; set; }
-        public ZDictionary Dictionary { get; set; }
 
         private void SetupScreenParams()
         {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 
 namespace ZMachineLib.Extensions
 {
@@ -8,7 +7,7 @@ namespace ZMachineLib.Extensions
         public static ushort SwapBytes(this ushort value) 
             => (ushort)((value >> 8) | ((value & 0xFF) << 8));
 
-        public static void StoreAt(this byte[] buffer, uint address, uint value)
+        public static void SetWord(this byte[] buffer, uint address, uint value)
         {
             buffer[address + 0] = (byte)(value >> 24);
             buffer[address + 1] = (byte)(value >> 16);
@@ -16,7 +15,7 @@ namespace ZMachineLib.Extensions
             buffer[address + 3] = (byte)(value >> 0);
         }
 
-        public static void StoreAt(this byte[] buffer, uint address, ushort value)
+        public static void SetWord(this byte[] buffer, uint address, ushort value)
         {
             buffer[address + 0] = (byte)(value >> 8);
             buffer[address + 1] = (byte)(value >> 0);

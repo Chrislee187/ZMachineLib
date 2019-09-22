@@ -18,7 +18,7 @@ namespace ZMachineLib.Operations.OP1
         public override void Execute(List<ushort> operands)
         {
             var data = Machine.Memory.AsSpan((int) ObjectManager.GetPackedAddress(operands[0]));
-            var s = ZsciiString.Get(data, Machine.Abbreviations);
+            var s = ZsciiString.Get(data, Machine.Contents.Abbreviations);
             _io.Print(s);
             Log.Write($"[{s}]");
         }

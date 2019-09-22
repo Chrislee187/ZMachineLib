@@ -1,4 +1,5 @@
-﻿using ZMachineLib.Extensions;
+﻿using System.Collections.Generic;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Managers
 {
@@ -9,13 +10,19 @@ namespace ZMachineLib.Managers
         void StoreByte(byte dest, byte value);
     }
 
-    public class VariableManager : ZMachineBase, IVariableManager
+    public class VariableManager : IVariableManager
     {
+        private readonly ZHeader _header;
+        private readonly IMemoryManager _memoryManager;
+        private readonly Stack<ZStackFrame> _stack;
 
-        public VariableManager(ZMachine2 machine,
-            IMemoryManager memoryManager) : base(machine, memoryManager)
+        public VariableManager(IMemoryManager memoryManager, 
+            ZHeader header, 
+            Stack<ZStackFrame> stack)
         {
-
+            _stack = stack;
+            _memoryManager = memoryManager;
+            _header = header;
         }
         public ushort GetWord(byte variable, bool andRemove = true)
         {
@@ -39,14 +46,14 @@ namespace ZMachineLib.Managers
 
         private ushort GetWordFromGlobals(byte variable)
         {
-            var val = Memory.GetUShort((ushort)(GlobalsTable + 2 * (variable - 0x10)));
+            var val = _memoryManager.GetUShort((ushort)(_header.Globals + 2 * (variable - 0x10)));
             Log.Write($"G{variable - 0x10:X2} ({val:X4}), ");
             return val;
         }
 
         private ushort GetWordFromVariables(byte variable)
         {
-            var val = Stack.Peek().Variables[variable - 1];
+            var val = _stack.Peek().Variables[variable - 1];
             Log.Write($"L{variable - 1:X2} ({val:X4}), ");
             return val;
         }
@@ -55,8 +62,8 @@ namespace ZMachineLib.Managers
         {
             ushort val;
             val = andRemove 
-                ? Stack.Peek().RoutineStack.Pop() 
-                : Stack.Peek().RoutineStack.Peek();
+                ? _stack.Peek().RoutineStack.Pop() 
+                : _stack.Peek().RoutineStack.Peek();
 
             Log.Write($"SP ({val:X4}), ");
             return val;
@@ -82,14 +89,14 @@ namespace ZMachineLib.Managers
         {
             var globalsIdx = dest - 0x10;
             Log.Write($"-> GLB{globalsIdx:X2} ({value:X4}), ");
-            Memory.StoreAt((ushort)(GlobalsTable + 2 * globalsIdx), value);
+            _memoryManager.Set((ushort)(_header.Globals + 2 * globalsIdx), value);
         }
 
         private void StoreWordInVariable(byte dest, ushort value)
         {
             var variablesIdx = dest - 1;
             Log.Write($"-> VAR{variablesIdx:X2} ({value:X4}), ");
-            Stack.Peek().Variables[variablesIdx] = value;
+            _stack.Peek().Variables[variablesIdx] = value;
         }
 
         private void StoreWordOnStack(ushort value, bool newEntry)
@@ -97,10 +104,10 @@ namespace ZMachineLib.Managers
             if (!newEntry)
             {
                 Log.Write($"-> STK POP BEFORE... ");
-                Stack.Peek().RoutineStack.Pop();
+                _stack.Peek().RoutineStack.Pop();
             }
             Log.Write($"-> STK PUSH({value:X4}), ");
-            Stack.Peek().RoutineStack.Push(value);
+            _stack.Peek().RoutineStack.Push(value);
         }
 
         public void StoreByte(byte dest, byte value)
@@ -123,22 +130,22 @@ namespace ZMachineLib.Managers
         {
             var globalsIdx = dest - 0x10;
             Log.Write($"-> GLB{globalsIdx:X2} = ({value:X2}), ");
-            var addr = GlobalsTable + 2 * globalsIdx;
+            var addr = _header.Globals + 2 * globalsIdx;
             // this still gets written as a word...write the byte to addr+1
-            Memory.StoreAt(addr, 0, value);
+            _memoryManager.Set(addr, 0, value);
         }
 
         private void StoreByteInVariable(byte dest, byte value)
         {
             var variableIdx = dest - 1;
             Log.Write($"-> VAR{variableIdx:X2} = ({value:X2}), ");
-            Stack.Peek().Variables[variableIdx] = value;
+            _stack.Peek().Variables[variableIdx] = value;
         }
 
         private void StoreByteOnStack(byte value)
         {
             Log.Write($"-> STK PUSH({value:X2})");
-            Stack.Peek().RoutineStack.Push(value);
+            _stack.Peek().RoutineStack.Push(value);
         }
 
         private bool DestinationIsStack(byte dest) => dest == 0;

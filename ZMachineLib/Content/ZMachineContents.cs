@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using ZMachineLib.Managers;
 
 namespace ZMachineLib.Content
 {
@@ -9,10 +11,15 @@ namespace ZMachineLib.Content
         public ZDictionary Dictionary { get; }
         public ZAbbreviations Abbreviations { get; }
         public ZObjectTree ObjectTree { get; }
+        public MemoryManager MemoryManager { get; }
+        public VariableManager VariableManager { get; }
+        public OperandManager OperandManager { get; }
         private byte[] DynamicMemory { get; }
 
         public byte[] Memory { get; }
-        public ZMachineContents(byte[] data)
+
+        public ushort DictionaryWordStart => (ushort) (Header.Dictionary + Dictionary.WordStart);
+        public ZMachineContents(byte[] data, Stack<ZStackFrame> stack)
         {
             Memory = data;
             Version = data[0];
@@ -24,6 +31,11 @@ namespace ZMachineLib.Content
             Abbreviations = new ZAbbreviations(data.AsSpan(Header.AbbreviationsTable), DynamicMemory);
             Dictionary = new ZDictionary(data.AsSpan(Header.Dictionary), Abbreviations);
             ObjectTree = new ZObjectTree(DynamicMemory, Header, Abbreviations);
+
+            MemoryManager = new MemoryManager(Memory);
+            VariableManager = new VariableManager(MemoryManager, Header, stack);
+            OperandManager = new OperandManager(MemoryManager, VariableManager, stack);
+
         }
     }
 }

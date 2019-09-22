@@ -180,15 +180,15 @@ namespace ZMachineLib.Content
             if (_objectManager.Machine.Header.Version <= 3)
             {
                 var attributes = Attributes & ~flagMask;
-                _objectManager.Machine.Memory.StoreAt(Address, (uint)attributes);
+                _objectManager.Machine.Memory.SetWord(Address, (uint)attributes);
             }
             else
             {
                 var attributes = Attributes & ~flagMask;
                 uint val = (uint)attributes >> 16;
-                _objectManager.Machine.Memory.StoreAt(Address, val);
+                _objectManager.Machine.Memory.SetWord(Address, val);
                 ushort value = (ushort)attributes;
-                _objectManager.Machine.Memory.StoreAt((ushort)(Address + 4), value);
+                _objectManager.Machine.Memory.SetWord((ushort)(Address + 4), value);
             }
         }
 
@@ -199,13 +199,13 @@ namespace ZMachineLib.Content
             if (_objectManager.Machine.Header.Version <= 3)
             {
                 var attributes = Attributes | flagMask;
-                _objectManager.Machine.Memory.StoreAt(Address, (uint)attributes);
+                _objectManager.Machine.Memory.SetWord(Address, (uint)attributes);
             }
             else
             {
                 var attributes = Attributes | flagMask;
-                _objectManager.Machine.Memory.StoreAt(Address, (uint)(attributes >> 16));
-                _objectManager.Machine.Memory.StoreAt((ushort)(Address + 4), (ushort)attributes);
+                _objectManager.Machine.Memory.SetWord(Address, (uint)(attributes >> 16));
+                _objectManager.Machine.Memory.SetWord((ushort)(Address + 4), (ushort)attributes);
             }
         }
 

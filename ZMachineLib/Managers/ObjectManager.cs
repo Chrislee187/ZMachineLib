@@ -149,7 +149,7 @@ namespace ZMachineLib.Managers
             var s = string.Empty;
             if (size > 0)
             {
-                s = ZsciiString.Get(Memory.AsSpan(propAddr), Machine.Abbreviations); // s = ZsciiString.GetZsciiString(propAddr);
+                s = ZsciiString.Get(Memory.AsSpan(propAddr), Machine.Contents.Abbreviations); // s = ZsciiString.GetZsciiString(propAddr);
             }
 
             propAddr += (ushort)(size * 2);

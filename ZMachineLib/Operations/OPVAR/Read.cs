@@ -62,8 +62,8 @@ namespace ZMachineLib.Operations.OPVAR
                     if (tokenised[i].Length > len)
                         tokenised[i] = tokenised[i].Substring(0, len);
 
-                    var wordIndex = (ushort)(Array.IndexOf(Machine.Dictionary.Words, tokenised[i]));
-                    var addr = (ushort)(wordIndex == 0xffff ? 0 : Machine.WordStart + wordIndex * Machine.EntryLength);
+                    var wordIndex = (ushort)(Array.IndexOf(Machine.Contents.Dictionary.Words, tokenised[i]));
+                    var addr = (ushort)(wordIndex == 0xffff ? 0 : Machine.Contents.DictionaryWordStart + wordIndex * Machine.Contents.Dictionary.EntryLength);
                     MemoryManager.Set((ushort)(Machine.ReadParseAddr + 2 + i * 4), addr);
                     MemoryManager.Set(Machine.ReadParseAddr + 4 + i * 4, (byte)tokenised[i].Length);
                     var index = input.IndexOf(tokenised[i], last, StringComparison.Ordinal);

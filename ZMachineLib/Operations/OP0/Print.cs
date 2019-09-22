@@ -16,7 +16,7 @@ namespace ZMachineLib.Operations.OP0
         {
             var array = Machine.Memory.AsSpan((int) Machine.Stack.Peek().PC);
 
-            var zStr = new ZsciiString(array, Machine.Abbreviations);
+            var zStr = new ZsciiString(array, Machine.Contents.Abbreviations);
 
             Machine.Stack.Peek().PC += zStr.BytesUsed;
 

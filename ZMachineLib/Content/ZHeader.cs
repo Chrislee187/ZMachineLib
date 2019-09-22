@@ -54,6 +54,7 @@ namespace ZMachineLib.Content
 
     [Flags]
     // ReSharper disable UnusedMember.Global
+    // ReSharper disable once InconsistentNaming
     public enum Flags1_V3 : byte
     {
         Bit0NotUsed = Bits.Bit0,

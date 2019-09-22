@@ -14,7 +14,7 @@ namespace ZMachineLib.Operations.OPVAR
         {
             var addr = (ushort)(operands[0] + 2 * operands[1]);
             ushort value = operands[2];
-            Machine.Memory.StoreAt(addr, value);
+            Machine.Memory.SetWord(addr, value);
         }
     }
 }

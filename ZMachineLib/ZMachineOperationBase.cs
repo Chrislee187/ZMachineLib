@@ -26,9 +26,10 @@ namespace ZMachineLib
             Machine = machine;
             if (Machine != null)
             {
-                MemoryManager = memoryManager ?? new MemoryManager(Machine.Contents?.Memory);
-                ObjectManager = objectManager ?? new ObjectManager(Machine, Machine.Abbreviations, MemoryManager);
-                VariableManager = variableManager ?? new VariableManager(Machine, MemoryManager);
+                var contents = machine.Contents;
+                MemoryManager = memoryManager ?? contents?.MemoryManager;
+                ObjectManager = objectManager ?? new ObjectManager(Machine, contents?.Abbreviations, MemoryManager);
+                VariableManager = variableManager ?? contents?.VariableManager;
             }
         }
 
