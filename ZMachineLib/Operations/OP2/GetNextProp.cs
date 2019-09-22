@@ -12,7 +12,7 @@ namespace ZMachineLib.Operations.OP2
     /// and an interpreter should halt with an error message
     /// (if it can efficiently check this condition).
     /// </summary>
-    public sealed class GetNextProp : ZMachineOperation
+    public sealed class GetNextProp : ZMachineOperationBase
     {
         public GetNextProp(ZMachine2 machine)
             : base((ushort)OpCodes.GetNextProp, machine)

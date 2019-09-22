@@ -4,7 +4,7 @@ using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OPVAR
 {
-    public sealed class PrintTable : ZMachineOperation
+    public sealed class PrintTable : ZMachineOperationBase
     {
         private readonly IUserIo _io;
 

@@ -7,7 +7,7 @@ namespace ZMachineLib.Operations.OP2
     /// 2OP:21 15 sub a b -> (result)
     /// Signed 16-bit subtraction.
     /// </summary>
-    public sealed class Sub : ZMachineOperation
+    public sealed class Sub : ZMachineOperationBase
     {
         public Sub(ZMachine2 machine,
             IVariableManager variableManager = null)

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ZMachineLib.Operations.OPVAR
 {
-    public sealed class Read : ZMachineOperation
+    public sealed class Read : ZMachineOperationBase
     {
         private readonly IUserIo _io;
 

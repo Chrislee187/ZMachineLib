@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OPExtended
 {
-    public sealed class LogShift : ZMachineOperation
+    public sealed class LogShift : ZMachineOperationBase
     {
         public LogShift(ZMachine2 machine)
             : base((ushort)KindExtOpCodes.LogShift, machine)

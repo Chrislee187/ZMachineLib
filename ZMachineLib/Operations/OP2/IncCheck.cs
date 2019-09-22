@@ -6,7 +6,7 @@ namespace ZMachineLib.Operations.OP2
     /// <summary>
     /// Increment variable, and branch if now greater than value.
     /// </summary>
-    public sealed class IncCheck : ZMachineOperation
+    public sealed class IncCheck : ZMachineOperationBase
     {
         public IncCheck(ZMachine2 machine,
             IObjectManager objectManager = null,

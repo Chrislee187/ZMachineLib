@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OPVAR
 {
-    public sealed class BufferMode : ZMachineOperation
+    public sealed class BufferMode : ZMachineOperationBase
     {
         private readonly IUserIo _io;
 

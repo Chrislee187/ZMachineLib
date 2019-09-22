@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OPVAR
 {
-    public sealed class CheckArgCount : ZMachineOperation
+    public sealed class CheckArgCount : ZMachineOperationBase
     {
         public CheckArgCount(ZMachine2 machine)
             : base((ushort)OpCodes.CheckArgCount, machine)

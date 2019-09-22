@@ -31,6 +31,7 @@ namespace ZMachineLib
         private Operations.Operations _operations;
         private readonly VariableManager _variableManager;
         private readonly MemoryManager _memoryManager;
+        private IOperandManager _operandManager;
         public ZHeader Header { get; private set; }
         internal VersionedOffsets VersionedOffsets;
 
@@ -74,7 +75,7 @@ namespace ZMachineLib
 
                 Log.WriteLine($" OP: {opCodeEnum:D} ({(byte)opCodeEnum:X2}) - {operation.GetType().Name})");
 
-                operation.Execute(GetOperands(opCode));
+                operation.Execute(_operandManager.GetOperands(opCode));
 
                 Log.Flush();
             }
@@ -108,12 +109,12 @@ namespace ZMachineLib
         private void LoadFile(Stream stream)
         {
             Memory = Read(stream);
-            var machineContents = new ZMachineContents(Memory);
+            Contents = new ZMachineContents(Memory);
+            _operandManager = new OperandManager(_memoryManager, _variableManager, Stack);
+            Header = Contents.Header; // new ZHeader(Memory[..0x3f]);
+            Abbreviations = Contents.Abbreviations;
 
-            Header = machineContents.Header; // new ZHeader(Memory[..0x3f]);
-            Abbreviations = machineContents.Abbreviations;
-
-            Dictionary = machineContents.Dictionary;
+            Dictionary = Contents.Dictionary;
             WordStart = (ushort)(Header.Dictionary + Dictionary.WordStart);
             EntryLength = Dictionary.EntryLength;
             // NOTE: Need zHeader to be read (mainly for the Version) before we can setup the Ops as few of them have zHeader value dependencies
@@ -129,6 +130,8 @@ namespace ZMachineLib
             var zsf = new ZStackFrame {PC = Header.Pc };
             Stack.Push(zsf);
         }
+
+        public ZMachineContents Contents { get; set; }
 
         public ZAbbreviations Abbreviations { get; set; }
         public ZDictionary Dictionary { get; set; }
@@ -166,83 +169,6 @@ namespace ZMachineLib
             RTrue = _operations[OpCodes.RTrue];
             RFalse = _operations[OpCodes.RFalse];
             _extendedOperations = new KindExtOperations(this, _operations);
-        }
-
-        private List<ushort> GetOperands(byte opcode)
-        {
-            var args = new List<ushort>();
-            ushort arg;
-
-            // Variable
-            if ((opcode & 0xc0) == 0xc0)
-            {
-                var types = Memory[Stack.Peek().PC++];
-                byte types2 = 0;
-
-                if (opcode == 0xec || opcode == 0xfa)
-                    types2 = Memory[Stack.Peek().PC++];
-
-                GetVariableOperands(types, args);
-                if (opcode == 0xec || opcode == 0xfa)
-                    GetVariableOperands(types2, args);
-            }
-            // Short
-            else if ((opcode & 0x80) == 0x80)
-            {
-                var type = (byte) (opcode >> 4 & 0x03);
-                arg = GetOperand((OperandType) type);
-                args.Add(arg);
-            }
-            // Long
-            else
-            {
-                arg = GetOperand((opcode & 0x40) == 0x40 ? OperandType.Variable : OperandType.SmallConstant);
-                args.Add(arg);
-
-                arg = GetOperand((opcode & 0x20) == 0x20 ? OperandType.Variable : OperandType.SmallConstant);
-                args.Add(arg);
-            }
-
-            return args;
-        }
-
-        private void GetVariableOperands(byte types, List<ushort> args)
-        {
-            for (var i = 6; i >= 0; i -= 2)
-            {
-                var type = (byte) ((types >> i) & 0x03);
-
-                // omitted
-                if (type == 0x03)
-                    break;
-
-                var arg = GetOperand((OperandType) type);
-                args.Add(arg);
-            }
-        }
-
-        private ushort GetOperand(OperandType type)
-        {
-            ushort arg = 0;
-
-            switch (type)
-            {
-                case OperandType.LargeConstant:
-                    arg = Memory.GetUShort((int)Stack.Peek().PC);
-                    Stack.Peek().PC += 2;
-                    Log.Write($"#{arg:X4}, ");
-                    break;
-                case OperandType.SmallConstant:
-                    arg = Memory[Stack.Peek().PC++];
-                    Log.Write($"#{arg:X2}, ");
-                    break;
-                case OperandType.Variable:
-                    var b = Memory[Stack.Peek().PC++];
-                    arg = _variableManager.GetWord(b);
-                    break;
-            }
-
-            return arg;
         }
 
         internal void ReloadFile() => LoadFile(_gameFileStream);

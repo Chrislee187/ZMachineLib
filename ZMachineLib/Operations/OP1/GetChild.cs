@@ -9,7 +9,7 @@ namespace ZMachineLib.Operations.OP1
     /// branching if this exists,
     /// i.e. is not nothing (i.e., is not 0).
     /// </summary>
-    public sealed class GetChild : ZMachineOperation
+    public sealed class GetChild : ZMachineOperationBase
     {
         public GetChild(ZMachine2 machine, 
             IVariableManager variableManager = null)

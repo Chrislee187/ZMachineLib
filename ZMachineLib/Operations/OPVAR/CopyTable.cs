@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ZMachineLib.Operations.OPVAR
 {
-    public sealed class CopyTable : ZMachineOperation
+    public sealed class CopyTable : ZMachineOperationBase
     {
         public CopyTable(ZMachine2 machine)
             : base((ushort)OpCodes.CopyTable, machine)

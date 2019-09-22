@@ -7,7 +7,7 @@ namespace ZMachineLib.Operations.OP2
     /// 2OP:12 C clear_attr object attribute
     /// Make object not have the attribute numbered attribute
     /// </summary>
-    public sealed class ClearAttribute : ZMachineOperation
+    public sealed class ClearAttribute : ZMachineOperationBase
     {
         public ClearAttribute(ZMachine2 machine,
             IObjectManager objectManager = null)

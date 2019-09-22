@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ZMachineLib.Operations.OPVAR
 {
-    public sealed class PrintChar : ZMachineOperation
+    public sealed class PrintChar : ZMachineOperationBase
     {
         private readonly IUserIo _io;
 

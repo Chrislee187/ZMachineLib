@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OPVAR
 {
-    public sealed class SetTextStyle : ZMachineOperation
+    public sealed class SetTextStyle : ZMachineOperationBase
     {
         private readonly IUserIo _io;
 

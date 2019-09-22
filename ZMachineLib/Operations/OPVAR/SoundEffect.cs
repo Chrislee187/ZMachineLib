@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OPVAR
 {
-    public sealed class SoundEffect : ZMachineOperation
+    public sealed class SoundEffect : ZMachineOperationBase
     {
         private readonly IUserIo _io;
 

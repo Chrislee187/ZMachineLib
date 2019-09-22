@@ -3,7 +3,7 @@ using ZMachineLib.Extensions;
 
 namespace ZMachineLib.Operations.OPVAR
 {
-    public sealed class ScanTable : ZMachineOperation
+    public sealed class ScanTable : ZMachineOperationBase
     {
         public ScanTable(ZMachine2 machine)
             : base((ushort)OpCodes.ScanTable, machine)

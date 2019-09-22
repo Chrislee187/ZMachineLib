@@ -9,11 +9,12 @@ namespace ZMachineLib.Content
         public ZDictionary Dictionary { get; }
         public ZAbbreviations Abbreviations { get; }
         public ZObjectTree ObjectTree { get; }
+        private byte[] DynamicMemory { get; }
 
-        public byte[] DynamicMemory { get; }
-
+        public byte[] Memory { get; }
         public ZMachineContents(byte[] data)
         {
+            Memory = data;
             Version = data[0];
 
             if (Version > 3) throw new NotSupportedException("ZMachine > V3 not currently supported");

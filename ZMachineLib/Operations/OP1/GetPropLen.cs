@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OP1
 {
-    public sealed class GetPropLen : ZMachineOperation
+    public sealed class GetPropLen : ZMachineOperationBase
     {
         public GetPropLen(ZMachine2 machine)
             : base((ushort)OpCodes.GetPropLen, machine)

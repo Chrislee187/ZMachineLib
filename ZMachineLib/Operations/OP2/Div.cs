@@ -3,7 +3,7 @@ using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OP2
 {
-    public sealed class Div : ZMachineOperation
+    public sealed class Div : ZMachineOperationBase
     {
         public Div(ZMachine2 machine,
             IVariableManager variableManager = null)

@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OPVAR
 {
-    public sealed class SetCursor : ZMachineOperation
+    public sealed class SetCursor : ZMachineOperationBase
     {
         private readonly IUserIo _io;
 

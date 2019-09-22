@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OP0
 {
-    public abstract class GameSaveBase : ZMachineOperation
+    public abstract class GameSaveBase : ZMachineOperationBase
     {
         protected readonly IFileIo Io;
 

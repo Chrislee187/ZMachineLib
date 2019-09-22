@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OPVAR
 {
-    public sealed class ReadChar : ZMachineOperation
+    public sealed class ReadChar : ZMachineOperationBase
     {
         private readonly IUserIo _io;
 

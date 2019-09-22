@@ -3,7 +3,7 @@ using ZMachineLib.Extensions;
 
 namespace ZMachineLib.Operations.OP2
 {
-    public sealed class LoadW : ZMachineOperation
+    public sealed class LoadW : ZMachineOperationBase
     {
         public LoadW(ZMachine2 machine)
             : base((ushort)OpCodes.LoadW, machine)

@@ -4,7 +4,7 @@ using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP1
 {
-    public sealed class PrintPAddr : ZMachineOperation
+    public sealed class PrintPAddr : ZMachineOperationBase
     {
         private readonly IUserIo _io;
 

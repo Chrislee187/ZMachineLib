@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OP0
 {
-    public sealed class ShowStatus : ZMachineOperation
+    public sealed class ShowStatus : ZMachineOperationBase
     {
         private readonly IUserIo _io;
 

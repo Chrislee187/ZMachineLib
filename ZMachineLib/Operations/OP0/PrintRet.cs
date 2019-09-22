@@ -4,7 +4,7 @@ using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP0
 {
-    public sealed class PrintRet : BasePrintingOperations
+    public sealed class PrintRet : BasePrintingOperationsBase
     {
         private readonly RTrue _rTrue;
 

@@ -7,7 +7,7 @@ using ZMachineLib.Operations;
 
 namespace ZMachineLib
 {
-    public abstract class ZMachineOperation : IOperation
+    public abstract class ZMachineOperationBase : IOperation
     {
         public ushort Code { get; }
         
@@ -16,7 +16,7 @@ namespace ZMachineLib
         protected readonly IObjectManager ObjectManager;
         protected readonly IMemoryManager MemoryManager;
 
-        protected ZMachineOperation(ushort code,
+        protected ZMachineOperationBase(ushort code,
             ZMachine2 machine,
             IObjectManager objectManager = null,
             IVariableManager variableManager = null,

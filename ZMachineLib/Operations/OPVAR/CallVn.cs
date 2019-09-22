@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OPVAR
 {
-    public sealed class CallVn : ZMachineOperation
+    public sealed class CallVn : ZMachineOperationBase
     {
         public CallVn(ZMachine2 machine)
             : base((ushort)OpCodes.CallVn, machine)

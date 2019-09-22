@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OP2
 {
-    public sealed class Mul : ZMachineOperation
+    public sealed class Mul : ZMachineOperationBase
     {
         public Mul(ZMachine2 machine)
             : base((ushort)OpCodes.Mul, machine)

@@ -4,7 +4,7 @@ using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP0
 {
-    public sealed class Print : BasePrintingOperations
+    public sealed class Print : BasePrintingOperationsBase
     {
         public Print(ZMachine2 machine,
             IUserIo io)

@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OP0
 {
-    public class Nop : ZMachineOperation {
+    public class Nop : ZMachineOperationBase {
         public override void Execute(List<ushort> operands)
         {
             // 

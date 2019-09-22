@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OP0
 {
-    public sealed class Quit : ZMachineOperation
+    public sealed class Quit : ZMachineOperationBase
     {
         private readonly IUserIo _io;
 

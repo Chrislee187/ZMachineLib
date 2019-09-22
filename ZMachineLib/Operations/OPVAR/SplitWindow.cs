@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OPVAR
 {
-    public sealed class SplitWindow : ZMachineOperation
+    public sealed class SplitWindow : ZMachineOperationBase
     {
         private readonly IUserIo _io;
 

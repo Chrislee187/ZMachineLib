@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OPVAR
 {
-    public sealed class PrintNum : ZMachineOperation
+    public sealed class PrintNum : ZMachineOperationBase
     {
         private readonly IUserIo _io;
 

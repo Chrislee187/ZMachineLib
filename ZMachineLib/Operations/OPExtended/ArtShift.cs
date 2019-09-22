@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OPExtended
 {
-    public sealed class ArtShift : ZMachineOperation
+    public sealed class ArtShift : ZMachineOperationBase
     {
         public ArtShift(ZMachine2 machine)
             : base((ushort)KindExtOpCodes.ArtShift, machine)

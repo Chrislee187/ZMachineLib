@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OP1
 {
-    public sealed class Not : ZMachineOperation
+    public sealed class Not : ZMachineOperationBase
     {
         public Not(ZMachine2 machine)
             : base((ushort)OpCodes.Not, machine)

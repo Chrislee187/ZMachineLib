@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OP0
 {
-    public class Restart : ZMachineOperation
+    public class Restart : ZMachineOperationBase
     {
         public Restart(ZMachine2 machine)
             : base((ushort)OpCodes.Restart, machine)

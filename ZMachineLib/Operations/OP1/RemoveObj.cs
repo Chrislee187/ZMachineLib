@@ -12,7 +12,7 @@ namespace ZMachineLib.Operations.OP1
     /// <remarks>
     /// Drink the bottle of water in zork1 to trigger this operation
     /// </remarks>
-    public sealed class RemoveObj : ZMachineOperation
+    public sealed class RemoveObj : ZMachineOperationBase
     {
         public RemoveObj(ZMachine2 machine)
             : base((ushort)OpCodes.RemoveObj, machine)

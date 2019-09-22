@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OP1
 {
-    public sealed class Dec : ZMachineOperation
+    public sealed class Dec : ZMachineOperationBase
     {
         public Dec(ZMachine2 machine)
             : base((ushort)OpCodes.Dec, machine)

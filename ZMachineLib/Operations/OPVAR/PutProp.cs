@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OPVAR
 {
-    public sealed class PutProp : ZMachineOperation
+    public sealed class PutProp : ZMachineOperationBase
     {
         public PutProp(ZMachine2 machine)
             : base((ushort)OpCodes.PutProp, machine)

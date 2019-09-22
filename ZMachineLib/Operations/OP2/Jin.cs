@@ -6,7 +6,7 @@ namespace ZMachineLib.Operations.OP2
     /// <summary>
     /// Jump if object a is a direct child of b, i.e., if parent of a is b.
     /// </summary>
-    public sealed class Jin : ZMachineOperation
+    public sealed class Jin : ZMachineOperationBase
     {
         public Jin(ZMachine2 machine,
             IObjectManager objectManager = null,

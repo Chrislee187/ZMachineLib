@@ -6,7 +6,7 @@ namespace ZMachineLib.Operations.OP2
     /// 2OP:10 A test_attr object attribute ?(label)
     /// Jump if object has attribute
     /// </summary>
-    public sealed class TestAttribute : ZMachineOperation
+    public sealed class TestAttribute : ZMachineOperationBase
     {
         public TestAttribute(ZMachine2 machine)
             : base((ushort)OpCodes.TestAttribute, machine)

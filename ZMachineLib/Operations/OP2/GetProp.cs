@@ -12,7 +12,7 @@ namespace ZMachineLib.Operations.OP2
     /// It is illegal for the opcode to be used if the property has length greater than 2,
     /// and the result is unspecified.
     /// </summary>
-    public sealed class GetProp : ZMachineOperation
+    public sealed class GetProp : ZMachineOperationBase
     {
         public GetProp(ZMachine2 machine)
             : base((ushort)OpCodes.GetProp, machine)

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ZMachineLib.Operations.OP0
 {
-    public sealed class Newline : ZMachineOperation
+    public sealed class Newline : ZMachineOperationBase
     {
         private readonly IUserIo _io;
 

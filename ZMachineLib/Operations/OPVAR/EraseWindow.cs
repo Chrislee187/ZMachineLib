@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OPVAR
 {
-    public sealed class EraseWindow : ZMachineOperation
+    public sealed class EraseWindow : ZMachineOperationBase
     {
         private readonly IUserIo _io;
 

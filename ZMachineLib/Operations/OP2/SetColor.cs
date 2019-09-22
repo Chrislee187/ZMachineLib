@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OP2
 {
-    public sealed class SetColor : ZMachineOperation
+    public sealed class SetColor : ZMachineOperationBase
     {
         private IUserIo _io;
 

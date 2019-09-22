@@ -9,7 +9,7 @@ namespace ZMachineLib.Operations.OP2
     /// is whatever was previously the child of D.) All children of O move with it.
     /// (Initially O can be at any point in the object tree; it may legally have parent zero.)
     /// </summary>
-    public sealed class InsertObj : ZMachineOperation
+    public sealed class InsertObj : ZMachineOperationBase
     {
         public InsertObj(ZMachine2 machine)
             : base((ushort)OpCodes.InsertObj, machine)

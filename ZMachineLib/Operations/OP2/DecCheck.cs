@@ -9,7 +9,7 @@ namespace ZMachineLib.Operations.OP2
     /// <seealso cref="http://inform-fiction.org/zmachine/standards/z1point1/sect15.html#je"/>
     /// </summary>
     /// 
-    public sealed class DecCheck : ZMachineOperation
+    public sealed class DecCheck : ZMachineOperationBase
     {
         public DecCheck(ZMachine2 machine,
             IObjectManager objectManager = null,

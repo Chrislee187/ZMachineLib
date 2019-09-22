@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OPVAR
 {
-    public sealed class Pull : ZMachineOperation
+    public sealed class Pull : ZMachineOperationBase
     {
         public Pull(ZMachine2 machine)
             : base((ushort)OpCodes.Pull, machine)

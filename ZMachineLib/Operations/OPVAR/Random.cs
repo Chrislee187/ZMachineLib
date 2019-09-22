@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OPVAR
 {
-    public sealed class Random : ZMachineOperation
+    public sealed class Random : ZMachineOperationBase
     {
         private static System.Random _random = new System.Random();
         public Random(ZMachine2 machine)

@@ -1,6 +1,6 @@
 namespace ZMachineLib
 {
-	internal enum OperandType
+    public enum OperandType
 	{
 		LargeConstant = 0,
 		SmallConstant,

@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OP2
 {
-    public sealed class GetPropAddr : ZMachineOperation
+    public sealed class GetPropAddr : ZMachineOperationBase
     {
         public GetPropAddr(ZMachine2 machine)
             : base((ushort)OpCodes.GetPropAddr, machine)

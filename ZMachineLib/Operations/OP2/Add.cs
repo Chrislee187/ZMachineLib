@@ -7,7 +7,7 @@ namespace ZMachineLib.Operations.OP2
     /// 2OP:20 14 add a b -> (result)
     /// Signed 16-bit addition.
     /// </summary>
-    public sealed class Add : ZMachineOperation
+    public sealed class Add : ZMachineOperationBase
     {
         public Add(ZMachine2 machine, IVariableManager variableManager = null)
             : base((ushort)OpCodes.Add, machine, variableManager: variableManager)

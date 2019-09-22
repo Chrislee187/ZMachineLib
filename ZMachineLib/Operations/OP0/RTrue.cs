@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OP0
 {
-    public sealed class RTrue : ZMachineOperation
+    public sealed class RTrue : ZMachineOperationBase
     {
         public RTrue(ZMachine2 machine)
             : base((ushort)OpCodes.RTrue, machine)

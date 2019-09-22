@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OPVAR
 {
-    public sealed class SetWindow : ZMachineOperation
+    public sealed class SetWindow : ZMachineOperationBase
     {
         private readonly IUserIo _io;
 

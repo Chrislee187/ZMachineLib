@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OPExtended
 {
-    public sealed class SetFont : ZMachineOperation
+    public sealed class SetFont : ZMachineOperationBase
     {
         public SetFont(ZMachine2 machine)
             : base((ushort)KindExtOpCodes.SetFont, machine)

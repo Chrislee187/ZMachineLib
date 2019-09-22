@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OP2
 {
-    public sealed class Jg : ZMachineOperation
+    public sealed class Jg : ZMachineOperationBase
     {
         public Jg(ZMachine2 machine)
             : base((ushort)OpCodes.Jg, machine)

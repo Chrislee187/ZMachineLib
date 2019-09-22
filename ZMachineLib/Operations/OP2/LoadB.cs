@@ -8,7 +8,7 @@ namespace ZMachineLib.Operations.OP2
     /// Stores array->byte-index(i.e., the byte at address array+byte-index,
     /// which must lie in static or dynamic memory).
     /// </summary>
-    public sealed class LoadB : ZMachineOperation
+    public sealed class LoadB : ZMachineOperationBase
     {
         public LoadB(ZMachine2 machine,
             IVariableManager variableManager = null)

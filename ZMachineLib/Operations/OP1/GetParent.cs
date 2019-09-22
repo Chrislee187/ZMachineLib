@@ -7,7 +7,7 @@ namespace ZMachineLib.Operations.OP1
     /// Get parent object
     /// (note that this has NO "branch if exists" clause as Get Child has).
     /// </summary>
-    public sealed class GetParent : ZMachineOperation
+    public sealed class GetParent : ZMachineOperationBase
     {
         public GetParent(ZMachine2 machine)
             : base((ushort) OpCodes.GetParent, machine)

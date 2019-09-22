@@ -3,7 +3,7 @@ using ZMachineLib.Extensions;
 
 namespace ZMachineLib.Operations.OPVAR
 {
-    public sealed class StoreW : ZMachineOperation
+    public sealed class StoreW : ZMachineOperationBase
     {
         public StoreW(ZMachine2 machine)
             : base((ushort)OpCodes.StoreW, machine)

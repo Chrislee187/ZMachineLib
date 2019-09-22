@@ -1,10 +1,10 @@
 ﻿namespace ZMachineLib.Operations.OP0
 {
-    public abstract class BasePrintingOperations : ZMachineOperation
+    public abstract class BasePrintingOperationsBase : ZMachineOperationBase
     {
         protected readonly IUserIo Io;
 
-        protected BasePrintingOperations(ushort code,
+        protected BasePrintingOperationsBase(ushort code,
             ZMachine2 machine,
             IUserIo io) 
             : base(code, machine)

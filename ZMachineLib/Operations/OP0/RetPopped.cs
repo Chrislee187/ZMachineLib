@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OP0
 {
-    public sealed class RetPopped : ZMachineOperation
+    public sealed class RetPopped : ZMachineOperationBase
     {
         public RetPopped(ZMachine2 machine)
             : base((ushort)OpCodes.RetPopped, machine)

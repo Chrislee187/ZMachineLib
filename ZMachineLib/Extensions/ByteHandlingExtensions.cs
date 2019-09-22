@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace ZMachineLib.Extensions
 {
@@ -85,6 +86,11 @@ namespace ZMachineLib.Extensions
                 throw new ArgumentOutOfRangeException(nameof(bitNumber), "Byte bit numbers must be between 0 and 7");
             }
             return (byte) (1 << bitNumber);
+        }
+
+        public static bool BitsSet(byte attrs, byte mask)
+        {
+            return (attrs & mask) == mask;
         }
     }
 }

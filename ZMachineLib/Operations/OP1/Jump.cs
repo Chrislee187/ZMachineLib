@@ -2,7 +2,7 @@
 
 namespace ZMachineLib.Operations.OP1
 {
-    public sealed class Jump : ZMachineOperation
+    public sealed class Jump : ZMachineOperationBase
     {
         public Jump(ZMachine2 machine)
             : base((ushort)OpCodes.Jump, machine)

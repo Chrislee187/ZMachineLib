@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace ZMachineLib.Operations.OP1
 {
-    public sealed class PrintObj : ZMachineOperation
+    public sealed class PrintObj : ZMachineOperationBase
     {
         private readonly IUserIo _io;
 
