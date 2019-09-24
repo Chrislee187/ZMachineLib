@@ -32,9 +32,9 @@ namespace ZMachineLib.Operations
             _operations.Add(OpCodes.InsertObj, new InsertObj(machine, machine.Contents));
             _operations.Add(OpCodes.LoadW, new LoadW(machine.Contents));
             _operations.Add(OpCodes.LoadB, new LoadB(machine.Contents));
-            _operations.Add(OpCodes.GetProp, new GetProp(machine, machine.Contents));
-            _operations.Add(OpCodes.GetPropAddr, new GetPropAddr(machine));
-            _operations.Add(OpCodes.GetNextProp, new GetNextProp(machine));
+            _operations.Add(OpCodes.GetProp, new GetProp(machine.Contents));
+            _operations.Add(OpCodes.GetPropAddr, new GetPropAddr(machine.Contents));
+            _operations.Add(OpCodes.GetNextProp, new GetNextProp(machine, machine.Contents));
             _operations.Add(OpCodes.Add, new Add(machine.Contents));
             _operations.Add(OpCodes.Sub, new Sub(machine.Contents));
             _operations.Add(OpCodes.Mul, new Mul(machine.Contents));
@@ -54,7 +54,7 @@ namespace ZMachineLib.Operations
             _operations.Add(OpCodes.Dec, new Dec(machine));
             _operations.Add(OpCodes.PrintAddr, new PrintAddr(machine, io));
             _operations.Add(OpCodes.Call1S, new Call1S(machine));
-            _operations.Add(OpCodes.RemoveObj, new RemoveObj(machine));
+            _operations.Add(OpCodes.RemoveObj, new RemoveObj(machine.Contents));
             _operations.Add(OpCodes.PrintObj, new PrintObj(machine, io));
             _operations.Add(OpCodes.Ret, new Ret(machine));
             _operations.Add(OpCodes.Jump, new Jump(machine));

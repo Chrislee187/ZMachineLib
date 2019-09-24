@@ -53,7 +53,9 @@ namespace ZPlay
 #if SIMPLE_IO
 			var s = Console.ReadLine();
 			Console.MoveBufferArea(0, 0, Console.WindowWidth, _lines, 0, 1);
-			return s?.Substring(0, Math.Min(s.Length, max));
+            var substring = s?.Substring(0, Math.Min(s.Length, max));
+
+            return substring;
 #else
 			string s = string.Empty;
 			ConsoleKeyInfo key = new ConsoleKeyInfo();

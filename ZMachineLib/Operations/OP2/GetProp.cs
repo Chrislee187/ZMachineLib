@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP2
@@ -14,35 +15,24 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class GetProp : ZMachineOperationBase
     {
-        public GetProp(ZMachine2 machine, IZMemory contents)
-            : base((ushort)OpCodes.GetProp, machine, contents)
+        public GetProp(IZMemory contents)
+            : base((ushort)OpCodes.GetProp, null, contents)
         {
         }
 
         public override void Execute(List<ushort> operands)
         {
             var dest = GetNextByte();
-            ushort val = 0;
-
+            var obj = operands[0];
             byte prop = (byte)operands[1];
-            var addr = ObjectManager.GetPropertyAddress(operands[0], prop);
-            if (addr > 0)
-            {
-                var propInfo = MemoryManager.Get(addr++);
-                byte len;
+            var zObj = Contents.ObjectTree[obj];
 
-                if (Contents.Header.Version > 3 && (propInfo & 0x80) == 0x80)
-                    len = (byte)(Contents.Manager.Get(addr++) & 0x3f);
-                else
-                    len = (byte)((propInfo >> ((ushort) Contents.Header.Version <= 3 ? 5 : 6)) + 1);
+            ushort valNew = 0;
+            var propValues = zObj.GetProperty(prop);
+            for (var i = 0; i < propValues.Data.Length; i++)
+                valNew |= (ushort)(propValues.Data[i] << (propValues.Data.Length - 1 - i) * 8);
 
-                for (var i = 0; i < len; i++)
-                    val |= (ushort)(Contents.Manager.Get(addr + i) << (len - 1 - i) * 8);
-            }
-            else
-                val = Contents.Manager.GetUShort((ushort)(Contents.Header.ObjectTable + (operands[1] - 1) * 2));
-
-            Contents.VariableManager.StoreWord(dest, val);
+            Contents.VariableManager.StoreWord(dest, valNew);
         }
     }
 }

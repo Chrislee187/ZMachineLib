@@ -21,17 +21,19 @@ namespace ZMachineLib.Content
         ushort PropertyHeader { get; set; }
         Dictionary<int, bool> AttributeFlags { get; set; }
         ushort PropertiesAddress { get; set; }
-        IReadOnlyDictionary<int, byte[]> Properties { get;  }
+        IReadOnlyDictionary<int, ZProperty> Properties { get;  }
+        ushort ObjectNumber { get; set; }
         ZMachineObject RefreshFromMemory();
+
+        ZProperty GetProperty(int i);
     }
 
     [DebuggerDisplay("[{ObjectNumber}] '{Name}'")]
     public class ZMachineObject : IZMachineObject
     {
-        public static readonly ZMachineObject Object0 = new ZMachineObject(0, 0, default, null, null);
-        public static readonly ZMachineObject Object64 = new ZMachineObject(0, 0, default, null, null);
+        public static readonly ZMachineObject Object0 = new ZMachineObject(0, 0, default, null, null, null);
         public ulong Attributes { get; private set; }
-        public IReadOnlyDictionary<int, byte[]> Properties { get; set; }
+        public IReadOnlyDictionary<int, ZProperty> Properties { get; set; }
         public string Name { get; private set; }
 
         private readonly Func<ushort, ulong> _flagsProviderV3 = attr => 0x80000000 >> attr;
@@ -44,17 +46,20 @@ namespace ZMachineLib.Content
 
         public ushort Address { get; set; }
 
+        public byte BytesRead { get; private set; }
+
         public ZMachineObject()
         {
 
         }
-        public byte BytesRead { get; private set; }
 
         public ZMachineObject(ushort objNumber, ushort address,
             ZHeader header,
             IMemoryManager manager,
-            ZAbbreviations abbreviations)
+            ZAbbreviations abbreviations, 
+            IReadOnlyDictionary<int, byte[]> defaultProps)
         {
+            _defaultProps = defaultProps;
             if (objNumber == 0) return;
 
             _header = header;
@@ -73,6 +78,16 @@ namespace ZMachineLib.Content
             HydrateObject();
             return this;
         }
+
+        public ZProperty GetProperty(int i)
+        {
+            if (!Properties.TryGetValue(i, out var value))
+            {
+                value = new ZProperty((byte) i, 0, _defaultProps[i]);
+            }
+            return value;
+        }
+
         private void HydrateObject()
         {
             var ptr = Address;
@@ -104,27 +119,31 @@ namespace ZMachineLib.Content
 
         }
 
-        private Dictionary<int, byte[]> GetProperties(ushort ptr)
+        private Dictionary<int, ZProperty> GetProperties(ushort ptr)
         {
-            // TODO: Need public GetProperty(ushort propNumber)
-            //       this will need the default properties table to sorted
+            Debug.Assert(ptr > 0, "GetProperties ptr not > 0");
+
             byte GetPropertyNumber(byte sizeByte) 
                 => (byte) (sizeByte & (byte) PropertyMasks.PropertyNumberMaskV3 );
 
             ushort GetActualSize(byte sizeByte) 
                 =>(ushort) ((sizeByte >> (byte) PropertyMasks.PropertySizeShiftV3) + 1);
 
-            Debug.Assert(ptr > 0, "GetProperties ptr not > 0");
-            var properties = new Dictionary<int, byte[]>();
+
+            var properties = new Dictionary<int, ZProperty>();
             while (_manager.Get(ptr) != 0x00)
             {
+                // Section 12.4.1 - V3 Specific
                 var sizeByte = _manager.Get(ptr++);
+                var dataAddress = ptr;
                 var propNum = GetPropertyNumber(sizeByte);
                 var propSize = GetActualSize(sizeByte);
 
                 var propData = _manager.AsSpan(ptr, propSize);
-                properties.Add(propNum, propData.ToArray());
-
+                properties.Add(
+                    propNum, 
+                    new ZProperty(propNum, dataAddress, propData.ToArray())
+                    );
                 ptr += propSize;
             }
 
@@ -178,6 +197,7 @@ namespace ZMachineLib.Content
         }
 
         private ushort _siblingObjectNumber;
+        private IReadOnlyDictionary<int, byte[]> _defaultProps;
 
         public ushort Sibling
         {
@@ -218,10 +238,10 @@ namespace ZMachineLib.Content
                 // TODO: _manager NOT tested in this section
                 var attributes = Attributes & ~flagMask;
                 uint val = (uint)attributes >> 16;
-//                _objectManager.Machine.Memory.SetLong(Address, val);
+//                _objectManager.Machine.Memory.SetLong(DataAddress, val);
                 _manager.SetLong(Address, val);
                 ushort value = (ushort)attributes;
-//                _objectManager.Machine.Memory.SetWord((ushort)(Address + 4), value);
+//                _objectManager.Machine.Memory.SetWord((ushort)(DataAddress + 4), value);
                 _manager.Set((ushort)(Address + 4), value);
             }
         }
@@ -240,9 +260,9 @@ namespace ZMachineLib.Content
             {
                 // TODO: _manager NOT tested in this section
                 Attributes |= flagMask;
-//                _objectManager.Machine.Memory.SetLong(Address, (uint)(attributes >> 16));
+//                _objectManager.Machine.Memory.SetLong(DataAddress, (uint)(attributes >> 16));
                 _manager.SetLong(Address, (uint)(Attributes >> 16));
-//                _objectManager.Machine.Memory.SetWord((ushort)(Address + 4), (ushort)attributes);
+//                _objectManager.Machine.Memory.SetWord((ushort)(DataAddress + 4), (ushort)attributes);
                 _manager.Set((ushort)(Address + 4), (ushort)Attributes);
 
             }

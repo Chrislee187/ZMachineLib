@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP2
 {
@@ -14,20 +18,33 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class GetNextProp : ZMachineOperationBase
     {
-        public GetNextProp(ZMachine2 machine)
-            : base((ushort)OpCodes.GetNextProp, machine, machine.Contents)
+        public GetNextProp(ZMachine2 machine, IZMemory contents)
+            : base((ushort)OpCodes.GetNextProp, machine, contents)
         {
         }
 
         public override void Execute(List<ushort> operands)
         {
-            var next = false;
+            var obj = operands[0];
+            var prop = operands[1];
+
+            var next = prop == 0;
 
             var dest = GetNextByte();
-            if (operands[1] == 0)
-                next = true;
 
-            var propHeaderAddr = ObjectManager.GetPropertyHeaderAddress(operands[0]);
+            var zObj = Contents.ObjectTree[obj];
+
+            var keyArray = zObj.Properties.Keys.ToArray();
+            var propIdx = Array.FindIndex(keyArray, k => k == prop);
+
+            var nextPropNum = 0;
+            if (propIdx < keyArray.Length - 2)
+            {
+                nextPropNum = keyArray[propIdx++];
+            }
+
+
+            var propHeaderAddr = ObjectManager.GetPropertyHeaderAddress(obj);
             var size = MemoryManager.Get(propHeaderAddr);
             propHeaderAddr += (ushort)(size * 2 + 1);
 
@@ -49,16 +66,18 @@ namespace ZMachineLib.Operations.OP2
 
                 if (next)
                 {
+                    Debug.Assert(propNum == nextPropNum);
                     variableManager.StoreByte(dest, propNum);
                     return;
                 }
 
-                if (propNum == operands[1])
+                if (propNum == prop)
                     next = true;
 
                 propHeaderAddr += (ushort)(len + 1);
             }
 
+            Debug.Assert(0 == nextPropNum);
             variableManager.StoreByte(dest, 0);
         }
     }

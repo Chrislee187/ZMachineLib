@@ -38,13 +38,12 @@ namespace ZMachineLib.Content
         {
             Stack = stack;
             Memory = data;
-            var version = data[0];
-            Offsets = VersionedOffsets.For(version);
+            Header = new ZHeader(data.AsSpan(0, 31));
+            if (Header.Version > 3) throw new NotSupportedException("ZMachine > V3 not currently supported");
+
+            Offsets = VersionedOffsets.For(Header.Version);
             Manager = new MemoryManager(Memory);
 
-            if (version > 3) throw new NotSupportedException("ZMachine > V3 not currently supported");
-
-            Header = new ZHeader(data.AsSpan(0,31));
             Offsets = VersionedOffsets.For(Header.Version);
 
             Abbreviations = new ZAbbreviations(

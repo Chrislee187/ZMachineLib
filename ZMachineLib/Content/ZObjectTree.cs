@@ -40,9 +40,7 @@ namespace ZMachineLib.Content
                 lastObject = objectAddress >= min;
                 if (!lastObject)
                 {
-                    // TODO: Pass Default Props in to zObj and add zObj.GetProperty(int propertyNumber) that
-                    // will pick up defaults for non existing properties.
-                    var zObj = new ZMachineObject(objNumber, objectAddress, header, manager, abbreviations);
+                    var zObj = new ZMachineObject(objNumber, objectAddress, header, manager, abbreviations, defaultProps);
                     _dict.Add(objNumber, zObj);
                     ptr += zObj.BytesRead;
 

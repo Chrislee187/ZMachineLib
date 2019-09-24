@@ -1,6 +1,9 @@
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Moq;
 using Moq.Language;
+using NUnit.Framework;
 
 namespace ZMachineLib.Feature.Tests
 {
@@ -19,17 +22,61 @@ namespace ZMachineLib.Feature.Tests
         }
 
         public void Execute(string command, string outputContains = "")
-        {
-            _inputSequence.Returns(command);
+        {                        // NOTE: Output text can be split across multiple calls to print mechansims
+
+            if (!string.IsNullOrEmpty(command))
+            {
+                _inputSequence.Returns(command);
+                TestContext.WriteLine($"\nExecuting: {command}\nExpecting:");
+            }
 
             if (!string.IsNullOrWhiteSpace(outputContains))
             {
-                _outputSequence.Add(outputContains);
+                foreach (var word in outputContains.Split(' '))
+                {
+                    var santise = Santise(word);
+                    _outputSequence.Add(santise);
+                    TestContext.Write($"{santise} ");
+                }
             }
         }
 
+        private string Santise(string word) 
+            => new string(word.Where(c 
+                => !".,:;#".Contains(c)
+                ).ToArray());
+
+        public void SetupInputs(string textFile)
+        {
+            var text = File.OpenText(textFile).ReadToEnd();
+            var lines = new StringReader(text);
+            var line = lines.ReadLine();
+            var cmd = "";
+            while (line != null)
+            {
+                if (!line.StartsWith('#'))
+                {
+                    if (line.Trim().StartsWith(">"))
+                    {
+                        cmd = line.Substring(1).Trim();
+                    }
+                    else
+                    {
+                        var result = line.Trim();
+
+
+                        Execute(cmd, result);
+
+                        cmd = string.Empty;
+                    }
+                }
+
+                line = lines.ReadLine();
+            }
+        }
         public void Quit()
         {
+            Execute("", "");
             Execute("quit", "wish to leave");
             Execute("Y");
         }

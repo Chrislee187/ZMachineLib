@@ -1,29 +1,23 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP2
 {
     public sealed class GetPropAddr : ZMachineOperationBase
     {
-        public GetPropAddr(ZMachine2 machine)
-            : base((ushort)OpCodes.GetPropAddr, machine, machine.Contents)
+        public GetPropAddr(IZMemory contents)
+            : base((ushort)OpCodes.GetPropAddr, null, contents)
         {
         }
 
         public override void Execute(List<ushort> operands)
         {
             var dest = GetNextByte();
-            byte prop = (byte)operands[1];
-            var addr = ObjectManager.GetPropertyAddress(operands[0], prop);
 
-            if (addr > 0)
-            {
-                var propInfo = MemoryManager.Get(addr + 1);
-
-                if (Machine.Contents.Header.Version > 3 && (propInfo & 0x80) == 0x80)
-                    addr += 2;
-                else
-                    addr += 1;
-            }
+            var obj = operands[0];
+            var prop = (byte)operands[1];
+            var zObj = Contents.ObjectTree[obj];
+            var addr = zObj.GetProperty(prop).DataAddress;
 
             Contents.VariableManager.StoreWord(dest, addr);
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP1
 {
@@ -9,66 +10,55 @@ namespace ZMachineLib.Operations.OP1
     /// Detach the object from its parent, so that it no longer has any parent.
     /// (Its children remain in its possession.)
     /// </summary>
-    /// <remarks>
-    /// Drink the bottle of water in zork1 to trigger this operation
-    /// </remarks>
     public sealed class RemoveObj : ZMachineOperationBase
     {
-        public RemoveObj(ZMachine2 machine)
-            : base((ushort)OpCodes.RemoveObj, machine, machine.Contents)
+        public RemoveObj(IZMemory contents)
+            : base((ushort)OpCodes.RemoveObj, null, contents)
         {
 
         }
 
         public override void Execute(List<ushort> operands)
         {
-            if (operands[0] == 0)
+            var rootObjectNumber = operands[0];
+            if (rootObjectNumber == 0)
                 return;
 
-            var zObj = ObjectManager.GetObject(operands[0]);
-            var parentZObj = ObjectManager.GetObject(zObj.Parent);
-            Log.Write($"[{zObj.Name}] parent [{parentZObj.Name}]");
+            var zObj = Contents.ObjectTree.GetOrDefault(rootObjectNumber);
+            var parentZObj = Contents.ObjectTree.GetOrDefault(zObj.Parent);
 
-            // if object is the first child, set first child to the sibling
-            if (zObj.Parent == operands[0])
+            // if object is the first child, simply set first child to the sibling to skip the the object being de-etached
+            if (parentZObj.Child == rootObjectNumber)
             {
-                ObjectManager.SetObjectNumber((ushort)(parentZObj.Address + Machine.Contents.Offsets.Child), zObj.Sibling);
+                parentZObj.Child = zObj.Sibling;
             }
             else if (parentZObj.Child != 0)
             {
-                var parentChildZObj = ObjectManager.GetObject(parentZObj.Child);
-
-                var addr = ObjectManager.GetObjectAddress(parentZObj.Child);
-                var currentZObj = ObjectManager.GetObject(parentZObj.Child);
-                var currentSibling = ObjectManager.GetObjectNumber((ushort)(addr + Machine.Contents.Offsets.Sibling));
-                Debug.Assert(currentSibling == currentZObj.Sibling);
-                Debug.Assert(parentChildZObj.Sibling == currentZObj.Sibling);
-
-                // while sibling of parent1's child has siblings
-                while (currentZObj.Sibling != 0)
-                {
-                    //
-                    // NOTE: Not found anything that hits this yet, do not refactor until we do
-                    //
-                    // if obj1 is the sibling of the current object
-                    if (currentSibling == operands[0])
-                    {
-                        // set the current object's sibling to the next sibling
-                        Debug.Assert(currentZObj.Sibling == (ushort)(addr + Machine.Contents.Offsets.Sibling));
-                        ObjectManager.SetObjectNumber((ushort)(addr + Machine.Contents.Offsets.Sibling), zObj.Sibling);
-                        break;
-                    }
-
-                    addr = ObjectManager.GetObjectAddress(currentSibling);
-                    currentZObj = ObjectManager.GetObject(currentSibling);
-                    currentSibling = ObjectManager.GetObjectNumber((ushort)(addr + Machine.Contents.Offsets.Sibling));
-                    Debug.Assert(currentSibling == currentZObj.Sibling);
-                    throw new Exception("Been waiting to find something that hits this");
-                }
+                RemoveObjectFromParent(zObj, Contents.ObjectTree.GetOrDefault(parentZObj.Child));
             }
 
             // set the object's parent to nothing
-            ObjectManager.SetObjectNumber((ushort)(zObj.Address + Machine.Contents.Offsets.Parent), 0);
+            zObj.Parent = 0;
+        }
+
+        private void RemoveObjectFromParent(IZMachineObject zObj, IZMachineObject firstChild)
+        {
+            var currentZObjToSet = firstChild;
+            var nextSibling = Contents.ObjectTree.GetOrDefault(firstChild.Sibling);
+            // while sibling of parent1's child has siblings
+            while (nextSibling.ObjectNumber != 0)
+            {
+                // if obj1 is the sibling of the current object
+                if (nextSibling.ObjectNumber == zObj.ObjectNumber)
+                {
+                    // set the current object's sibling to the next sibling
+                    currentZObjToSet.Sibling = zObj.Sibling;
+                    break;
+                }
+
+                currentZObjToSet = nextSibling;
+                nextSibling = Contents.ObjectTree.GetOrDefault(nextSibling.Sibling);
+            }
         }
     }
 }
