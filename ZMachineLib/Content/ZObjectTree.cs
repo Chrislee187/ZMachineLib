@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ZMachineLib.Extensions;
 using ZMachineLib.Managers;
 
 namespace ZMachineLib.Content
@@ -16,15 +15,16 @@ namespace ZMachineLib.Content
         private readonly Dictionary<ushort, IZMachineObject> _dict;
 
         // ReSharper disable once UnusedAutoPropertyAccessor.Local
-        private IReadOnlyList<ushort> DefaultPropAddresses { get; set; }
+        private Dictionary<int, byte[]> DefaultProperties { get; set; }
 
         public ZObjectTree(ZHeader header, 
             ZAbbreviations abbreviations,
             IMemoryManager manager)
         {
             var objectTableData = manager.AsSpan(header.ObjectTable);// memory.AsSpan(header.ObjectTable);
+
             var (defaultProps, ptr) = GetDefaultProps(objectTableData);
-            DefaultPropAddresses = defaultProps;
+            DefaultProperties = defaultProps;
 
             var lastObject = false;
 
@@ -40,6 +40,8 @@ namespace ZMachineLib.Content
                 lastObject = objectAddress >= min;
                 if (!lastObject)
                 {
+                    // TODO: Pass Default Props in to zObj and add zObj.GetProperty(int propertyNumber) that
+                    // will pick up defaults for non existing properties.
                     var zObj = new ZMachineObject(objNumber, objectAddress, header, manager, abbreviations);
                     _dict.Add(objNumber, zObj);
                     ptr += zObj.BytesRead;
@@ -65,15 +67,16 @@ namespace ZMachineLib.Content
 
         #region IReadOnlyDictionary<>
 
-        private (IReadOnlyList<ushort> defaultProps, ushort bytesRead) GetDefaultProps(Span<byte> data)
+        private (Dictionary<int, byte[]> defaultProps, ushort bytesRead) GetDefaultProps(Span<byte> data)
         {
+            // Section 12.2 - Default Property Table
+            // NOTE: Default properties values are fixed at 2 bytes (words)
             const int propCountV3 = 31;
-            var defaultProps = new List<ushort>();
-
-
+            var defaultProps = new Dictionary<int, byte[]>();
+            
             for (int i = 0; i < propCountV3; i++)
             {
-                defaultProps.Add(data.Slice(i * 2, 2).GetUShort());
+                defaultProps.Add(i+1, data.Slice(i * 2, 2).ToArray());
             }
 
             return (defaultProps, propCountV3 * 2);

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using ZMachineLib.Extensions;
 using ZMachineLib.Managers;
 
@@ -22,6 +21,7 @@ namespace ZMachineLib.Content
         ushort PropertyHeader { get; set; }
         Dictionary<int, bool> AttributeFlags { get; set; }
         ushort PropertiesAddress { get; set; }
+        IReadOnlyDictionary<int, byte[]> Properties { get;  }
         ZMachineObject RefreshFromMemory();
     }
 
@@ -31,6 +31,7 @@ namespace ZMachineLib.Content
         public static readonly ZMachineObject Object0 = new ZMachineObject(0, 0, default, null, null);
         public static readonly ZMachineObject Object64 = new ZMachineObject(0, 0, default, null, null);
         public ulong Attributes { get; private set; }
+        public IReadOnlyDictionary<int, byte[]> Properties { get; set; }
         public string Name { get; private set; }
 
         private readonly Func<ushort, ulong> _flagsProviderV3 = attr => 0x80000000 >> attr;
@@ -38,6 +39,8 @@ namespace ZMachineLib.Content
         private readonly IMemoryManager _manager;
         private readonly ZAbbreviations _abbreviations;
         private readonly ZHeader _header;
+        private VersionedOffsets Offsets => VersionedOffsets.For(_header.Version);
+
 
         public ushort Address { get; set; }
 
@@ -87,34 +90,53 @@ namespace ZMachineLib.Content
 
             BytesRead = (byte) (ptr - Address);
             ptr = PropertiesAddress;
+
             var len = _manager.Get(ptr++);
 
             if (len != 0)
             {
                 var zStr = new ZsciiString(_manager.AsSpan(ptr), _abbreviations);
                 Name = zStr.String;
+                ptr += zStr.BytesUsed;
             }
 
+            Properties = GetProperties(ptr);
 
-            if (Sibling != 0)
-            {
-//                SiblingZObject = _objects[Sibling];
-            }
-            if (Child != 0)
-            {
-//                ChildZObject = _objects[Child];
-            }
-            //            var propIndex = 1;
-            //            var propSize = (dynamicMemory[ptr++] >> 5) + 1;
-            //            while (propSize != 0 && propIndex <= 32 )
-            //            {
-            //                //                var propValue = 
-            //                ptr += (ushort)propSize;
-            //                propSize = (dynamicMemory[ptr++] >> 5) + 1;
-            //                propIndex++;
-            //            }
         }
 
+        private Dictionary<int, byte[]> GetProperties(ushort ptr)
+        {
+            // TODO: Need public GetProperty(ushort propNumber)
+            //       this will need the default properties table to sorted
+            byte GetPropertyNumber(byte sizeByte) 
+                => (byte) (sizeByte & (byte) PropertyMasks.PropertyNumberMaskV3 );
+
+            ushort GetActualSize(byte sizeByte) 
+                =>(ushort) ((sizeByte >> (byte) PropertyMasks.PropertySizeShiftV3) + 1);
+
+            Debug.Assert(ptr > 0, "GetProperties ptr not > 0");
+            var properties = new Dictionary<int, byte[]>();
+            while (_manager.Get(ptr) != 0x00)
+            {
+                var sizeByte = _manager.Get(ptr++);
+                var propNum = GetPropertyNumber(sizeByte);
+                var propSize = GetActualSize(sizeByte);
+
+                var propData = _manager.AsSpan(ptr, propSize);
+                properties.Add(propNum, propData.ToArray());
+
+                ptr += propSize;
+            }
+
+            return properties;
+        }
+
+        [Flags]
+        private enum PropertyMasks : byte
+        {
+            PropertyNumberMaskV3 = Bits.Bit4 | Bits.Bit3 | Bits.Bit2 | Bits.Bit1 | Bits.Bit0,
+            PropertySizeShiftV3 = 5
+        }
         private void SetAttributes(uint attrs)
         {
             Attributes = attrs;
@@ -132,12 +154,6 @@ namespace ZMachineLib.Content
         public ushort PropertiesAddress { get; set; }
 
         public ushort ObjectNumber { get; set; }
-
-
-
-
-
-        private VersionedOffsets Offsets => VersionedOffsets.For(_header.Version);
 
         private ushort _parentObjectNumber;
         public ushort Parent
@@ -162,6 +178,7 @@ namespace ZMachineLib.Content
         }
 
         private ushort _siblingObjectNumber;
+
         public ushort Sibling
         {
             get => _siblingObjectNumber;
@@ -171,9 +188,13 @@ namespace ZMachineLib.Content
                 _manager?.Set((ushort)(Address + Offsets.Sibling), (byte)value);
             }
         }
+
+        // TODO: Get object tree to wire these references up
+        // ReSharper disable UnassignedGetOnlyAutoProperty
         public IZMachineObject ParentZObject { get; }
         public IZMachineObject SiblingZObject { get; }
         public IZMachineObject ChildZObject { get; }
+        // ReSharper restore UnassignedGetOnlyAutoProperty
 
         public ushort PropertyHeader { get; set; }
 
@@ -244,10 +265,12 @@ namespace ZMachineLib.Content
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
+            // ReSharper disable once ArrangeThisQualifier
             if (obj.GetType() != this.GetType()) return false;
             return Equals((ZMachineObject) obj);
         }
 
+        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
         public override int GetHashCode()
         {
             unchecked

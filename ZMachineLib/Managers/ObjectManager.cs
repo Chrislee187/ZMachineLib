@@ -105,7 +105,8 @@ namespace ZMachineLib.Managers
             while (_memory.Manager.Get(propHeaderAddr) != 0x00)
             {
                 var propInfo = _memory.Manager.Get(propHeaderAddr);
-                var propNum = (byte)(propInfo & (_memory.Header.Version <= 3 ? 0x1f : 0x3f));
+                var propNum = (byte)(propInfo 
+                                     & (_memory.Header.Version <= 3 ? 0x1f : 0x3f));
 
                 if (propNum == prop)
                     return propHeaderAddr;

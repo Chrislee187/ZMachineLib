@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using ZMachineLib.Content;
-using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OP2
 {
@@ -13,7 +12,7 @@ namespace ZMachineLib.Operations.OP2
     public sealed class DecCheck : ZMachineOperationBase
     {
         public DecCheck(IZMemory contents)
-            : base((ushort)OpCodes.DecCheck, null, contents, null)
+            : base((ushort)OpCodes.DecCheck, null, contents)
         {
         }
 

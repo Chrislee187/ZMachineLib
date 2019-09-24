@@ -18,7 +18,7 @@ namespace ZMachineLib.Operations.OP2
         {
             var obj = operands[0];
             var attr = operands[1];
-            var zObj = Contents.ObjectTree[obj];;
+            var zObj = Contents.ObjectTree[obj];
 
             Jump(zObj.TestAttribute(attr));
         }

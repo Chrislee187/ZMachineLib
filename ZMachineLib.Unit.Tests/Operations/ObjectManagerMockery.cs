@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Moq;
 using Moq.Language;
 using ZMachineLib.Content;
@@ -8,8 +7,8 @@ namespace ZMachineLib.Unit.Tests.Operations
 {
     public class ObjectManagerMockery
     {
-        private Mock<IObjectManager> _objectManagerMock;
-        private ISetupSequentialResult<IZMachineObject> _getObjectSequence;
+        private readonly Mock<IObjectManager> _objectManagerMock;
+        private readonly ISetupSequentialResult<IZMachineObject> _getObjectSequence;
 
         public ObjectManagerMockery()
         {

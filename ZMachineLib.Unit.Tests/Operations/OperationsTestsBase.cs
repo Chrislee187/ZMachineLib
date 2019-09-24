@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Castle.DynamicProxy.Generators.Emitters;
 using Moq;
 using Shouldly;
 using ZMachineLib.Content;

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP2
@@ -41,13 +40,14 @@ namespace ZMachineLib.Operations.OP2
             {
                 // set parent1's child to obj1's sibling
                 parent1ZObj.Child = zObj1.Sibling;
-//                ObjectManager.SetObjectNumber(
-//                    (ushort)(parent1ZObj.Address + Machine.Contents.Offsets.Child), 
-//                    zObj1.Sibling
-//                    );
             }
             else // else if I'm not the child but there is a child, we need to link the broken sibling chain
             {
+                // Need a longer test than the drink bottle of water with more interactions
+                // to get more opcodes to be hit.
+
+
+
                 var parent1ChildZObj = Contents.ObjectTree[parent1ZObj.Child];
                 var addr = parent1ChildZObj.Address;
                 var currentSibling = parent1ChildZObj.Sibling;

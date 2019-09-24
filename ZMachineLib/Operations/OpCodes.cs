@@ -2,7 +2,7 @@
 {
     public enum OpCodes : byte
     {
-        // 2OP
+        // 2OP - V3
         Je = 0x01,
         Jl = 0x02,
         Jg = 0x03,
@@ -27,13 +27,16 @@
         Mul = 0x16,
         Div = 0x17,
         Mod = 0x18,
+        // 2OP - V4
         Call2S = 0x19,
+        // 2OP -V5
         Call2N = 0x1a,
         SetColor = 0x1b, // NOTE: args differences between in v5/6
         // ReSharper disable once UnusedMember.Global
+        // 2OP - V6
         @Throw = 0x1c,
 
-        // 1OP
+        // 1OP - V3
         Jz = 0x80,
         GetSibling = 0x81,
         GetChild = 0x82,
@@ -42,16 +45,16 @@
         Inc = 0x85,
         Dec = 0x86,
         PrintAddr = 0x87,
-        Call1S = 0x88,
+        Call1S = 0x88, // V4
         RemoveObj = 0x89,
         PrintObj = 0x8a,
         Ret = 0x8b,
         Jump = 0x8c,
         PrintPAddr = 0x8d,
         Load = 0x8e,
-        // Version <= 4
+        // V4
         Not = 0x8f,
-        //Version > 4
+        // V5
         Call1N = 0x8f,
 
         // 0OP

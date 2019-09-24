@@ -32,7 +32,7 @@ namespace ZMachineLib.Operations
             _operations.Add(OpCodes.InsertObj, new InsertObj(machine, machine.Contents));
             _operations.Add(OpCodes.LoadW, new LoadW(machine.Contents));
             _operations.Add(OpCodes.LoadB, new LoadB(machine.Contents));
-            _operations.Add(OpCodes.GetProp, new GetProp(machine));
+            _operations.Add(OpCodes.GetProp, new GetProp(machine, machine.Contents));
             _operations.Add(OpCodes.GetPropAddr, new GetPropAddr(machine));
             _operations.Add(OpCodes.GetNextProp, new GetNextProp(machine));
             _operations.Add(OpCodes.Add, new Add(machine.Contents));
@@ -80,7 +80,7 @@ namespace ZMachineLib.Operations
             _operations.Add(OpCodes.Restore, new Restore(machine, fileIo));
             _operations.Add(OpCodes.Restart, new Restart(machine));
             _operations.Add(OpCodes.RetPopped, new RetPopped(machine));
-            _operations.Add(OpCodes.Pop, new Pop(machine, machine.Contents));
+            _operations.Add(OpCodes.Pop, new Pop(machine.Contents));
             _operations.Add(OpCodes.Quit, new Quit(machine, io));
             _operations.Add(OpCodes.NewLine, new Newline(machine, io));
             _operations.Add(OpCodes.ShowStatus, new ShowStatus(machine, io));

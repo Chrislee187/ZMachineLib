@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OPVAR
 {

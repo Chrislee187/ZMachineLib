@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OP1
 {
@@ -11,8 +10,7 @@ namespace ZMachineLib.Operations.OP1
     /// </summary>
     public sealed class GetChild : ZMachineOperationBase
     {
-        public GetChild(ZMachine2 machine, 
-            IVariableManager variableManager = null)
+        public GetChild(ZMachine2 machine)
             : base((ushort)OpCodes.GetChild, machine, machine.Contents)
         {
         }

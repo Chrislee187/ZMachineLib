@@ -2,7 +2,6 @@
 using System.IO;
 using System.Runtime.Serialization.Json;
 using ZMachineLib.Content;
-using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OP0
 {

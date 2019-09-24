@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Text;
 using ZMachineLib;
 using ZMachineLib.Content;
@@ -13,7 +12,11 @@ namespace ZDump
     {
         static void Main(string[] args)
         {
-            
+            // TODO: Pull in YACLAP and add some options to control whats is output
+            // -header, -abbreviations, -dictionary, -objects s, t, v
+            // s (simple)  = Object Number & Name on a single line
+            // t (terse)   = Object Number & Name, Parent, Child, Sibling addresses on a single line
+            // v (verbose) = Full, multi-line per object, output
             if (!args.Any() || !File.Exists(args[0]))
             {
                 Console.Error.WriteLine("USAGE: ZDump: filename");
@@ -83,6 +86,13 @@ namespace ZDump
             {
                 sb.AppendLine($"    Child: {objs[zObj.Child]}");
 //                sb.AppendLine(FormatObj(objs[zObj.Child], objs));
+            }
+
+            sb.AppendLine($"  Properties:");
+            foreach (var pair in zObj.Properties)
+            {
+                sb.AppendLine($"   [{pair.Key:D2}] : {Format.ByteArray(pair.Value, false)}");
+
             }
 
             return sb.ToString();
