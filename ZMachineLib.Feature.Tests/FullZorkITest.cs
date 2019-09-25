@@ -5,7 +5,7 @@ using Shouldly;
 
 namespace ZMachineLib.Feature.Tests
 {
-    [Explicit("Very slow tests that verify lots of commands and result text")]
+    
     public class FullZorkITest : FeatureTestsBase
     {
         private const string Zork3V3 = "zork1.z3";
@@ -16,6 +16,7 @@ namespace ZMachineLib.Feature.Tests
         }
 
         [Test]
+        [Explicit("Very slow tests that verify lots of commands and result text")]
 
         public void Should_play_Zork_I()
         {
@@ -29,6 +30,15 @@ namespace ZMachineLib.Feature.Tests
 //            );
         }
 
+        [Test]
+        public void Should_play_Zork_I_quickly()
+        {
+            Feature.SetupQuickInputs("quick-run-zork-1.txt");
+            Feature.ExpectAdditionalOutput("Timber Room");
+            Feature.Quit();
+
+            ShouldRunToCompletion(Zork3V3);
+        }
 
         private void VerifyOutput(params string[] commands)
         {

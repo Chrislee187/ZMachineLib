@@ -27,7 +27,6 @@ namespace ZMachineLib.Feature.Tests
             if (!string.IsNullOrEmpty(command))
             {
                 _inputSequence.Returns(command);
-                TestContext.WriteLine($"\nExecuting: {command}\nExpecting:");
             }
 
             if (!string.IsNullOrWhiteSpace(outputContains))
@@ -36,14 +35,13 @@ namespace ZMachineLib.Feature.Tests
                 {
                     var santise = Santise(word);
                     _outputSequence.Add(santise);
-                    TestContext.Write($"{santise} ");
                 }
             }
         }
 
         private string Santise(string word) 
             => new string(word.Where(c 
-                => !".,:;#".Contains(c)
+                => !".,:;".Contains(c)
                 ).ToArray());
 
         public void SetupInputs(string textFile)
@@ -69,6 +67,22 @@ namespace ZMachineLib.Feature.Tests
 
                         cmd = string.Empty;
                     }
+                }
+
+                line = lines.ReadLine();
+            }
+        }
+
+        public void SetupQuickInputs(string textFile)
+        {
+            var text = File.OpenText(textFile).ReadToEnd();
+            var lines = new StringReader(text);
+            var line = lines.ReadLine();
+            while (line != null)
+            {
+                if (!line.StartsWith("//"))
+                {
+                    Execute(line.Trim(), "");
                 }
 
                 line = lines.ReadLine();

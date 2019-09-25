@@ -91,7 +91,7 @@ namespace ZMachineLib.Operations
             _operations.Add(OpCodes.Call, new Call(machine));
             _operations.Add(OpCodes.StoreB, new StoreB(machine));
             _operations.Add(OpCodes.StoreW, new StoreW(machine));
-            _operations.Add(OpCodes.PutProp, new PutProp(machine));
+            _operations.Add(OpCodes.PutProp, new PutProp(machine)); // NEXT ONE TO REFACTOR GEETS USED A LOT
             _operations.Add(OpCodes.Read, new Read(machine, io));
             _operations.Add(OpCodes.PrintChar, new PrintChar(machine, io));
             _operations.Add(OpCodes.PrintNum, new PrintNum(machine, io));
