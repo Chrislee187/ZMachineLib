@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP0
 {
@@ -7,8 +8,8 @@ namespace ZMachineLib.Operations.OP0
     {
         private readonly IUserIo _io;
 
-        public Newline(ZMachine2 machine, IUserIo io)
-            : base((ushort)OpCodes.NewLine, machine, machine.Contents)
+        public Newline(IZMemory memory, IUserIo io)
+            : base((ushort)OpCodes.NewLine, memory)
         {
             _io = io;
         }

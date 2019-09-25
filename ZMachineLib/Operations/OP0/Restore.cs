@@ -1,15 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization.Json;
 using ZMachineLib.Content;
+using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OP0
 {
     public class Restore : GameSaveBase
     {
-        public Restore(ZMachine2 machine,
+        public Restore(IZMemory memory,
             IFileIo io)
-            : base(OpCodes.Restore, machine, io)
+            : base(OpCodes.Restore, null, memory, io)
         {
         }
 
@@ -22,13 +24,13 @@ namespace ZMachineLib.Operations.OP0
             }
 
 
-            if (Machine.Contents.Header.Version < 5)
+            if (Contents.Header.Version < 5)
             {
                 Jump(true);
             }
             else
             {
-                Contents.VariableManager.StoreWord(GetNextByte(), 1);
+                Contents.VariableManager.StoreWord(Contents.GetCurrentByteAndInc(), 1);
             }
         }
 
@@ -36,11 +38,19 @@ namespace ZMachineLib.Operations.OP0
         {
             var br = new BinaryReader(stream);
             stream.Position = 0;
-            Machine.ReadParseAddr = br.ReadUInt16();
-            Machine.ReadTextAddr = br.ReadUInt16();
-            stream.Read(Machine.Memory, 0, Machine.Contents.Header.DynamicMemorySize - 1);
             var dcs = new DataContractJsonSerializer(typeof(Stack<ZStackFrame>));
-            Machine.Stack = (Stack<ZStackFrame>)dcs.ReadObject(stream);
+            Contents.ReadParseAddr = br.ReadUInt16();
+            Contents.ReadTextAddr = br.ReadUInt16();
+
+            stream.Read(((MemoryManager)(Contents.Manager))._memory, 0, Contents.Header.DynamicMemorySize - 1);
+            var zStackFrames = (Stack<ZStackFrame>)dcs.ReadObject(stream);
+            
+            Contents.Stack.Clear();
+            foreach (var zStackFrame in zStackFrames.ToArray().Reverse())
+            {
+                Contents.Stack.Push(zStackFrame);
+            }
+
             stream.Dispose();
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OPVAR
 {
@@ -6,8 +7,8 @@ namespace ZMachineLib.Operations.OPVAR
     {
         private readonly IUserIo _io;
 
-        public BufferMode(ZMachine2 machine, IUserIo io)
-            : base((ushort)OpCodes.BufferMode, machine, machine.Contents)
+        public BufferMode(IZMemory memory, IUserIo io)
+            : base((ushort)OpCodes.BufferMode, memory)
         {
             _io = io;
         }

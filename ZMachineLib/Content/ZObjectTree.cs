@@ -99,7 +99,9 @@ namespace ZMachineLib.Content
 
         public bool TryGetValue(ushort key, out IZMachineObject value)
         {
-            return _dict.TryGetValue(key, out value);
+            var found = _dict.TryGetValue(key, out value);
+            if(found) value.RefreshFromMemory();
+            return found;
         }
 
         public IZMachineObject this[ushort key] => GetOrDefault(key);

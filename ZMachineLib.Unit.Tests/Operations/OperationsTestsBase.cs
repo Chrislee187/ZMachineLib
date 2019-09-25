@@ -46,7 +46,7 @@ namespace ZMachineLib.Unit.Tests.Operations
         }
         protected void MockPeekNextByte(IOperation op)
         {
-            op.GetNextByte = () => 0;
+            op.GetCurrentByteAndInc = () => 0;
         }
         protected void JumpedWith(bool value)
         {

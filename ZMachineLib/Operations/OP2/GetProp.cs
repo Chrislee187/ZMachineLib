@@ -16,13 +16,13 @@ namespace ZMachineLib.Operations.OP2
     public sealed class GetProp : ZMachineOperationBase
     {
         public GetProp(IZMemory contents)
-            : base((ushort)OpCodes.GetProp, null, contents)
+            : base((ushort)OpCodes.GetProp, contents)
         {
         }
 
         public override void Execute(List<ushort> operands)
         {
-            var dest = GetNextByte();
+            var dest = GetCurrentByteAndInc();
             var obj = operands[0];
             byte prop = (byte)operands[1];
             var zObj = Contents.ObjectTree[obj];

@@ -9,7 +9,7 @@ namespace ZMachineLib.Operations.OP0
         }
 
         public Nop(OpCodes opCode = OpCodes.Nop) 
-            : base((ushort)opCode, null, null)
+            : base((ushort)opCode, null)
         {
         }
     }

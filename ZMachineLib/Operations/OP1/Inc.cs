@@ -1,20 +1,21 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
+using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OP1
 {
     public sealed class Inc : ZMachineOperationBase
     {
-        public Inc(ZMachine2 machine)
-            : base((ushort)OpCodes.Inc, machine, machine.Contents)
+        public Inc(IZMemory memory)
+            : base((ushort)OpCodes.Inc, memory)
         {
         }
 
         public override void Execute(List<ushort> operands)
         {
-            var variableManager = Contents.VariableManager;
-            var val = (short)(variableManager.GetWord((byte)operands[0]) + 1);
+            var val = (short)(Contents.VariableManager.GetWord((byte)operands[0]) + 1);
             ushort value = (ushort)val;
-            variableManager.StoreWord((byte)operands[0], value);
+            Contents.VariableManager.StoreWord((byte)operands[0], value);
         }
     }
 }

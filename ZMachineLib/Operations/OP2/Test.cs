@@ -9,7 +9,7 @@ namespace ZMachineLib.Operations.OP2
     public sealed class Test : ZMachineOperationBase
     {
         public Test(IZMemory contents)
-            : base((ushort)OpCodes.Test, null, contents)
+            : base((ushort)OpCodes.Test, contents)
         {
         }
 

@@ -6,13 +6,13 @@ namespace ZMachineLib.Operations.OP2
     public sealed class Div : ZMachineOperationBase
     {
         public Div(IZMemory contents)
-            : base((ushort)OpCodes.Div, null, contents)
+            : base((ushort)OpCodes.Div, contents)
         {
         }
 
         public override void Execute(List<ushort> operands)
         {
-            var dest = GetNextByte();
+            var dest = GetCurrentByteAndInc();
 
             if (operands[1] == 0)
                 return;

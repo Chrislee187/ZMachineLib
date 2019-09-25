@@ -10,13 +10,13 @@ namespace ZMachineLib.Operations.OP2
     public sealed class Add : ZMachineOperationBase
     {
         public Add(IZMemory contents)
-            : base((ushort)OpCodes.Add, null, contents)
+            : base((ushort)OpCodes.Add, contents)
         {
         }
 
         public override void Execute(List<ushort> operands)
         {
-            var dest = GetNextByte();
+            var dest = GetCurrentByteAndInc();
             var val = (short)(operands[0] + operands[1]);
             Contents.VariableManager.StoreWord(
                 dest, 

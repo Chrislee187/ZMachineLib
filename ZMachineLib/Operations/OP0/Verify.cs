@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP0
 {
     public sealed class Verify : ZMachineOperationBase
     {
-        public Verify(ZMachine2 machine)
-            : base((ushort)OpCodes.Verify, machine, machine.Contents)
+        public Verify(IZMemory memory)
+            : base((ushort)OpCodes.Verify, memory)
         {}
 
         public override void Execute(List<ushort> operands) => Jump(true);

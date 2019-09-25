@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OPVAR
 {
@@ -6,8 +7,8 @@ namespace ZMachineLib.Operations.OPVAR
     {
         private readonly IUserIo _io;
 
-        public SoundEffect(ZMachine2 machine, IUserIo io)
-            : base((ushort)OpCodes.SoundEffect, machine, machine.Contents)
+        public SoundEffect(IZMemory memory, IUserIo io)
+            : base((ushort)OpCodes.SoundEffect, memory)
         {
             _io = io;
         }

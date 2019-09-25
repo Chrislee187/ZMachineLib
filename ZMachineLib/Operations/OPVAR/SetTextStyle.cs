@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OPVAR
 {
@@ -6,8 +7,8 @@ namespace ZMachineLib.Operations.OPVAR
     {
         private readonly IUserIo _io;
 
-        public SetTextStyle(ZMachine2 machine, IUserIo io)
-            : base((ushort)OpCodes.SetTextStyle, machine, machine.Contents)
+        public SetTextStyle(IZMemory memory, IUserIo io)
+            : base((ushort)OpCodes.SetTextStyle, memory)
         {
             _io = io;
         }

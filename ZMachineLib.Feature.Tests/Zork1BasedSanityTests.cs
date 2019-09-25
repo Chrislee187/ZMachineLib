@@ -37,17 +37,27 @@ namespace ZMachineLib.Feature.Tests
         [Test]
         public void Should_restart()
         {
+            ExpectZorkIStartText();
             Feature.Execute("n", "North of House");
             Feature.Restart();
+            ExpectZorkIStartText();
             Feature.Quit();
 
             ShouldRunToCompletion(TestFile);
         }
 
-        [Test]
+        [Test, Ignore("Need an explicit FileIO to properly test this")]
         public void Should_save_and_load()
         {
-            Assert.Inconclusive("TODO");
+            ExpectZorkIStartText();
+            Feature.Execute("n", "North of House");
+            Feature.Execute("save", "saved");
+
+            Feature.Execute("restore", "Ok.");
+            Feature.Quit();
+
+            ShouldRunToCompletion(TestFile);
+
         }
 
         [Test]

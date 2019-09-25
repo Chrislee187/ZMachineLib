@@ -6,7 +6,7 @@ namespace ZMachineLib.Operations.OP2
     public sealed class SetAttribute : ZMachineOperationBase
     {
         public SetAttribute(IZMemory contents)
-            : base((ushort)OpCodes.SetAttribute, null, contents)
+            : base((ushort)OpCodes.SetAttribute, contents)
         {
         }
 

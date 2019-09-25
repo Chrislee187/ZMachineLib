@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
+using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OP1
 {
@@ -9,25 +11,24 @@ namespace ZMachineLib.Operations.OP1
     /// </summary>
     public sealed class GetParent : ZMachineOperationBase
     {
-        public GetParent(ZMachine2 machine)
-            : base((ushort) OpCodes.GetParent, machine, machine.Contents)
+        public GetParent(IZMemory contents)
+            : base((ushort) OpCodes.GetParent, contents)
         {
         }
 
         public override void Execute(List<ushort> operands)
         {
-            var zObj = ObjectManager.GetObject(operands[0]);
+            var obj = operands[0];
+            var zObj = Contents.ObjectTree.GetOrDefault(obj).RefreshFromMemory();
+            var storageType = Contents.GetCurrentByteAndInc();
 
-            var dest = GetNextByte();
-
-            var variableManager = Contents.VariableManager;
-            if (Machine.Contents.Header.Version <= 3)
+            if (Contents.Header.Version <= 3)
             {
-                variableManager.StoreByte(dest, (byte)zObj.Parent);
+                Contents.VariableManager.StoreByte(storageType, (byte)zObj.Parent);
             }
             else
             {
-                variableManager.StoreWord(dest, zObj.Parent);
+                Contents.VariableManager.StoreWord(storageType, zObj.Parent);
             }
         }
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using ZMachineLib.Content;
+using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OP2
 {
@@ -18,8 +19,8 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class GetNextProp : ZMachineOperationBase
     {
-        public GetNextProp(ZMachine2 machine, IZMemory contents)
-            : base((ushort)OpCodes.GetNextProp, machine, contents)
+        public GetNextProp(IZMemory contents)
+            : base((ushort)OpCodes.GetNextProp, contents)
         {
         }
 
@@ -30,9 +31,9 @@ namespace ZMachineLib.Operations.OP2
 
             var next = prop == 0;
 
-            var dest = GetNextByte();
+            var dest = Contents.GetCurrentByteAndInc();
 
-            var zObj = Contents.ObjectTree[obj];
+            var zObj = Contents.ObjectTree.GetOrDefault(obj);
 
             var keyArray = zObj.Properties.Keys.ToArray();
             var propIdx = Array.FindIndex(keyArray, k => k == prop);
@@ -44,30 +45,30 @@ namespace ZMachineLib.Operations.OP2
             }
 
 
-            var propHeaderAddr = ObjectManager.GetPropertyHeaderAddress(obj);
-            var size = MemoryManager.Get(propHeaderAddr);
+            var propHeaderAddr = zObj.PropertiesAddress;
+
+            var size = Contents.Manager.Get(propHeaderAddr);
             propHeaderAddr += (ushort)(size * 2 + 1);
 
-            var variableManager = Contents.VariableManager;
-            while (MemoryManager.Get(propHeaderAddr) != 0x00)
+            while (Contents.Manager.Get(propHeaderAddr) != 0x00)
             {
-                var propInfo = MemoryManager.Get(propHeaderAddr);
+                var propInfo = Contents.Manager.Get(propHeaderAddr);
                 byte len;
-                if (Machine.Contents.Header.Version > 3 && (propInfo & 0x80) == 0x80)
+                if (Contents.Header.Version > 3 && (propInfo & 0x80) == 0x80)
                 {
-                    len = (byte)(MemoryManager.Get(++propHeaderAddr) & 0x3f);
+                    len = (byte)(Contents.Manager.Get(++propHeaderAddr) & 0x3f);
                     if (len == 0)
                         len = 64;
                 }
                 else
-                    len = (byte)((propInfo >> ((ushort) Machine.Contents.Header.Version <= 3 ? 5 : 6)) + 1);
+                    len = (byte)((propInfo >> ((ushort)Contents.Header.Version <= 3 ? 5 : 6)) + 1);
 
-                var propNum = (byte)(propInfo & ((ushort) Machine.Contents.Header.Version <= 3 ? 0x1f : 0x3f));
+                var propNum = (byte)(propInfo & ((ushort)Contents.Header.Version <= 3 ? 0x1f : 0x3f));
 
                 if (next)
                 {
                     Debug.Assert(propNum == nextPropNum);
-                    variableManager.StoreByte(dest, propNum);
+                    Contents.VariableManager.StoreByte(dest, propNum);
                     return;
                 }
 
@@ -78,7 +79,7 @@ namespace ZMachineLib.Operations.OP2
             }
 
             Debug.Assert(0 == nextPropNum);
-            variableManager.StoreByte(dest, 0);
+            Contents.VariableManager.StoreByte(dest, 0);
         }
     }
 }

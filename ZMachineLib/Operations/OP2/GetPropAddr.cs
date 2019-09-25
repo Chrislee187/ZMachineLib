@@ -6,13 +6,13 @@ namespace ZMachineLib.Operations.OP2
     public sealed class GetPropAddr : ZMachineOperationBase
     {
         public GetPropAddr(IZMemory contents)
-            : base((ushort)OpCodes.GetPropAddr, null, contents)
+            : base((ushort)OpCodes.GetPropAddr, contents)
         {
         }
 
         public override void Execute(List<ushort> operands)
         {
-            var dest = GetNextByte();
+            var dest = GetCurrentByteAndInc();
 
             var obj = operands[0];
             var prop = (byte)operands[1];

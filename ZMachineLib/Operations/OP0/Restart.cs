@@ -1,16 +1,17 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP0
 {
     public class Restart : ZMachineOperationBase
     {
-        public Restart(ZMachine2 machine)
-            : base((ushort)OpCodes.Restart, machine, machine.Contents)
+        public Restart(IZMemory memory)
+            : base((ushort)OpCodes.Restart, memory)
         {
         }
         public override void Execute(List<ushort> operands)
         {
-            Machine.ReloadFile();
+            Contents.Restart();
         }
 
     }

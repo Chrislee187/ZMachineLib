@@ -8,8 +8,8 @@ namespace ZMachineLib.Operations.OPVAR
     {
         private readonly IUserIo _io;
 
-        public PrintTable(ZMachine2 machine, IUserIo io)
-            : base((ushort)OpCodes.PrintTable, machine, machine.Contents)
+        public PrintTable(IZMemory memory, IUserIo io)
+            : base((ushort)OpCodes.PrintTable, memory)
         {
             _io = io;
         }
@@ -17,7 +17,7 @@ namespace ZMachineLib.Operations.OPVAR
         public override void Execute(List<ushort> operands)
         {
             // TODO: print properly
-            var s = ZsciiString.Get(Machine.Memory.AsSpan(operands[0]), Machine.Contents.Abbreviations);
+            var s = ZsciiString.Get(Contents.Manager.AsSpan(operands[0]), Contents.Abbreviations);
             _io.Print(s);
             Log.Write($"[{s}]");
         }

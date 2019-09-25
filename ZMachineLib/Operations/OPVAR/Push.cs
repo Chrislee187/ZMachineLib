@@ -1,17 +1,18 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OPVAR
 {
     public sealed class Push : ZMachineOperationBase
     {
-        public Push(ZMachine2 machine)
-            : base((ushort)OpCodes.Push, machine, machine.Contents)
+        public Push(IZMemory memory)
+            : base((ushort)OpCodes.Push, memory)
         {
         }
 
         public override void Execute(List<ushort> operands)
         {
-            Machine.Stack.Peek().RoutineStack.Push(operands[0]);
+            Contents.Stack.Peek().RoutineStack.Push(operands[0]);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OPVAR
 {
@@ -6,15 +7,18 @@ namespace ZMachineLib.Operations.OPVAR
     {
         private readonly IUserIo _io;
 
-        public SetCursor(ZMachine2 machine, IUserIo io)
-            : base((ushort)OpCodes.SetCursor, machine, machine.Contents)
+        public SetCursor(IZMemory memory, IUserIo io)
+            : base((ushort)OpCodes.SetCursor, memory)
         {
             _io = io;
         }
 
         public override void Execute(List<ushort> operands)
         {
-            _io.SetCursor(operands[0], operands[1], (ushort)(operands.Count == 3 ? operands[2] : 0));
+            _io.SetCursor(
+                operands[0], 
+                operands[1], 
+                (ushort)(operands.Count == 3 ? operands[2] : 0));
 
         }
     }

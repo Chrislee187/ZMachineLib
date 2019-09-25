@@ -11,14 +11,14 @@ namespace ZMachineLib.Operations.OP2
     public sealed class LoadB : ZMachineOperationBase
     {
         public LoadB(IZMemory contents)
-            : base((ushort)OpCodes.LoadB, null, contents)
+            : base((ushort)OpCodes.LoadB, contents)
         {
         }
 
         public override void Execute(List<ushort> operands)
         {
             var addr = (ushort)(operands[0] + operands[1]);
-            var dest = GetNextByte();
+            var dest = GetCurrentByteAndInc();
             Contents.VariableManager.StoreByte(dest, Contents.Manager.Get(addr));
         }
     }

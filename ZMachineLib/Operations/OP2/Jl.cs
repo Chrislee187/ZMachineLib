@@ -6,7 +6,7 @@ namespace ZMachineLib.Operations.OP2
     public sealed class Jl : ZMachineOperationBase
     {
         public Jl(IZMemory contents)
-            : base((ushort)OpCodes.Jl, null, contents)
+            : base((ushort)OpCodes.Jl, contents)
         {
         }
 

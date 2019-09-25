@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OPVAR
 {
@@ -7,8 +8,8 @@ namespace ZMachineLib.Operations.OPVAR
     {
         private readonly IUserIo _io;
 
-        public PrintChar(ZMachine2 machine, IUserIo io)
-            : base((ushort)OpCodes.PrintChar, machine, machine.Contents)
+        public PrintChar(IZMemory memory, IUserIo io)
+            : base((ushort)OpCodes.PrintChar, memory)
         {
             _io = io;
         }

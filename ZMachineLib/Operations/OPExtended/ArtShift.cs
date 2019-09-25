@@ -5,7 +5,7 @@ namespace ZMachineLib.Operations.OPExtended
     public sealed class ArtShift : ZMachineOperationBase
     {
         public ArtShift(ZMachine2 machine)
-            : base((ushort)KindExtOpCodes.ArtShift, machine, machine.Contents)
+            : base((ushort)KindExtOpCodes.ArtShift, machine.Memory)
         {
         }
 
@@ -18,7 +18,7 @@ namespace ZMachineLib.Operations.OPExtended
             else if ((short)operands[1] < 0)
                 val >>= -operands[1];
 
-            var dest = GetNextByte();
+            var dest = GetCurrentByteAndInc();
             ushort value = (ushort)val;
             Contents.VariableManager.StoreWord(dest, value);
         }

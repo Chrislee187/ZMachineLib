@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
+using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OP1
 {
@@ -10,26 +12,25 @@ namespace ZMachineLib.Operations.OP1
     /// </summary>
     public sealed class GetChild : ZMachineOperationBase
     {
-        public GetChild(ZMachine2 machine)
-            : base((ushort)OpCodes.GetChild, machine, machine.Contents)
+        public GetChild(IZMemory contents)
+            : base((ushort)OpCodes.GetChild, contents)
         {
         }
 
         public override void Execute(List<ushort> operands)
         {
-            var zObj = ObjectManager.GetObject(operands[0]);
-
-            var dest = GetNextByte();
+            var obj = operands[0];
+            var zObj = Contents.ObjectTree.GetOrDefault(obj).RefreshFromMemory();
+            var storageType = Contents.GetCurrentByteAndInc();
 
             // NOTE: Do we need to store if Child == 0 ???
-            var variableManager = Contents.VariableManager;
-            if (Machine.Contents.Header.Version <= 3)
+            if (Contents.Header.Version <= 3)
             {
-                variableManager.StoreByte(dest, (byte) zObj.Child);
+                Contents.VariableManager.StoreByte(storageType, (byte) zObj.Child);
             }
             else
             {
-                variableManager.StoreWord(dest, zObj.Child);
+                Contents.VariableManager.StoreWord(storageType, zObj.Child);
             }
 
             Jump(zObj.Child != 0);

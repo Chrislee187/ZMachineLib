@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OPVAR
 {
@@ -6,8 +7,8 @@ namespace ZMachineLib.Operations.OPVAR
     {
         private readonly IUserIo _io;
 
-        public SplitWindow(ZMachine2 machine, IUserIo io)
-            : base((ushort)OpCodes.SplitWindow, machine, machine.Contents)
+        public SplitWindow(IZMemory memory, IUserIo io)
+            : base((ushort)OpCodes.SplitWindow, memory)
         {
             _io = io;
         }

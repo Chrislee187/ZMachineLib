@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OPVAR
 {
     public sealed class Call : ZMachineOperationBase
     {
-        public Call(ZMachine2 machine)
-            : base((ushort)OpCodes.Call	, machine, machine.Contents)
+        public Call(IZMemory memory)
+            : base((ushort)OpCodes.Call, memory)
         {
         }
 

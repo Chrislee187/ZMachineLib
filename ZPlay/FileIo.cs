@@ -15,6 +15,7 @@ namespace ZPlay
         public bool Save(Stream s)
         {
             var saveFilePath = BuildSavePath();
+            s.Position = 0;
             var fs = File.Create(saveFilePath);
             s.CopyTo(fs);
             fs.Close();

@@ -6,7 +6,7 @@ namespace ZMachineLib.Operations.OP2
     public sealed class Jg : ZMachineOperationBase
     {
         public Jg(IZMemory contents)
-            : base((ushort)OpCodes.Jg, null, contents)
+            : base((ushort)OpCodes.Jg, contents)
         {
         }
 

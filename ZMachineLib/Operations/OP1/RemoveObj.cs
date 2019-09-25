@@ -13,7 +13,7 @@ namespace ZMachineLib.Operations.OP1
     public sealed class RemoveObj : ZMachineOperationBase
     {
         public RemoveObj(IZMemory contents)
-            : base((ushort)OpCodes.RemoveObj, null, contents)
+            : base((ushort)OpCodes.RemoveObj, contents)
         {
 
         }

@@ -12,7 +12,7 @@ namespace ZMachineLib.Operations.OP2
     public sealed class DecCheck : ZMachineOperationBase
     {
         public DecCheck(IZMemory contents)
-            : base((ushort)OpCodes.DecCheck, null, contents)
+            : base((ushort)OpCodes.DecCheck, contents)
         {
         }
 

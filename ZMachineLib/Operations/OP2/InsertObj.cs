@@ -12,8 +12,8 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class InsertObj : ZMachineOperationBase
     {
-        public InsertObj(ZMachine2 machine, IZMemory contents)
-            : base((ushort)OpCodes.InsertObj, machine, contents)
+        public InsertObj(IZMemory contents)
+            : base((ushort)OpCodes.InsertObj, contents)
         {
         }
 
@@ -40,6 +40,7 @@ namespace ZMachineLib.Operations.OP2
             {
                 // set parent1's child to obj1's sibling
                 parent1ZObj.Child = zObj1.Sibling;
+
             }
             else // else if I'm not the child but there is a child, we need to link the broken sibling chain
             {
@@ -59,27 +60,27 @@ namespace ZMachineLib.Operations.OP2
                     if (currentSibling == obj1Number)
                     {
                         // set the current object's sibling to the next sibling
-                        ObjectManager.SetObjectNumber(
-                            (ushort)(addr + Machine.Contents.Offsets.Sibling)
-                            , zObj1.Sibling);
+                        Contents.Manager.Set(
+                            (ushort)(addr + Contents.Offsets.Sibling)
+                            , (byte) zObj1.Sibling);
 //                        parent1ZObj.Sibling = zObj1.Sibling;
                         break;
                     }
 
                     addr = Contents.ObjectTree[currentSibling].Address; // ObjectManager.GetObjectAddress(currentSibling);
                     
-                    currentSibling = ObjectManager.GetObjectNumber((ushort)(addr + Machine.Contents.Offsets.Sibling));
+                    currentSibling = Contents.Manager.Get((ushort)(addr + Contents.Offsets.Sibling));
                 }
             }
 
             // set obj1's parent to obj2
-            ObjectManager.SetObjectNumber((ushort)(zObj1.Address + Machine.Contents.Offsets.Parent), obj2Number);
+            Contents.Manager.Set((ushort)(zObj1.Address + Contents.Offsets.Parent), (byte) obj2Number);
 
             // set obj2's child to obj1
-            ObjectManager.SetObjectNumber((ushort)(zObj2.Address + Machine.Contents.Offsets.Child), obj1Number);
+            Contents.Manager.Set((ushort)(zObj2.Address + Contents.Offsets.Child),(byte) obj1Number);
 
             // set obj1's sibling to obj2's child
-            ObjectManager.SetObjectNumber((ushort)(zObj1.Address + Machine.Contents.Offsets.Sibling), zObj2.Child);
+            Contents.Manager.Set((ushort)(zObj1.Address + Contents.Offsets.Sibling), (byte)zObj2.Child);
         }
     }
 }

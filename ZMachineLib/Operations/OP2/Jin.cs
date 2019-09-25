@@ -9,7 +9,7 @@ namespace ZMachineLib.Operations.OP2
     public sealed class Jin : ZMachineOperationBase
     {
         public Jin(IZMemory contents)
-            : base((ushort)OpCodes.Jin, null, contents)
+            : base((ushort)OpCodes.Jin, contents)
         {
         }
 

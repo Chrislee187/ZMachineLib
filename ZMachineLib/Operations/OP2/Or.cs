@@ -9,13 +9,13 @@ namespace ZMachineLib.Operations.OP2
     public sealed class Or : ZMachineOperationBase
     {
         public Or(IZMemory contents)
-            : base((ushort)OpCodes.Or, null, contents)
+            : base((ushort)OpCodes.Or, contents)
         {
         }
 
         public override void Execute(List<ushort> operands)
         {
-            var dest = GetNextByte();
+            var dest = GetCurrentByteAndInc();
             Contents.VariableManager.StoreWord(dest, (ushort)(operands[0] | operands[1]));
         }
     }

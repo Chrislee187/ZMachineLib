@@ -6,19 +6,19 @@ namespace ZMachineLib.Operations.OP0
 {
     public sealed class Print : BasePrintingOperationsBase
     {
-        public Print(ZMachine2 machine,
+        public Print(IZMemory memory,
             IUserIo io)
-            : base((ushort) OpCodes.Print, machine, io)
+            : base((ushort) OpCodes.Print, null, memory, io)
         {
         }
 
         public override void Execute(List<ushort> operands)
         {
-            var array = Machine.Memory.AsSpan((int) Machine.Stack.Peek().PC);
+            var array = Contents.Manager.AsSpan((int)Contents.Stack.Peek().PC);
 
-            var zStr = new ZsciiString(array, Machine.Contents.Abbreviations);
+            var zStr = new ZsciiString(array, Contents.Abbreviations);
 
-            Machine.Stack.Peek().PC += zStr.BytesUsed;
+            Contents.Stack.Peek().PC += zStr.BytesUsed;
 
             Io.Print(zStr.String);
             Log.Write($"[{zStr.String}]");

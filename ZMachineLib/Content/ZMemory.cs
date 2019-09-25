@@ -6,7 +6,7 @@ namespace ZMachineLib.Content
 {
     public interface IZMemory
     {
-        Stack<ZStackFrame> Stack { get; }
+        Stack<ZStackFrame> Stack { get; set; }
         ZHeader Header { get; }
         ZDictionary Dictionary { get; }
         ZAbbreviations Abbreviations { get; }
@@ -17,12 +17,24 @@ namespace ZMachineLib.Content
         VersionedOffsets Offsets { get; }
         ushort DictionaryWordStart { get; }
         byte PeekNextByte();
-        byte GetNextByte();
+        byte PeekPreviousByte();
+        byte PeekCurrentByte();
+        byte GetCurrentByteAndInc();
+        uint GetPackedAddress(ushort address);
+
+        bool TerminateOnInput { get; set; }
+        ushort ReadTextAddr { get; set; }
+        ushort ReadParseAddr { get; set; }
+
+        bool Running { get; set; }
+
+        void Restart();
     }
 
     public class ZMemory : IZMemory
     {
-        public Stack<ZStackFrame> Stack { get; }
+        private readonly Action _restart;
+        public Stack<ZStackFrame> Stack { get; set; }
         public ZHeader Header { get; }
         public ZDictionary Dictionary { get; }
         public ZAbbreviations Abbreviations { get; }
@@ -34,8 +46,12 @@ namespace ZMachineLib.Content
         public byte[] Memory { get; }
         public VersionedOffsets Offsets { get; private set; }
         public ushort DictionaryWordStart => (ushort) (Header.Dictionary + Dictionary.WordStart);
-        public ZMemory(byte[] data, Stack<ZStackFrame> stack)
+
+
+        public ZMemory(byte[] data, Stack<ZStackFrame> stack,
+            Action restart)
         {
+            _restart = restart;
             Stack = stack;
             Memory = data;
             Header = new ZHeader(data.AsSpan(0, 31));
@@ -57,14 +73,50 @@ namespace ZMachineLib.Content
             OperandManager = new OperandManager(Manager, VariableManager, stack);
         }
 
-
         public byte PeekNextByte()
+        {
+            return Memory[Stack.Peek().PC+1];
+        }
+        public byte PeekPreviousByte()
+        {
+            return Memory[Stack.Peek().PC-1];
+        }
+
+        public byte PeekCurrentByte()
         {
             return Memory[Stack.Peek().PC];
         }
-        public byte GetNextByte()
+        public byte GetCurrentByteAndInc()
         {
             return Memory[Stack.Peek().PC++];
+        }
+
+        public uint GetPackedAddress(ushort address)
+        {
+            if (Header.Version <= 3)
+                return (uint)(address * 2);
+            if (Header.Version <= 5)
+                return (uint)(address * 4);
+
+            return 0;
+        }
+
+
+        private bool _running;
+        public bool TerminateOnInput { get; set; }
+
+        public ushort ReadTextAddr { get; set; }
+        public ushort ReadParseAddr { get; set; }
+
+        public bool Running
+        {
+            get => _running;
+            set => _running = value;
+        }
+
+        public void Restart()
+        {
+            _restart();
         }
     }
 }

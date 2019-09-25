@@ -13,17 +13,20 @@ namespace ZMachineLib.Managers
         void Set(int address, byte value);
         void Set(ushort address, byte value);
         void Set(ushort address, ushort value);
-
+        void SetWord(uint address, ushort value);
         void Set(ushort address, params byte[] values);
         void Set(int address, params byte[] values);
+        Span<byte> AsSpan();
         Span<byte> AsSpan(ushort start);
         Span<byte> AsSpan(ushort start, int length);
+        Span<byte> AsSpan(int start);
+        Span<byte> AsSpan(uint start);
         void SetLong(uint address, uint value);
     }
 
     public class MemoryManager : IMemoryManager
     {
-        private readonly byte[] _memory;
+        internal byte[] _memory;
 
         public MemoryManager(byte[] memory)
         {
@@ -37,7 +40,10 @@ namespace ZMachineLib.Managers
         public ushort GetUShort(int address) => _memory.GetUShort(address);
         public uint GetUInt(int address) => _memory.GetUInt(address);
 
+        public Span<byte> AsSpan() => _memory.AsSpan();
         public Span<byte> AsSpan(ushort start) => _memory.AsSpan(start);
+        public Span<byte> AsSpan(int start) => _memory.AsSpan(start);
+        public Span<byte> AsSpan(uint start) => _memory.AsSpan((int)start);
         public Span<byte> AsSpan(ushort start, int length) => _memory.AsSpan(start, length);
 
         public void Set(int address, byte value) => _memory[address] = value;
@@ -61,6 +67,11 @@ namespace ZMachineLib.Managers
             }
         }
 
+        public void SetWord(uint address, ushort value)
+        {
+            _memory.Set(address + 0, (byte)(value >> 8));
+            _memory.Set(address + 1, (byte)(value >> 0));
+        }
         public void SetLong(uint address, uint value) => _memory.SetLong(address, value);
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace ZMachineLib.Operations.OP0
+﻿using ZMachineLib.Content;
+
+namespace ZMachineLib.Operations.OP0
 {
     public abstract class BasePrintingOperationsBase : ZMachineOperationBase
     {
@@ -6,8 +8,9 @@
 
         protected BasePrintingOperationsBase(ushort code,
             ZMachine2 machine,
+            IZMemory memory,
             IUserIo io) 
-            : base(code, machine, machine.Contents)
+            : base(code, memory)
         {
             Io = io;
         }

@@ -6,7 +6,7 @@ namespace ZMachineLib.Operations.OP2
     public sealed class Store : ZMachineOperationBase
     {
         public Store(IZMemory contents)
-            : base((ushort)OpCodes.Store, null, contents)
+            : base((ushort)OpCodes.Store, contents)
         {
         }
 

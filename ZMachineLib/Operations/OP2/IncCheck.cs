@@ -9,7 +9,7 @@ namespace ZMachineLib.Operations.OP2
     public sealed class IncCheck : ZMachineOperationBase
     {
         public IncCheck(IZMemory contents)
-            : base((ushort)OpCodes.IncCheck, null, contents)
+            : base((ushort)OpCodes.IncCheck, contents)
         {
         }
 

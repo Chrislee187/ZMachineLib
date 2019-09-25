@@ -21,8 +21,9 @@ namespace ZMachineLib.Content
         ushort PropertyHeader { get; set; }
         Dictionary<int, bool> AttributeFlags { get; set; }
         ushort PropertiesAddress { get; set; }
-        IReadOnlyDictionary<int, ZProperty> Properties { get;  }
+        IDictionary<int, ZProperty> Properties { get;  }
         ushort ObjectNumber { get; set; }
+        byte BytesRead { get; }
         ZMachineObject RefreshFromMemory();
 
         ZProperty GetProperty(int i);
@@ -31,10 +32,10 @@ namespace ZMachineLib.Content
     [DebuggerDisplay("[{ObjectNumber}] '{Name}'")]
     public class ZMachineObject : IZMachineObject
     {
-        public static readonly ZMachineObject Object0 = new ZMachineObject(0, 0, default, null, null, null);
-        public ulong Attributes { get; private set; }
-        public IReadOnlyDictionary<int, ZProperty> Properties { get; set; }
         public string Name { get; private set; }
+        public ulong Attributes { get; private set; }
+        public IDictionary<int, ZProperty> Properties { get; set; }
+        private readonly IReadOnlyDictionary<int, byte[]> _defaultProps;
 
         private readonly Func<ushort, ulong> _flagsProviderV3 = attr => 0x80000000 >> attr;
 
@@ -83,7 +84,7 @@ namespace ZMachineLib.Content
         {
             if (!Properties.TryGetValue(i, out var value))
             {
-                value = new ZProperty((byte) i, 0, _defaultProps[i]);
+                value = new ZProperty((byte) i, 0, _defaultProps[i], _manager);
             }
             return value;
         }
@@ -142,7 +143,7 @@ namespace ZMachineLib.Content
                 var propData = _manager.AsSpan(ptr, propSize);
                 properties.Add(
                     propNum, 
-                    new ZProperty(propNum, dataAddress, propData.ToArray())
+                    new ZProperty(propNum, dataAddress, propData.ToArray(), _manager)
                     );
                 ptr += propSize;
             }
@@ -177,44 +178,79 @@ namespace ZMachineLib.Content
         private ushort _parentObjectNumber;
         public ushort Parent
         {
-            get => _parentObjectNumber;
+            get
+            {
+                var b = (byte) (_manager?.Get((ushort)(Address + Offsets.Parent)) ?? 0);
+                if (b != _parentObjectNumber)
+                {
+                    Console.WriteLine($"Expected: {_parentObjectNumber} got from {(Address + Offsets.Parent):X4} = {b}");
+                }
+                //                _parentObjectNumber = b;
+                return _parentObjectNumber;
+            }
             set
             {
                 _parentObjectNumber = value;
                 _manager?.Set((ushort)(Address + Offsets.Parent), (byte)value);
+                var b = (byte)(_manager?.Get((ushort)(Address + Offsets.Parent)) ?? 0);
+                if (b != _parentObjectNumber)
+                {
+                    Console.WriteLine($"{Name}.Parent = {b} | Expected: {_parentObjectNumber}");
+                }
             }
         }
 
         private ushort _childObjectNumber;
         public ushort Child
         {
-            get => _childObjectNumber;
+            get
+            {
+                var b = (byte)(_manager?.Get((ushort)(Address + Offsets.Child)) ?? 0);
+                if (b != _childObjectNumber)
+                {
+                    Console.WriteLine($"Expected: {_parentObjectNumber} got from {(Address + Offsets.Child):X4} = {b}");
+
+                }
+                return _childObjectNumber;
+            }
             set
             {
+
                 _childObjectNumber = value;
                 _manager?.Set((ushort)(Address + Offsets.Child), (byte)value);
+                var b = (byte)(_manager?.Get((ushort)(Address + Offsets.Child)) ?? 0);
+                if (b != _childObjectNumber)
+                {
+                    Console.WriteLine($"{Name}.Child = {b} | Expected: {_childObjectNumber}");
+                }
             }
         }
 
         private ushort _siblingObjectNumber;
-        private IReadOnlyDictionary<int, byte[]> _defaultProps;
 
         public ushort Sibling
         {
-            get => _siblingObjectNumber;
+            get
+            {
+                var b = (byte)(_manager?.Get((ushort)(Address + Offsets.Sibling)) ?? 0);
+                if (b != _siblingObjectNumber)
+                {
+                    Console.WriteLine($"Expected: {_parentObjectNumber} got from {(Address + Offsets.Sibling):X4} = {b}");
+                }
+                return _siblingObjectNumber;
+            }
             set
             {
                 _siblingObjectNumber = value;
                 _manager?.Set((ushort)(Address + Offsets.Sibling), (byte)value);
+                var b = (byte)(_manager?.Get((ushort)(Address + Offsets.Sibling)) ?? 0);
+                if (b != _siblingObjectNumber)
+                {
+                    Console.WriteLine($"{Name}.Sibling = {b} | Expected: {_siblingObjectNumber}");
+
+                }
             }
         }
-
-        // TODO: Get object tree to wire these references up
-        // ReSharper disable UnassignedGetOnlyAutoProperty
-        public IZMachineObject ParentZObject { get; }
-        public IZMachineObject SiblingZObject { get; }
-        public IZMachineObject ChildZObject { get; }
-        // ReSharper restore UnassignedGetOnlyAutoProperty
 
         public ushort PropertyHeader { get; set; }
 
@@ -238,10 +274,10 @@ namespace ZMachineLib.Content
                 // TODO: _manager NOT tested in this section
                 var attributes = Attributes & ~flagMask;
                 uint val = (uint)attributes >> 16;
-//                _objectManager.Machine.Memory.SetLong(DataAddress, val);
+//                _objectManager.Machine._memory.SetLong(DataAddress, val);
                 _manager.SetLong(Address, val);
                 ushort value = (ushort)attributes;
-//                _objectManager.Machine.Memory.SetWord((ushort)(DataAddress + 4), value);
+//                _objectManager.Machine._memory.SetWord((ushort)(DataAddress + 4), value);
                 _manager.Set((ushort)(Address + 4), value);
             }
         }
@@ -260,9 +296,9 @@ namespace ZMachineLib.Content
             {
                 // TODO: _manager NOT tested in this section
                 Attributes |= flagMask;
-//                _objectManager.Machine.Memory.SetLong(DataAddress, (uint)(attributes >> 16));
+//                _objectManager.Machine._memory.SetLong(DataAddress, (uint)(attributes >> 16));
                 _manager.SetLong(Address, (uint)(Attributes >> 16));
-//                _objectManager.Machine.Memory.SetWord((ushort)(DataAddress + 4), (ushort)attributes);
+//                _objectManager.Machine._memory.SetWord((ushort)(DataAddress + 4), (ushort)attributes);
                 _manager.Set((ushort)(Address + 4), (ushort)Attributes);
 
             }
@@ -270,14 +306,15 @@ namespace ZMachineLib.Content
         public override string ToString() 
             => $"[{ObjectNumber:D3}] ({Address:X4}) '{Name}' ";
 
+        #region Equals overrides
         public bool Equals(ZMachineObject other)
         {
             return Attributes == other.Attributes
                    && string.Equals(Name, other.Name)
-                   && Address == other.Address 
-                   && ObjectNumber == other.ObjectNumber 
-                   && Parent == other.Parent 
-                   && Sibling == other.Sibling 
+                   && Address == other.Address
+                   && ObjectNumber == other.ObjectNumber
+                   && Parent == other.Parent
+                   && Sibling == other.Sibling
                    && Child == other.Child;
         }
 
@@ -287,7 +324,7 @@ namespace ZMachineLib.Content
             if (ReferenceEquals(this, obj)) return true;
             // ReSharper disable once ArrangeThisQualifier
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((ZMachineObject) obj);
+            return Equals((ZMachineObject)obj);
         }
 
         [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
@@ -305,5 +342,9 @@ namespace ZMachineLib.Content
                 return hashCode;
             }
         }
+
+        #endregion
+
+        public static readonly ZMachineObject Object0 = new ZMachineObject(0, 0, default, null, null, null);
     }
 }

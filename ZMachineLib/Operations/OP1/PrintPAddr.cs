@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP1
@@ -8,19 +9,22 @@ namespace ZMachineLib.Operations.OP1
     {
         private readonly IUserIo _io;
 
-        public PrintPAddr(ZMachine2 machine,
+        public PrintPAddr(IZMemory memory,
             IUserIo io)
-            : base((ushort)OpCodes.PrintObj, machine, machine.Contents)
+            : base((ushort)OpCodes.PrintObj, memory)
         {
             _io = io;
         }
 
         public override void Execute(List<ushort> operands)
         {
-            var data = Machine.Memory.AsSpan((int) ObjectManager.GetPackedAddress(operands[0]));
-            var s = ZsciiString.Get(data, Machine.Contents.Abbreviations);
+            var packedAddress = Contents.GetPackedAddress(operands[0]);
+            var s = ZsciiString.Get(Contents.Manager.AsSpan(packedAddress), 
+                Contents.Abbreviations);
             _io.Print(s);
             Log.Write($"[{s}]");
+
+
         }
     }
 }

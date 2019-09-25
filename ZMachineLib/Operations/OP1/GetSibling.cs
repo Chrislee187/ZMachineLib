@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using ZMachineLib.Content;
+using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OP1
 {
@@ -8,24 +12,23 @@ namespace ZMachineLib.Operations.OP1
     /// </summary>
     public sealed class GetSibling : ZMachineOperationBase
     {
-        public GetSibling(ZMachine2 machine)
-            : base((ushort)OpCodes.GetSibling, machine, machine.Contents)
+        public GetSibling(IZMemory contents)
+            : base((ushort)OpCodes.GetSibling, contents)
         {
         }
 
         public override void Execute(List<ushort> operands)
         {
-            var zObj = ObjectManager.GetObject(operands[0]);
+            var obj = operands[0];
+            var zObj = Contents.ObjectTree.GetOrDefault(obj).RefreshFromMemory();
+            var storageType = Contents.GetCurrentByteAndInc();
 
-            var dest = GetNextByte();
-
-            var variableManager = Contents.VariableManager;
-            if (Machine.Contents.Header.Version <= 3)
+            if (Contents.Header.Version <= 3)
             {
-                variableManager.StoreByte(dest, (byte)zObj.Sibling);
+                Contents.VariableManager.StoreByte(storageType, (byte)zObj.Sibling);
             }
             else
-                variableManager.StoreWord(dest, zObj.Sibling);
+                Contents.VariableManager.StoreWord(storageType, zObj.Sibling);
 
             Jump(zObj.Sibling != 0);
         }

@@ -10,7 +10,7 @@ namespace ZMachineLib.Operations.OP2
     public sealed class ClearAttribute : ZMachineOperationBase
     {
         public ClearAttribute(IZMemory contents)
-            : base((ushort)OpCodes.ClearAttribute, null, contents)
+            : base((ushort)OpCodes.ClearAttribute, contents)
         {
         }
 

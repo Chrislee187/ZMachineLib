@@ -1,49 +1,39 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
+using ZMachineLib.Extensions;
 
 namespace ZMachineLib.Operations.OPVAR
 {
+    /// <summary>
+    /// VAR:227 3 put_prop object property value
+    /// Writes the given value to the given property of the given object.
+    /// If the property does not exist for that object, the interpreter should
+    /// halt with a suitable error message. If the property length is 1,
+    /// then the interpreter should store only the least significant byte
+    /// of the value.
+    /// (For instance, storing -1 into a 1-byte property results in the
+    /// property value 255.)
+    /// As with get_prop the property length must not be more than 2:
+    /// if it is, the behaviour of the opcode is undefined.
+    /// </summary>
     public sealed class PutProp : ZMachineOperationBase
     {
-        public PutProp(ZMachine2 machine)
-            : base((ushort)OpCodes.PutProp, machine, machine.Contents)
+        public PutProp(IZMemory memory)
+            : base((ushort)OpCodes.PutProp, memory)
         {
         }
 
         public override void Execute(List<ushort> operands)
         {
-            var prop = ObjectManager.GetPropertyHeaderAddress(operands[0]);
-            var size = MemoryManager.Get(prop);
-            prop += (ushort)(size * 2 + 1);
+            var obj = operands[0];
+            var propertyNumber = operands[1];
+            var value = operands[2];
 
-            while (MemoryManager.Get(prop) != 0x00)
-            {
-                var propInfo = MemoryManager.Get(prop++);
-                byte len;
-                if (Machine.Contents.Header.Version > 3 && (propInfo & 0x80) == 0x80)
-                {
-                    len = (byte)(MemoryManager.Get(prop++) & 0x3f);
-                    if (len == 0)
-                        len = 64;
-                }
-                else
-                    len = (byte)((propInfo >> ((ushort) Machine.Contents.Header.Version <= 3 ? 5 : 6)) + 1);
+            var zObj = Contents.ObjectTree.GetOrDefault(obj);
 
-                var propNum = (byte)(propInfo & ((ushort) Machine.Contents.Header.Version <= 3 ? 0x1f : 0x3f));
-                if (propNum == operands[1])
-                {
-                    if (len == 1)
-                        MemoryManager.Set(prop + 1, (byte)operands[2]);
-                    else
-                    {
-                        ushort value = operands[2];
-                        MemoryManager.Set(prop, value);
-                    }
+            zObj.Properties[propertyNumber].Data = value.ToByteArray();
 
-                    break;
-                }
-
-                prop += len;
-            }
+            return;
         }
     }
 }

@@ -5,7 +5,7 @@ namespace ZMachineLib.Operations.OPExtended
     public sealed class SetFont : ZMachineOperationBase
     {
         public SetFont(ZMachine2 machine)
-            : base((ushort)KindExtOpCodes.SetFont, machine, machine.Contents)
+            : base((ushort)KindExtOpCodes.SetFont, machine.Memory)
         {
         }
 
@@ -13,7 +13,7 @@ namespace ZMachineLib.Operations.OPExtended
         {
             // TODO
 
-            var dest = GetNextByte();
+            var dest = GetCurrentByteAndInc();
             Contents.VariableManager.StoreWord(dest, 0);
         }
     }

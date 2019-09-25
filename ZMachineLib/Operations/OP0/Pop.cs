@@ -7,7 +7,7 @@ namespace ZMachineLib.Operations.OP0
     public sealed class Pop : ZMachineOperationBase
     {
         public Pop(IZMemory contents)
-            : base((ushort)OpCodes.Pop, null, contents)
+            : base((ushort)OpCodes.Pop, contents)
         {
         }
 
@@ -20,7 +20,7 @@ namespace ZMachineLib.Operations.OP0
             }
             else
             {
-                Machine.Stack.Pop();
+                Contents.Stack.Pop();
             }
         }
     }

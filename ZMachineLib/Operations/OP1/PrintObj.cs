@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP1
 {
@@ -7,21 +7,19 @@ namespace ZMachineLib.Operations.OP1
     {
         private readonly IUserIo _io;
 
-        public PrintObj(ZMachine2 machine,
+        public PrintObj(IZMemory memory,
             IUserIo io)
-            : base((ushort)OpCodes.PrintObj, machine, machine.Contents)
+            : base((ushort)OpCodes.PrintObj, memory)
         {
             _io = io;
         }
 
         public override void Execute(List<ushort> operands)
         {
-            var zObj = ObjectManager.GetObject(operands[0]);
-            //var addr = ObjectManager.GetPropertyHeaderAddress(operands[0]);
-            var s = zObj.Name; // Machine.ZsciiString.GetZsciiString((ushort)(addr + 1));
-            Debug.Assert(zObj.Name == s);
-            _io.Print(s);
-            Log.Write($"[{s}]");
+            var obj = operands[0];
+            var zObj = Contents.ObjectTree.GetOrDefault(obj);
+            _io.Print(zObj.Name);
+            Log.Write($"[{zObj.Name}]");
         }
     }
 }

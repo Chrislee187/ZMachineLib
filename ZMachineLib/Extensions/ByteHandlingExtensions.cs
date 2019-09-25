@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace ZMachineLib.Extensions
 {
@@ -66,6 +67,16 @@ namespace ZMachineLib.Extensions
 
         public static byte FromBitNumber(this byte bitNumber)
             => (byte) (1 << bitNumber);
+
+        public static byte[] ToByteArray(this ushort value)
+        {
+            var result = new byte[2];
+
+            result[0] = (byte) value;
+            result[1] = (byte) (value >> 8);
+
+            return result;
+        }
     }
 
     public class Bits
