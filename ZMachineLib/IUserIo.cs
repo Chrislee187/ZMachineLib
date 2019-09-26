@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 
 namespace ZMachineLib
 {
@@ -13,7 +12,7 @@ namespace ZMachineLib
 		FixedPitch = 8
 	}
 
-	public interface IZMachineIO
+	public interface IUserIo
 	{
 		void Print(string s);
 		string Read(int max);
@@ -25,10 +24,10 @@ namespace ZMachineLib
 		void SplitWindow(ushort lines);
 		void ShowStatus();
 		void SetTextStyle(TextStyle textStyle);
-		bool Save(Stream stream);
-		Stream Restore();
 		void SetColor(ZColor foreground, ZColor background);
 		void SoundEffect(ushort number);
 		void Quit();
-	}
+        byte ScreenHeight { get; }
+        byte ScreenWidth { get; }
+    }
 }

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ZDump": {
+      "commandName": "Project",
+      "commandLineArgs": "D:\\zfiles\\zork1.z3"
+    }
+  }
+}

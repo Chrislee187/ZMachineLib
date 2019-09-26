@@ -6,13 +6,13 @@ using ZMachineLib;
 
 namespace ConsoleZMachine
 {
-	public class ConsoleIO : IZMachineIO
+	public class ConsoleIo : IZMachineIo
 	{
 		private int _lines;
 		private readonly ConsoleColor _defaultFore;
 		private readonly ConsoleColor _defaultBack;
 
-		public ConsoleIO()
+		public ConsoleIo()
 		{
 			Console.SetBufferSize(Console.WindowWidth, Console.WindowHeight);
 			Console.SetCursorPosition(0, Console.WindowHeight-1);

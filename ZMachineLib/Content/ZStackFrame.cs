@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace ZMachineLib
+namespace ZMachineLib.Content
 {
 	[DataContract]
-	internal class ZStackFrame
+	public class ZStackFrame
 	{
 		[DataMember]
 		public uint PC { get; set; }

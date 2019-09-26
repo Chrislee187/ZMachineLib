@@ -1,17 +1,32 @@
 ﻿using System.IO;
 using ZMachineLib;
+using ZMachineLib.Operations;
 
 namespace ConsoleZMachine
 {
 	class Program
 	{
-		static void Main(string[] args)
-		{
-			ZMachine zMachine = new ZMachine(new ConsoleIO());
+        // ReSharper disable once UnusedParameter.Local
+        static void Main(string[] args)
+        {
+            RunNewMachine(@"zork3.z3");
+        }
 
-			FileStream fs = File.OpenRead(@"zork1.dat");
-			zMachine.LoadFile(fs);
-			zMachine.Run();
-		}
+        private static void RunNewMachine(string filename)
+        {
+            var zMachine = new ZMachine2(new ConsoleIo());
+
+            FileStream fs = File.OpenRead(filename);
+            zMachine.RunFile(fs);
+        }
+
+        static void RunOriginalMachine(string filename)
+        {
+            var zMachine = new ZMachine(new ConsoleIo());
+
+            FileStream fs = File.OpenRead(filename);
+            zMachine.LoadFile(fs);
+            zMachine.Run();
+        }
 	}
 }
