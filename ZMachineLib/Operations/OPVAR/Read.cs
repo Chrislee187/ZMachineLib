@@ -8,7 +8,7 @@ namespace ZMachineLib.Operations.OPVAR
     {
         private readonly IUserIo _io;
 
-        public Read(ZMachine2 machine, IZMemory memory, IUserIo io)
+        public Read(IZMemory memory, IUserIo io)
             : base((ushort)OpCodes.Read, memory)
         {
             _io = io;

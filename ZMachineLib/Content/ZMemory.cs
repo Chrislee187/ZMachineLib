@@ -47,15 +47,15 @@ namespace ZMachineLib.Content
         public VersionedOffsets Offsets { get; private set; }
         public ushort DictionaryWordStart => (ushort) (Header.Dictionary + Dictionary.WordStart);
 
-
-        public ZMemory(byte[] data, Stack<ZStackFrame> stack,
+        public ZMemory(byte[] data,
             Action restart)
         {
             _restart = restart;
-            Stack = stack;
             Memory = data;
             Header = new ZHeader(data.AsSpan(0, 31));
             if (Header.Version > 3) throw new NotSupportedException("ZMachine > V3 not currently supported");
+
+            Stack = new Stack<ZStackFrame>();
 
             Offsets = VersionedOffsets.For(Header.Version);
             Manager = new MemoryManager(Memory);
@@ -69,8 +69,8 @@ namespace ZMachineLib.Content
             Dictionary = new ZDictionary(data.AsSpan(Header.Dictionary), Abbreviations);
             ObjectTree = new ZObjectTree(Header, Abbreviations, Manager);
 
-            VariableManager = new VariableManager(Manager, Header, stack);
-            OperandManager = new OperandManager(Manager, VariableManager, stack);
+            VariableManager = new VariableManager(Manager, Header, Stack);
+            OperandManager = new OperandManager(Manager, VariableManager, Stack);
         }
 
         public byte PeekNextByte()

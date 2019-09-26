@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using ZMachineLib.Content;
 using ZMachineLib.Operations.OP0;
 using ZMachineLib.Operations.OP1;
 using ZMachineLib.Operations.OP2;
@@ -12,109 +13,108 @@ namespace ZMachineLib.Operations
     {
         private readonly IDictionary<OpCodes, IOperation> _operations = new Dictionary<OpCodes, IOperation>();
 
-        public Operations(ZMachine2 machine,
-            IUserIo io, IFileIo fileIo)
+        public Operations(IUserIo io, IFileIo fileIo, IZMemory memory)
         {
             // OP2
-            _operations.Add(OpCodes.Je, new Je(machine.Memory));
-            _operations.Add(OpCodes.Jl, new Jl(machine.Memory));
-            _operations.Add(OpCodes.Jg, new Jg(machine.Memory));
-            _operations.Add(OpCodes.DecCheck, new DecCheck(machine.Memory));
-            _operations.Add(OpCodes.IncCheck, new IncCheck(machine.Memory));
-            _operations.Add(OpCodes.Jin, new Jin(machine.Memory));
-            _operations.Add(OpCodes.Test, new Test(machine.Memory));
-            _operations.Add(OpCodes.Or, new Or(machine.Memory));
-            _operations.Add(OpCodes.And, new And(machine.Memory));
-            _operations.Add(OpCodes.TestAttribute, new TestAttribute(machine.Memory));
-            _operations.Add(OpCodes.SetAttribute, new SetAttribute(machine.Memory));
-            _operations.Add(OpCodes.ClearAttribute, new ClearAttribute(machine.Memory));
-            _operations.Add(OpCodes.Store, new Store(machine.Memory));
-            _operations.Add(OpCodes.InsertObj, new InsertObj(machine.Memory));
-            _operations.Add(OpCodes.LoadW, new LoadW(machine.Memory));
-            _operations.Add(OpCodes.LoadB, new LoadB(machine.Memory));
-            _operations.Add(OpCodes.GetProp, new GetProp(machine.Memory));
-            _operations.Add(OpCodes.GetPropAddr, new GetPropAddr(machine.Memory));
-            _operations.Add(OpCodes.GetNextProp, new GetNextProp(machine.Memory));
-            _operations.Add(OpCodes.Add, new Add(machine.Memory));
-            _operations.Add(OpCodes.Sub, new Sub(machine.Memory));
-            _operations.Add(OpCodes.Mul, new Mul(machine.Memory));
-            _operations.Add(OpCodes.Div, new Div(machine.Memory));
-            _operations.Add(OpCodes.Mod, new Mod(machine.Memory));
-            _operations.Add(OpCodes.Call2S, new Call2S(machine.Memory));
-            _operations.Add(OpCodes.Call2N, new Call2N(machine.Memory));
-            _operations.Add(OpCodes.SetColor, new SetColor(machine.Memory, io));
+            _operations.Add(OpCodes.Je, new Je(memory));
+            _operations.Add(OpCodes.Jl, new Jl(memory));
+            _operations.Add(OpCodes.Jg, new Jg(memory));
+            _operations.Add(OpCodes.DecCheck, new DecCheck(memory));
+            _operations.Add(OpCodes.IncCheck, new IncCheck(memory));
+            _operations.Add(OpCodes.Jin, new Jin(memory));
+            _operations.Add(OpCodes.Test, new Test(memory));
+            _operations.Add(OpCodes.Or, new Or(memory));
+            _operations.Add(OpCodes.And, new And(memory));
+            _operations.Add(OpCodes.TestAttribute, new TestAttribute(memory));
+            _operations.Add(OpCodes.SetAttribute, new SetAttribute(memory));
+            _operations.Add(OpCodes.ClearAttribute, new ClearAttribute(memory));
+            _operations.Add(OpCodes.Store, new Store(memory));
+            _operations.Add(OpCodes.InsertObj, new InsertObj(memory));
+            _operations.Add(OpCodes.LoadW, new LoadW(memory));
+            _operations.Add(OpCodes.LoadB, new LoadB(memory));
+            _operations.Add(OpCodes.GetProp, new GetProp(memory));
+            _operations.Add(OpCodes.GetPropAddr, new GetPropAddr(memory));
+            _operations.Add(OpCodes.GetNextProp, new GetNextProp(memory));
+            _operations.Add(OpCodes.Add, new Add(memory));
+            _operations.Add(OpCodes.Sub, new Sub(memory));
+            _operations.Add(OpCodes.Mul, new Mul(memory));
+            _operations.Add(OpCodes.Div, new Div(memory));
+            _operations.Add(OpCodes.Mod, new Mod(memory));
+            _operations.Add(OpCodes.Call2S, new Call2S(memory));
+            _operations.Add(OpCodes.Call2N, new Call2N(memory));
+            _operations.Add(OpCodes.SetColor, new SetColor(memory, io));
 
             // OP1
-            _operations.Add(OpCodes.Jz, new Jz(machine.Memory));
-            _operations.Add(OpCodes.GetSibling, new GetSibling(machine.Memory));
-            _operations.Add(OpCodes.GetChild, new GetChild(machine.Memory));
-            _operations.Add(OpCodes.GetParent, new GetParent(machine.Memory));
-            _operations.Add(OpCodes.GetPropLen, new GetPropLen(machine.Memory));
-            _operations.Add(OpCodes.Inc, new Inc(machine.Memory));
-            _operations.Add(OpCodes.Dec, new Dec(machine.Memory));
-            _operations.Add(OpCodes.PrintAddr, new PrintAddr(machine.Memory, io));
-            _operations.Add(OpCodes.Call1S, new Call1S(machine.Memory));
-            _operations.Add(OpCodes.RemoveObj, new RemoveObj(machine.Memory));
-            _operations.Add(OpCodes.PrintObj, new PrintObj(machine.Memory, io));
-            _operations.Add(OpCodes.Ret, new Ret(machine.Memory));
-            _operations.Add(OpCodes.Jump, new Jump(machine.Memory));
-            _operations.Add(OpCodes.PrintPAddr, new PrintPAddr(machine.Memory, io));
-            _operations.Add(OpCodes.Load, new Load(machine.Memory));
+            _operations.Add(OpCodes.Jz, new Jz(memory));
+            _operations.Add(OpCodes.GetSibling, new GetSibling(memory));
+            _operations.Add(OpCodes.GetChild, new GetChild(memory));
+            _operations.Add(OpCodes.GetParent, new GetParent(memory));
+            _operations.Add(OpCodes.GetPropLen, new GetPropLen(memory));
+            _operations.Add(OpCodes.Inc, new Inc(memory));
+            _operations.Add(OpCodes.Dec, new Dec(memory));
+            _operations.Add(OpCodes.PrintAddr, new PrintAddr(memory, io));
+            _operations.Add(OpCodes.Call1S, new Call1S(memory));
+            _operations.Add(OpCodes.RemoveObj, new RemoveObj(memory));
+            _operations.Add(OpCodes.PrintObj, new PrintObj(memory, io));
+            _operations.Add(OpCodes.Ret, new Ret(memory));
+            _operations.Add(OpCodes.Jump, new Jump(memory));
+            _operations.Add(OpCodes.PrintPAddr, new PrintPAddr(memory, io));
+            _operations.Add(OpCodes.Load, new Load(memory));
 
-            if (machine.Memory.Header.Version <= 4)
+            if (memory.Header.Version <= 4)
             {
-                _operations.Add(OpCodes.Not, new Not(machine.Memory));
+                _operations.Add(OpCodes.Not, new Not(memory));
             }
             else
             {
-                _operations.Add(OpCodes.Call1N, new Call1N(machine.Memory));
+                _operations.Add(OpCodes.Call1N, new Call1N(memory));
             }
 
             // OP0
-            _operations.Add(OpCodes.RTrue, new RTrue(machine.Memory));
-            _operations.Add(OpCodes.RFalse, new RFalse(machine.Memory));
-            _operations.Add(OpCodes.Print, new Print(machine.Memory, io));
-            _operations.Add(OpCodes.PrintRet, new PrintRet(machine.Memory, io, (RTrue)_operations[OpCodes.RTrue]));
+            _operations.Add(OpCodes.RTrue, new RTrue(memory));
+            _operations.Add(OpCodes.RFalse, new RFalse(memory));
+            _operations.Add(OpCodes.Print, new Print(memory, io));
+            _operations.Add(OpCodes.PrintRet, new PrintRet(memory, io, (RTrue)_operations[OpCodes.RTrue]));
             _operations.Add(OpCodes.Nop, new Nop());
-            _operations.Add(OpCodes.Save, new Save(machine.Memory, fileIo)); 
-            _operations.Add(OpCodes.Restore, new Restore(machine.Memory, fileIo));
-            _operations.Add(OpCodes.Restart, new Restart(machine.Memory));
-            _operations.Add(OpCodes.RetPopped, new RetPopped(machine.Memory));
-            _operations.Add(OpCodes.Pop, new Pop(machine.Memory));
-            _operations.Add(OpCodes.Quit, new Quit(machine.Memory, io));// TODO: Remove machine dependency
-            _operations.Add(OpCodes.NewLine, new Newline(machine.Memory, io));
-            _operations.Add(OpCodes.ShowStatus, new ShowStatus(machine.Memory, io));
-            _operations.Add(OpCodes.Verify, new Verify(machine.Memory));
-            _operations.Add(OpCodes.Piracy, new Piracy(machine.Memory));
+            _operations.Add(OpCodes.Save, new Save(memory, fileIo)); 
+            _operations.Add(OpCodes.Restore, new Restore(memory, fileIo));
+            _operations.Add(OpCodes.Restart, new Restart(memory));
+            _operations.Add(OpCodes.RetPopped, new RetPopped(memory));
+            _operations.Add(OpCodes.Pop, new Pop(memory));
+            _operations.Add(OpCodes.Quit, new Quit(memory, io));
+            _operations.Add(OpCodes.NewLine, new Newline(memory, io));
+            _operations.Add(OpCodes.ShowStatus, new ShowStatus(memory, io));
+            _operations.Add(OpCodes.Verify, new Verify(memory));
+            _operations.Add(OpCodes.Piracy, new Piracy(memory));
 
             // OPVAR
-            _operations.Add(OpCodes.Call, new Call(machine.Memory));
-            _operations.Add(OpCodes.StoreB, new StoreB(machine.Memory));
-            _operations.Add(OpCodes.StoreW, new StoreW(machine.Memory));
-            _operations.Add(OpCodes.PutProp, new PutProp(machine.Memory)); 
-            _operations.Add(OpCodes.Read, new Read(machine, machine.Memory, io));// TODO: Remove machine dependency
-            _operations.Add(OpCodes.PrintChar, new PrintChar(machine.Memory, io));
-            _operations.Add(OpCodes.PrintNum, new PrintNum(machine.Memory, io));
-            _operations.Add(OpCodes.Random, new Random(machine.Memory));
-            _operations.Add(OpCodes.Push, new Push(machine.Memory));
-            _operations.Add(OpCodes.Pull, new Pull(machine.Memory));
-            _operations.Add(OpCodes.SplitWindow, new SplitWindow(machine.Memory, io));
-            _operations.Add(OpCodes.SetWindow, new SetWindow(machine.Memory, io));
-            _operations.Add(OpCodes.CallVs2, new CallVs2(machine.Memory));
-            _operations.Add(OpCodes.EraseWindow, new EraseWindow(machine.Memory, io));
-            _operations.Add(OpCodes.SetCursor, new SetCursor(machine.Memory, io));
-            _operations.Add(OpCodes.SetTextStyle, new SetTextStyle(machine.Memory, io));
-            _operations.Add(OpCodes.BufferMode, new BufferMode(machine.Memory, io));
-            _operations.Add(OpCodes.OutputStream, new OutputStream(machine.Memory));
-            _operations.Add(OpCodes.SoundEffect, new SoundEffect(machine.Memory, io));
-            _operations.Add(OpCodes.ReadChar, new ReadChar(machine.Memory, io));
-            _operations.Add(OpCodes.ScanTable, new ScanTable(machine.Memory));
-            _operations.Add(OpCodes.NotVar, new Not(machine.Memory));
-            _operations.Add(OpCodes.CallVn, new CallVn(machine.Memory));
-            _operations.Add(OpCodes.CallVn2, new CallVn2(machine.Memory));
-            _operations.Add(OpCodes.CopyTable, new CopyTable(machine.Memory));
-            _operations.Add(OpCodes.PrintTable, new PrintTable(machine.Memory, io));
-            _operations.Add(OpCodes.CheckArgCount, new CheckArgCount(machine.Memory));
+            _operations.Add(OpCodes.Call, new Call(memory));
+            _operations.Add(OpCodes.StoreB, new StoreB(memory));
+            _operations.Add(OpCodes.StoreW, new StoreW(memory));
+            _operations.Add(OpCodes.PutProp, new PutProp(memory)); 
+            _operations.Add(OpCodes.Read, new Read(memory, io));
+            _operations.Add(OpCodes.PrintChar, new PrintChar(memory, io));
+            _operations.Add(OpCodes.PrintNum, new PrintNum(memory, io));
+            _operations.Add(OpCodes.Random, new Random(memory));
+            _operations.Add(OpCodes.Push, new Push(memory));
+            _operations.Add(OpCodes.Pull, new Pull(memory));
+            _operations.Add(OpCodes.SplitWindow, new SplitWindow(memory, io));
+            _operations.Add(OpCodes.SetWindow, new SetWindow(memory, io));
+            _operations.Add(OpCodes.CallVs2, new CallVs2(memory));
+            _operations.Add(OpCodes.EraseWindow, new EraseWindow(memory, io));
+            _operations.Add(OpCodes.SetCursor, new SetCursor(memory, io));
+            _operations.Add(OpCodes.SetTextStyle, new SetTextStyle(memory, io));
+            _operations.Add(OpCodes.BufferMode, new BufferMode(memory, io));
+            _operations.Add(OpCodes.OutputStream, new OutputStream(memory));
+            _operations.Add(OpCodes.SoundEffect, new SoundEffect(memory, io));
+            _operations.Add(OpCodes.ReadChar, new ReadChar(memory, io));
+            _operations.Add(OpCodes.ScanTable, new ScanTable(memory));
+            _operations.Add(OpCodes.NotVar, new Not(memory));
+            _operations.Add(OpCodes.CallVn, new CallVn(memory));
+            _operations.Add(OpCodes.CallVn2, new CallVn2(memory));
+            _operations.Add(OpCodes.CopyTable, new CopyTable(memory));
+            _operations.Add(OpCodes.PrintTable, new PrintTable(memory, io));
+            _operations.Add(OpCodes.CheckArgCount, new CheckArgCount(memory));
         }
 
         #region IReadOnlyDictionary<>

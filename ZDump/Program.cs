@@ -20,7 +20,7 @@ namespace ZDump
 
             if (CheckStoryVersion(bytes)) return;
 
-            var contents = new ZMemory(bytes, null, null);
+            var contents = new ZMemory(bytes, null);
 
             WriteContents(filename, contents);
         }

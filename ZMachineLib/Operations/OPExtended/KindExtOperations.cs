@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OPExtended
 {
@@ -7,14 +8,13 @@ namespace ZMachineLib.Operations.OPExtended
     {
         private readonly IDictionary<KindExtOpCodes, IOperation> _operations = new Dictionary<KindExtOpCodes, IOperation>();
 
-        public KindExtOperations(ZMachine2 machine,
-            Operations operations)
+        public KindExtOperations(Operations operations, IZMemory memory)
         {
             _operations.Add(KindExtOpCodes.Save, operations[OpCodes.Save]);
             _operations.Add(KindExtOpCodes.Restore, operations[OpCodes.Restore]);
-            _operations.Add(KindExtOpCodes.LogShift, new LogShift(machine));
-            _operations.Add(KindExtOpCodes.ArtShift, new ArtShift(machine));
-            _operations.Add(KindExtOpCodes.SetFont, new SetFont(machine));
+            _operations.Add(KindExtOpCodes.LogShift, new LogShift(memory));
+            _operations.Add(KindExtOpCodes.ArtShift, new ArtShift(memory));
+            _operations.Add(KindExtOpCodes.SetFont, new SetFont(memory));
 
         }
 

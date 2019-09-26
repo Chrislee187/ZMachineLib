@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OPExtended
 {
     public sealed class ArtShift : ZMachineOperationBase
     {
-        public ArtShift(ZMachine2 machine)
-            : base((ushort)KindExtOpCodes.ArtShift, machine.Memory)
+        public ArtShift(IZMemory memory)
+            : base((ushort)KindExtOpCodes.ArtShift, memory)
         {
         }
 
@@ -18,7 +19,7 @@ namespace ZMachineLib.Operations.OPExtended
             else if ((short)operands[1] < 0)
                 val >>= -operands[1];
 
-            var dest = GetCurrentByteAndInc();
+            var dest = Contents.GetCurrentByteAndInc();
             ushort value = (ushort)val;
             Contents.VariableManager.StoreWord(dest, value);
         }

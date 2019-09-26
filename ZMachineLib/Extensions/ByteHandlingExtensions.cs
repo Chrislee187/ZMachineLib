@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace ZMachineLib.Extensions
@@ -76,6 +77,14 @@ namespace ZMachineLib.Extensions
             result[1] = (byte) (value >> 8);
 
             return result;
+        }
+
+        public static byte[] ToByteArray(this Stream stream)
+        {
+            var buffer = new byte[stream.Length];
+            stream.Seek(0, SeekOrigin.Begin);
+            stream.Read(buffer, 0, (int)stream.Length);
+            return buffer;
         }
     }
 

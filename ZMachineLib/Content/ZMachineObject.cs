@@ -117,7 +117,6 @@ namespace ZMachineLib.Content
             }
 
             Properties = GetProperties(ptr);
-
         }
 
         private Dictionary<int, ZProperty> GetProperties(ushort ptr)
@@ -180,7 +179,7 @@ namespace ZMachineLib.Content
         {
             get
             {
-                var b = (byte) (_manager?.Get((ushort)(Address + Offsets.Parent)) ?? 0);
+                var b = _manager?.Get((ushort)(Address + Offsets.Parent)) ?? 0;
                 if (b != _parentObjectNumber)
                 {
                     Console.WriteLine($"Expected: {_parentObjectNumber} got from {(Address + Offsets.Parent):X4} = {b}");

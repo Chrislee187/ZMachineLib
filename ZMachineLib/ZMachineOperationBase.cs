@@ -56,7 +56,6 @@ namespace ZMachineLib
             zsf.ArgumentCount = args.Count - 1;
         }
 
-
         // NOTE: Slightly funky setup for Jump and GetCurrentByteAndInc
         // so we can replace them when testing
         private Action<bool> _customJump;
