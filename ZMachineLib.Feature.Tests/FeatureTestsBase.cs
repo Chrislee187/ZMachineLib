@@ -6,8 +6,8 @@ namespace ZMachineLib.Feature.Tests
 {
     public class FeatureTestsBase
     {
-        protected Mock<IUserIo> _zMachineIo;
-        private Mock<IFileIo> _fileIo;
+        protected Mock<IUserIo> MockUserIo;
+        private Mock<IFileIo> MockFileIo;
         private ZMachine2 _machine;
         protected ZMachineFeatureTester Feature;
 
@@ -19,10 +19,10 @@ namespace ZMachineLib.Feature.Tests
 
         protected void BaseSetup()
         {
-            _zMachineIo = new Mock<IUserIo>();
-            _fileIo = new Mock<IFileIo>();
-            Feature = new ZMachineFeatureTester(_zMachineIo);
-            _machine = new ZMachine2(_zMachineIo.Object, _fileIo.Object);
+            MockUserIo = new Mock<IUserIo>();
+            MockFileIo = new Mock<IFileIo>();
+            Feature = new ZMachineFeatureTester(MockUserIo);
+            _machine = new ZMachine2(MockUserIo.Object, MockFileIo.Object);
         }
     }
 }

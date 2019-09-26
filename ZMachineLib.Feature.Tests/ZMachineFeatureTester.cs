@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using Moq;
 using Moq.Language;
-using NUnit.Framework;
 
 namespace ZMachineLib.Feature.Tests
 {
@@ -82,7 +81,7 @@ namespace ZMachineLib.Feature.Tests
             {
                 if (!line.StartsWith("//"))
                 {
-                    Execute(line.Trim(), "");
+                    Execute(line.Trim());
                 }
 
                 line = lines.ReadLine();
@@ -90,7 +89,7 @@ namespace ZMachineLib.Feature.Tests
         }
         public void Quit()
         {
-            Execute("", "");
+            Execute("");
             Execute("quit", "wish to leave");
             Execute("Y");
         }

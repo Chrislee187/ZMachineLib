@@ -11,7 +11,7 @@ namespace ZMachineLib.Operations.OP0
     {
         public Restore(IZMemory memory,
             IFileIo io)
-            : base(OpCodes.Restore, null, memory, io)
+            : base(OpCodes.Restore, memory, io)
         {
         }
 
@@ -42,7 +42,7 @@ namespace ZMachineLib.Operations.OP0
             Contents.ReadParseAddr = br.ReadUInt16();
             Contents.ReadTextAddr = br.ReadUInt16();
 
-            stream.Read(((MemoryManager)(Contents.Manager))._memory, 0, Contents.Header.DynamicMemorySize - 1);
+            stream.Read(((MemoryManager)(Contents.Manager)).Buffer, 0, Contents.Header.DynamicMemorySize - 1);
             var zStackFrames = (Stack<ZStackFrame>)dcs.ReadObject(stream);
             
             Contents.Stack.Clear();

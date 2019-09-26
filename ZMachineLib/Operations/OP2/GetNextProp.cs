@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using ZMachineLib.Content;
-using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OP2
 {

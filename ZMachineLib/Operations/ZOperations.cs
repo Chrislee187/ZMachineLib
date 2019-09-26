@@ -6,13 +6,13 @@ namespace ZMachineLib.Operations
     public class ZOperations
     {
         private readonly KindExtOperations _extendedOperations;
-        private readonly ZMachineLib.Operations.Operations _operations;
+        private readonly Operations _operations;
         private readonly IZMemory _zMemory;
 
         public ZOperations(IUserIo userIo, IFileIo fileIo, IZMemory zMemory)
         {
             _zMemory = zMemory;
-            _operations = new ZMachineLib.Operations.Operations(userIo, fileIo, _zMemory);
+            _operations = new Operations(userIo, fileIo, _zMemory);
             _extendedOperations = new KindExtOperations(_operations, _zMemory);
         }
 

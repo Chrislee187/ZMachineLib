@@ -7,28 +7,6 @@ using ZMachineLib.Managers;
 
 namespace ZMachineLib.Content
 {
-    public interface IZMachineObject
-    {
-        bool TestAttribute(ushort attr);
-        void ClearAttribute(ushort attr);
-        void SetAttribute(ushort attr);
-        ulong Attributes { get; }
-        string Name { get; }
-        ushort Address { get; set; }
-        ushort Sibling { get; set; }
-        ushort Parent { get; set; }
-        ushort Child { get; set; }
-        ushort PropertyHeader { get; set; }
-        Dictionary<int, bool> AttributeFlags { get; set; }
-        ushort PropertiesAddress { get; set; }
-        IDictionary<int, ZProperty> Properties { get;  }
-        ushort ObjectNumber { get; set; }
-        byte BytesRead { get; }
-        ZMachineObject RefreshFromMemory();
-
-        ZProperty GetProperty(int i);
-    }
-
     [DebuggerDisplay("[{ObjectNumber}] '{Name}'")]
     public class ZMachineObject : IZMachineObject
     {
@@ -51,7 +29,7 @@ namespace ZMachineLib.Content
 
         public ZMachineObject()
         {
-
+            // Used by tests
         }
 
         public ZMachineObject(ushort objNumber, ushort address,
@@ -179,11 +157,14 @@ namespace ZMachineLib.Content
         {
             get
             {
-                var b = _manager?.Get((ushort)(Address + Offsets.Parent)) ?? 0;
-                if (b != _parentObjectNumber)
-                {
-                    Console.WriteLine($"Expected: {_parentObjectNumber} got from {(Address + Offsets.Parent):X4} = {b}");
-                }
+                // NOTE: We should be able to use the memory bytes as the storage but it sometimes
+                // get's the value wrong? Something else must be changing the underlying value, whilst this
+                // instance is still expecting it to be the previous value
+                //                var b = _manager?.Get((ushort)(Address + Offsets.Parent)) ?? 0;
+                //                if (b != _parentObjectNumber)
+                //                {
+                //                    Console.WriteLine($"Expected Parent: {_parentObjectNumber} got from {(Address + Offsets.Parent):X4} = {b}");
+                //                }
                 //                _parentObjectNumber = b;
                 return _parentObjectNumber;
             }
@@ -191,11 +172,6 @@ namespace ZMachineLib.Content
             {
                 _parentObjectNumber = value;
                 _manager?.Set((ushort)(Address + Offsets.Parent), (byte)value);
-                var b = (byte)(_manager?.Get((ushort)(Address + Offsets.Parent)) ?? 0);
-                if (b != _parentObjectNumber)
-                {
-                    Console.WriteLine($"{Name}.Parent = {b} | Expected: {_parentObjectNumber}");
-                }
             }
         }
 
@@ -204,12 +180,12 @@ namespace ZMachineLib.Content
         {
             get
             {
-                var b = (byte)(_manager?.Get((ushort)(Address + Offsets.Child)) ?? 0);
-                if (b != _childObjectNumber)
-                {
-                    Console.WriteLine($"Expected: {_parentObjectNumber} got from {(Address + Offsets.Child):X4} = {b}");
-
-                }
+                // NOTE: See note for Parent
+                //                var b = _manager?.Get((ushort)(Address + Offsets.Child)) ?? 0;
+                //                if (b != _childObjectNumber)
+                //                {
+                //                    Debug.WriteLine($"Expected: Child {_childObjectNumber} got from {(Address + Offsets.Child):X4} = {b}");
+                //                }
                 return _childObjectNumber;
             }
             set
@@ -217,11 +193,6 @@ namespace ZMachineLib.Content
 
                 _childObjectNumber = value;
                 _manager?.Set((ushort)(Address + Offsets.Child), (byte)value);
-                var b = (byte)(_manager?.Get((ushort)(Address + Offsets.Child)) ?? 0);
-                if (b != _childObjectNumber)
-                {
-                    Console.WriteLine($"{Name}.Child = {b} | Expected: {_childObjectNumber}");
-                }
             }
         }
 
@@ -231,23 +202,18 @@ namespace ZMachineLib.Content
         {
             get
             {
-                var b = (byte)(_manager?.Get((ushort)(Address + Offsets.Sibling)) ?? 0);
-                if (b != _siblingObjectNumber)
-                {
-                    Console.WriteLine($"Expected: {_parentObjectNumber} got from {(Address + Offsets.Sibling):X4} = {b}");
-                }
+                // NOTE: See note for Parent
+                //                var b = _manager?.Get((ushort)(Address + Offsets.Sibling)) ?? 0;
+                //                if (b != _siblingObjectNumber)
+                //                {
+                //                    Console.WriteLine($"Expected Sibling: {_siblingObjectNumber} got from {(Address + Offsets.Sibling):X4} = {b}");
+                //                }
                 return _siblingObjectNumber;
             }
             set
             {
                 _siblingObjectNumber = value;
                 _manager?.Set((ushort)(Address + Offsets.Sibling), (byte)value);
-                var b = (byte)(_manager?.Get((ushort)(Address + Offsets.Sibling)) ?? 0);
-                if (b != _siblingObjectNumber)
-                {
-                    Console.WriteLine($"{Name}.Sibling = {b} | Expected: {_siblingObjectNumber}");
-
-                }
             }
         }
 

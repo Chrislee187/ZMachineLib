@@ -10,9 +10,7 @@ namespace ZMachineLib.Unit.Tests.Operations
     public class OperationsTestsBase
     {
         protected VariableManagerMockery VariableManagerMockery;
-        protected ObjectManagerMockery ObjectManagerMockery;
         protected ObjectTreeMockery ObjectTreeMockery;
-        protected ZMachine2 ZMachine2;
         private bool? _jumped;
         protected List<ushort> AnyArgs = new OpArgBuilder().Build();
         protected const ushort AnyValue = 1;
@@ -20,9 +18,7 @@ namespace ZMachineLib.Unit.Tests.Operations
 
         protected void Setup()
         {
-            ZMachine2 = new ZMachine2(null, null);
             VariableManagerMockery = new VariableManagerMockery();
-            ObjectManagerMockery = new ObjectManagerMockery();
             ObjectTreeMockery = new ObjectTreeMockery();
 
             var memoryMock = new Mock<IZMemory>();

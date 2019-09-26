@@ -10,7 +10,7 @@ namespace ZMachineLib.Operations.OP0
     {
         public Save(IZMemory memory,
             IFileIo io) 
-            : base(OpCodes.Save, null, memory, io)
+            : base(OpCodes.Save, memory, io)
         {
         }
 
@@ -47,7 +47,7 @@ namespace ZMachineLib.Operations.OP0
 
             bw.Write(Contents.ReadParseAddr);
             bw.Write(Contents.ReadTextAddr);
-            bw.Write(((MemoryManager)(Contents.Manager))._memory, 0, Contents.Header.DynamicMemorySize - 1);
+            bw.Write(((MemoryManager)(Contents.Manager)).Buffer, 0, Contents.Header.DynamicMemorySize - 1);
             dcs.WriteObject(ms, Contents.Stack);
             return ms;
         }

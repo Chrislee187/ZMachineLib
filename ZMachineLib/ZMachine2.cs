@@ -30,7 +30,7 @@ namespace ZMachineLib
             {
                 LoadFile(stream);
                 restart = Run(terminateOnInput);
-            };
+            }
         }
 
         public void RunFile(string filename)
@@ -81,7 +81,7 @@ namespace ZMachineLib
             _zMemory = new ZMemory(memory, () => Execute(_restartState));
             _zOperations = new ZOperations(_io, _fileIo, _zMemory);
 
-            _zMemory.Stack.Push(new ZStackFrame { PC = _zMemory.Header.Pc }); ;
+            _zMemory.Stack.Push(new ZStackFrame { PC = _zMemory.Header.Pc });
         }
 
     }

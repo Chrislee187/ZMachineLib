@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP2

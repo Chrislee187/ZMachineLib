@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using ZMachineLib.Content;
-using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OP1
 {

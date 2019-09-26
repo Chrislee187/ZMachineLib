@@ -32,8 +32,6 @@ namespace ZMachineLib.Operations.OPVAR
             var zObj = Contents.ObjectTree.GetOrDefault(obj);
 
             zObj.Properties[propertyNumber].Data = value.ToByteArray();
-
-            return;
         }
     }
 }

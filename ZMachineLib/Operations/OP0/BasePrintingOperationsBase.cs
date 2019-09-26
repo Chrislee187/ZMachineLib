@@ -7,7 +7,6 @@ namespace ZMachineLib.Operations.OP0
         protected readonly IUserIo Io;
 
         protected BasePrintingOperationsBase(ushort code,
-            ZMachine2 machine,
             IZMemory memory,
             IUserIo io) 
             : base(code, memory)

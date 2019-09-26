@@ -1,7 +1,4 @@
-﻿using System.IO;
-using Moq;
-using NUnit.Framework;
-using Shouldly;
+﻿using NUnit.Framework;
 
 namespace ZMachineLib.Feature.Tests
 {
@@ -25,9 +22,6 @@ namespace ZMachineLib.Feature.Tests
 
             ShouldRunToCompletion(Zork3V3);
 
-//            VerifyOutput(
-//                "349"
-//            );
         }
 
         [Test]
@@ -38,15 +32,6 @@ namespace ZMachineLib.Feature.Tests
             Feature.Quit();
 
             ShouldRunToCompletion(Zork3V3);
-        }
-
-        private void VerifyOutput(params string[] commands)
-        {
-            foreach (var command in commands)
-            {
-                _zMachineIo.Verify(io
-                    => io.Print(It.Is<string>(s => s.Contains(command))));
-            }
         }
     }
 }

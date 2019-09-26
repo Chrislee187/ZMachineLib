@@ -8,7 +8,6 @@ namespace ZMachineLib.Operations.OP0
         protected readonly IFileIo Io;
 
         protected GameSaveBase(OpCodes opCode,
-            ZMachine2 machine,
             IZMemory memory,
             IFileIo io)
             : base((ushort)opCode, memory)

@@ -1,27 +1,8 @@
 using Moq;
-using Moq.Language;
 using ZMachineLib.Content;
-using ZMachineLib.Managers;
 
 namespace ZMachineLib.Unit.Tests.Operations
 {
-    public class ObjectManagerMockery
-    {
-        private readonly Mock<IObjectManager> _objectManagerMock;
-        private readonly ISetupSequentialResult<IZMachineObject> _getObjectSequence;
-
-        public ObjectManagerMockery()
-        {
-            _objectManagerMock = new Mock<IObjectManager>();
-            _objectManagerMock
-                .Setup(o => o.GetObjectName(It.IsAny<ushort>()))
-                .Returns("");
-            _getObjectSequence = _objectManagerMock
-                .SetupSequence(m => m.GetObject(It.IsAny<ushort>()));
-
-        }
-    }
-
     public class ObjectTreeMockery
     {
         public IZObjectTree Object => _objectTreeMock.Object;

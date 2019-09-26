@@ -11,7 +11,7 @@ namespace ZMachineLib.Operations.OP0
         public PrintRet(IZMemory memory,
             IUserIo io,
             RTrue rTrue)
-            : base((ushort) OpCodes.PrintRet, null, memory, io)
+            : base((ushort) OpCodes.PrintRet, memory, io)
         {
             _rTrue = rTrue;
         }

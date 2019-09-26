@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP0
@@ -8,7 +7,7 @@ namespace ZMachineLib.Operations.OP0
     {
         public Print(IZMemory memory,
             IUserIo io)
-            : base((ushort) OpCodes.Print, null, memory, io)
+            : base((ushort) OpCodes.Print, memory, io)
         {
         }
 
