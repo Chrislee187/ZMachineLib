@@ -1,5 +1,4 @@
-﻿using System;
-using ZMachineLib.Managers;
+﻿using ZMachineLib.Managers;
 
 namespace ZMachineLib.Content
 {

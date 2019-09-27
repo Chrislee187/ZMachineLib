@@ -26,7 +26,8 @@ namespace ZMachineLib.Managers
         private readonly IMemoryManager _memoryManager;
 
         public OperandManager(IMemoryManager memoryManager,
-            IVariableManager variableManager, Stack<ZStackFrame> stack)
+            Stack<ZStackFrame> stack,
+            IVariableManager variableManager)
         {
             _memoryManager = memoryManager;
             _variableManager = variableManager;
@@ -92,7 +93,7 @@ namespace ZMachineLib.Managers
             }
         }
 
-        // TODO: Need to sort out abstracting these Memory and Stack references
+        // TODO: Need to sort out abstracting Stack references
         private ushort GetOperand(OperandType type)
         {
             ushort arg = 0;

@@ -58,22 +58,22 @@ namespace ZMachineLib.Content
             Header = new ZHeader(data.AsSpan(0, 31));
             if (Header.Version > 3) throw new NotSupportedException("ZMachine > V3 not currently supported");
 
-            Stack = new Stack<ZStackFrame>();
-
+            // Version specific offsets - not used every yet
             Offsets = VersionedOffsets.For(Header.Version);
+
             Manager = new MemoryManager(Memory);
-
-            Offsets = VersionedOffsets.For(Header.Version);
-
+            
+            // ZMachine tables
             Abbreviations = new ZAbbreviations(Header, Manager);
-
             Dictionary = new ZDictionary(Header, Manager, Abbreviations);
             ObjectTree = new ZObjectTree(Header, Manager, Abbreviations);
-
             Globals = new ZGlobals(Header, Manager);
 
-            VariableManager = new VariableManager(Manager, Header, Stack, Globals);
-            OperandManager = new OperandManager(Manager, VariableManager, Stack);
+            Stack = new Stack<ZStackFrame>();
+
+            // Simple managers abstracting variable and argument usage
+            VariableManager = new VariableManager(Stack, Globals);
+            OperandManager = new OperandManager(Manager, Stack, VariableManager);
         }
 
         public byte PeekNextByte()
@@ -103,19 +103,12 @@ namespace ZMachineLib.Content
 
             return 0;
         }
-
-
-        private bool _running;
-        public bool TerminateOnInput { get; set; }
-
+        
         public ushort ReadTextAddr { get; set; }
         public ushort ReadParseAddr { get; set; }
 
-        public bool Running
-        {
-            get => _running;
-            set => _running = value;
-        }
+        public bool TerminateOnInput { get; set; }
+        public bool Running { get; set; }
 
         public void Restart()
         {

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using ZMachineLib.Content;
 
 namespace ZMachineLib.Managers
@@ -13,19 +12,13 @@ namespace ZMachineLib.Managers
 
     public class VariableManager : IVariableManager
     {
-        private readonly ZHeader _header;
-        private readonly IMemoryManager _memoryManager;
         private readonly Stack<ZStackFrame> _stack;
         private ZGlobals _globals;
 
-        public VariableManager(IMemoryManager memoryManager,
-            ZHeader header,
-            Stack<ZStackFrame> stack, ZGlobals globals)
+        public VariableManager(Stack<ZStackFrame> stack, ZGlobals globals)
         {
             _globals = globals;
             _stack = stack;
-            _memoryManager = memoryManager;
-            _header = header;
         }
         public ushort GetWord(byte variable, bool andRemove = true)
         {
