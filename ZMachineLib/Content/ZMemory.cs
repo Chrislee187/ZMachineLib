@@ -27,6 +27,7 @@ namespace ZMachineLib.Content
         ushort ReadParseAddr { get; set; }
 
         bool Running { get; set; }
+        ZGlobals Globals { get; set; }
 
         void Restart();
     }
@@ -42,6 +43,8 @@ namespace ZMachineLib.Content
         public IMemoryManager Manager { get; }
         public IVariableManager VariableManager { get; }
         public OperandManager OperandManager { get; }
+        public ZGlobals Globals { get; set; }
+
 
         public byte[] Memory { get; }
         public VersionedOffsets Offsets { get; private set; }
@@ -69,7 +72,9 @@ namespace ZMachineLib.Content
             Dictionary = new ZDictionary(data.AsSpan(Header.Dictionary), Abbreviations);
             ObjectTree = new ZObjectTree(Header, Abbreviations, Manager);
 
-            VariableManager = new VariableManager(Manager, Header, Stack);
+            Globals = new ZGlobals(Header, Manager);
+
+            VariableManager = new VariableManager(Manager, Header, Stack, Globals);
             OperandManager = new OperandManager(Manager, VariableManager, Stack);
         }
 

@@ -242,7 +242,7 @@ namespace ZMachineLib.Content
 //                _objectManager.Machine._memory.SetLong(DataAddress, val);
                 _manager.SetLong(Address, val);
                 ushort value = (ushort)attributes;
-//                _objectManager.Machine._memory.SetWord((ushort)(DataAddress + 4), value);
+//                _objectManager.Machine._memory.SetUShort((ushort)(DataAddress + 4), value);
                 _manager.Set((ushort)(Address + 4), value);
             }
         }
@@ -263,7 +263,7 @@ namespace ZMachineLib.Content
                 Attributes |= flagMask;
 //                _objectManager.Machine._memory.SetLong(DataAddress, (uint)(attributes >> 16));
                 _manager.SetLong(Address, (uint)(Attributes >> 16));
-//                _objectManager.Machine._memory.SetWord((ushort)(DataAddress + 4), (ushort)attributes);
+//                _objectManager.Machine._memory.SetUShort((ushort)(DataAddress + 4), (ushort)attributes);
                 _manager.Set((ushort)(Address + 4), (ushort)Attributes);
 
             }

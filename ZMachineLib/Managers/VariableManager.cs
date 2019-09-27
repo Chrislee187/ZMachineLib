@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using ZMachineLib.Content;
 
 namespace ZMachineLib.Managers
@@ -15,11 +16,13 @@ namespace ZMachineLib.Managers
         private readonly ZHeader _header;
         private readonly IMemoryManager _memoryManager;
         private readonly Stack<ZStackFrame> _stack;
+        private ZGlobals _globals;
 
-        public VariableManager(IMemoryManager memoryManager, 
-            ZHeader header, 
-            Stack<ZStackFrame> stack)
+        public VariableManager(IMemoryManager memoryManager,
+            ZHeader header,
+            Stack<ZStackFrame> stack, ZGlobals globals)
         {
+            _globals = globals;
             _stack = stack;
             _memoryManager = memoryManager;
             _header = header;
@@ -46,8 +49,8 @@ namespace ZMachineLib.Managers
 
         private ushort GetWordFromGlobals(byte variable)
         {
-            var val = _memoryManager.GetUShort((ushort)(_header.Globals + 2 * (variable - 0x10)));
-            Log.Write($"G{variable - 0x10:X2} ({val:X4}), ");
+            var globalsNumber = variable - 0x10;
+            var val = _globals.Get((byte) globalsNumber); 
             return val;
         }
 
@@ -87,9 +90,9 @@ namespace ZMachineLib.Managers
 
         private void StoreWordInGlobal(byte dest, ushort value)
         {
-            var globalsIdx = dest - 0x10;
-            Log.Write($"-> GLB{globalsIdx:X2} ({value:X4}), ");
-            _memoryManager.Set((ushort)(_header.Globals + 2 * globalsIdx), value);
+            Log.Write($"-> GLB{ZGlobals.GetGlobalsNumber(dest):X2} ({value:X4}), ");
+
+            _globals.Set(ZGlobals.GetGlobalsNumber(dest), value);
         }
 
         private void StoreWordInVariable(byte dest, ushort value)
@@ -128,11 +131,9 @@ namespace ZMachineLib.Managers
 
         private void StoreByteInGlobals(byte dest, byte value)
         {
-            var globalsIdx = dest - 0x10;
+            var globalsIdx = ZGlobals.GetGlobalsNumber(dest);
             Log.Write($"-> GLB{globalsIdx:X2} = ({value:X2}), ");
-            var addr = _header.Globals + 2 * globalsIdx;
-            // this still gets written as a word...write the byte to addr+1
-            _memoryManager.Set(addr, 0, value);
+            _globals.Set(globalsIdx, value);
         }
 
         private void StoreByteInVariable(byte dest, byte value)

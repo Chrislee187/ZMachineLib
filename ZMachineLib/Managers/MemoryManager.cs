@@ -45,7 +45,7 @@ namespace ZMachineLib.Managers
             }
         }
 
-        public void SetWord(uint address, ushort value)
+        public void SetUShort(uint address, ushort value)
         {
             Buffer.Set(address + 0, (byte)(value >> 8));
             Buffer.Set(address + 1, (byte)(value >> 0));

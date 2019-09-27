@@ -12,7 +12,7 @@ namespace ZMachineLib.Managers
         void Set(int address, byte value);
         void Set(ushort address, byte value);
         void Set(ushort address, ushort value);
-        void SetWord(uint address, ushort value);
+        void SetUShort(uint address, ushort value);
         void Set(ushort address, params byte[] values);
         void Set(int address, params byte[] values);
         Span<byte> AsSpan();

@@ -62,6 +62,17 @@ namespace ZDump
             WriteAbbreviations(contents.Abbreviations);
             WriteDictionary(contents);
             WriteObjects(contents);
+            WriteGlobals(contents);
+        }
+
+        private static void WriteGlobals(ZMemory contents)
+        {
+            WriteHeading("Globals");
+
+            for (byte i = 0; i < ZGlobals.NumberOfGlobals; i++)
+            {
+                Console.WriteLine($"  [{i:D2}] = {contents.Globals.Get(i)}");
+            }
         }
 
         private static void WriteObjects(ZMemory contents)
