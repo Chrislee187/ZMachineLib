@@ -5,56 +5,56 @@ namespace ZMachineLib.Managers
 {
     public interface IVariableManager
     {
-        ushort GetWord(byte variable, bool andRemove = true);
-        void StoreWord(byte dest, ushort value, bool newEntry = true);
+        ushort GetUShort(byte variable, bool andRemove = true);
+        void StoreUShort(byte dest, ushort value, bool newEntry = true);
         void StoreByte(byte dest, byte value);
     }
 
     public class VariableManager : IVariableManager
     {
         private readonly Stack<ZStackFrame> _stack;
-        private ZGlobals _globals;
+        private readonly ZGlobals _globals;
 
         public VariableManager(Stack<ZStackFrame> stack, ZGlobals globals)
         {
             _globals = globals;
             _stack = stack;
         }
-        public ushort GetWord(byte variable, bool andRemove = true)
+        public ushort GetUShort(byte variable, bool andRemove = true)
         {
             ushort val;
 
             if (DestinationIsStack(variable))
             {
-                val = GetWordFromStack(andRemove);
+                val = GetUShortFromStack(andRemove);
             }
             else if (DestinationIsVariable(variable))
             {
-                val = GetWordFromVariables(variable);
+                val = GetUShortFromVariables(variable);
             }
             else
             {
-                val = GetWordFromGlobals(variable);
+                val = GetUShortFromGlobals(variable);
             }
 
             return val;
         }
 
-        private ushort GetWordFromGlobals(byte variable)
+        private ushort GetUShortFromGlobals(byte variable)
         {
             var globalsNumber = variable - 0x10;
             var val = _globals.Get((byte) globalsNumber); 
             return val;
         }
 
-        private ushort GetWordFromVariables(byte variable)
+        private ushort GetUShortFromVariables(byte variable)
         {
             var val = _stack.Peek().Variables[variable - 1];
             Log.Write($"L{variable - 1:X2} ({val:X4}), ");
             return val;
         }
 
-        private ushort GetWordFromStack(bool andRemove)
+        private ushort GetUShortFromStack(bool andRemove)
         {
             ushort val;
             val = andRemove 
@@ -65,37 +65,37 @@ namespace ZMachineLib.Managers
             return val;
         }
         
-        public void StoreWord(byte dest, ushort value, bool newEntry = true)
+        public void StoreUShort(byte dest, ushort value, bool newEntry = true)
         {
             if (DestinationIsStack(dest))
             {
-                StoreWordOnStack(value, newEntry);
+                StoreUShortOnStack(value, newEntry);
             }
             else if (DestinationIsVariable(dest))
             {
-                StoreWordInVariable(dest, value);
+                StoreUShortInVariable(dest, value);
             }
             else
             {
-                StoreWordInGlobal(dest, value);
+                StoreUShortInGlobal(dest, value);
             }
         }
 
-        private void StoreWordInGlobal(byte dest, ushort value)
+        private void StoreUShortInGlobal(byte dest, ushort value)
         {
             Log.Write($"-> GLB{ZGlobals.GetGlobalsNumber(dest):X2} ({value:X4}), ");
 
             _globals.Set(ZGlobals.GetGlobalsNumber(dest), value);
         }
 
-        private void StoreWordInVariable(byte dest, ushort value)
+        private void StoreUShortInVariable(byte dest, ushort value)
         {
             var variablesIdx = dest - 1;
             Log.Write($"-> VAR{variablesIdx:X2} ({value:X4}), ");
             _stack.Peek().Variables[variablesIdx] = value;
         }
 
-        private void StoreWordOnStack(ushort value, bool newEntry)
+        private void StoreUShortOnStack(ushort value, bool newEntry)
         {
             if (!newEntry)
             {

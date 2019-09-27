@@ -13,7 +13,7 @@ namespace ZMachineLib.Operations.OPExtended
         public override void Execute(List<ushort> operands)
         {
             var dest = Contents.GetCurrentByteAndInc();
-            Contents.VariableManager.StoreWord(dest, 0);
+            Contents.VariableManager.StoreUShort(dest, 0);
         }
     }
 }

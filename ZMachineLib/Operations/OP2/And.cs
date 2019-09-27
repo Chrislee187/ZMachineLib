@@ -17,7 +17,7 @@ namespace ZMachineLib.Operations.OP2
         public override void Execute(List<ushort> operands)
         {
             var dest = GetCurrentByteAndInc();
-            Contents.VariableManager.StoreWord(dest, (ushort)(operands[0] & operands[1]));
+            Contents.VariableManager.StoreUShort(dest, (ushort)(operands[0] & operands[1]));
         }
     }
 }

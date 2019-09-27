@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Moq;
 using Shouldly;
@@ -7,49 +8,66 @@ using ZMachineLib.Operations;
 
 namespace ZMachineLib.Unit.Tests.Operations
 {
-    public class OperationsTestsBase
+    public class OperationsTestsBase<T> : OperationsTestsBase where T : IOperation
     {
+        // TODO: Make a MemoryMockery
+        protected Mock<IZMemory> MemoryMock;
+
+        protected new void Setup()
+        {
+            base.Setup();
+            MemoryMock = new Mock<IZMemory>();
+            Operation = (IOperation)Activator.CreateInstance(typeof(T), MemoryMock.Object);
+
+            MockPeekNextByte();
+            MockJump(b => Jumped = b);
+
+            MemoryMock
+                .SetupGet(m => m.VariableManager)
+                .Returns(VariableManagerMockery.Object);
+
+            MemoryMock
+                .SetupGet(m => m.Manager)
+                .Returns(new Mock<IMemoryManager>().Object);
+
+            MemoryMock
+                .SetupGet(m => m.ObjectTree)
+                .Returns(ObjectTreeMockery.Object);
+
+            // Default the destination for stored operation results tests to globals to avoid needing a stack
+            SetNextDestinationGlobals();
+        }
+    }
+
+    public abstract class OperationsTestsBase
+    {
+        protected IOperation Operation;
+        const byte DestinationGlobals = 0x11;
+
+
         protected VariableManagerMockery VariableManagerMockery;
         protected ObjectTreeMockery ObjectTreeMockery;
-        private bool? _jumped;
         protected List<ushort> AnyArgs = new OpArgBuilder().Build();
         protected const ushort AnyValue = 1;
-        protected IZMemory MemoryMock;
 
         protected void Setup()
         {
             VariableManagerMockery = new VariableManagerMockery();
             ObjectTreeMockery = new ObjectTreeMockery();
-
-            var memoryMock = new Mock<IZMemory>();
-            memoryMock
-                .SetupGet(m => m.VariableManager)
-                .Returns(VariableManagerMockery.Object);
-
-            memoryMock
-                .SetupGet(m => m.Manager)
-                .Returns(new Mock<IMemoryManager>().Object);
-
-            memoryMock
-                .SetupGet(m => m.ObjectTree)
-                .Returns(ObjectTreeMockery.Object);
-            MemoryMock = memoryMock.Object;
-
         }
-        protected void MockJump(IOperation op)
-        {
-            op.Jump = b => _jumped = b;
-        }
-        protected void MockPeekNextByte(IOperation op)
-        {
-            op.GetCurrentByteAndInc = () => 0;
-        }
+
+        protected bool Jumped;
+        protected void MockJump(Action<bool> operationJump) 
+            => Operation.Jump = operationJump;
         protected void JumpedWith(bool value)
-        {
-            _jumped.HasValue.ShouldBeTrue();
-            // ReSharper disable once PossibleInvalidOperationException
-            _jumped.Value.ShouldBe(value);
-        }
+            => Jumped.ShouldBe(value);
+
+        protected void MockPeekNextByte(byte value = 0) 
+            => Operation.GetCurrentByteAndInc = () => value;
+
+        protected void SetNextDestinationGlobals() 
+            => MockPeekNextByte(DestinationGlobals);
+
 
     }
 }

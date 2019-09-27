@@ -3,17 +3,12 @@ using ZMachineLib.Operations.OP2;
 
 namespace ZMachineLib.Unit.Tests.Operations.OP2
 {
-    public class SubTests : OperationsTestsBase
+    public class SubTests : OperationsTestsBase<Sub>
     {
-        private Sub _op;
-
-
         [SetUp]
         public void SetUp()
         {
             Setup();
-            _op = new Sub(MemoryMock);
-            MockPeekNextByte(_op);
         }
 
         [TestCase((short)1, (short)2)]
@@ -25,10 +20,10 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
                 .WithValue((ushort)val2)
                 .Build();
 
-            _op.Execute(args);
+            Operation.Execute(args);
 
             VariableManagerMockery
-                .VerifyStoreWord((ushort)(val1 - val2));
+                .UShortWasStored((ushort)(val1 - val2));
         }
     }
 }

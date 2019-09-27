@@ -3,32 +3,31 @@ using ZMachineLib.Operations.OP2;
 
 namespace ZMachineLib.Unit.Tests.Operations.OP2
 {
-    public class AddTests : OperationsTestsBase
+    /// <summary>
+    /// 2OP:20 14 add a b -> (result)
+    /// Signed 16-bit addition.
+    /// </summary>
+    public class AddTests : OperationsTestsBase<Add>
     {
-        private Add _op;
-
-
         [SetUp]
         public void SetUp()
         {
             Setup();
-            _op = new Add(MemoryMock);
-            MockPeekNextByte(_op);
         }
 
-        [TestCase((short)1, (short)2)]
-        [TestCase((short)-1, (short)-1)]
-        public void Should_store_AND_result(short val1, short val2)
+        [TestCase((short) 1, (short) 2, 3)]
+        [TestCase((short)-1, (short)-1, -2)]
+        public void Should_store_Add_result(short val1, short val2, short result)
         {
             var args = new OpArgBuilder()
                 .WithValue((ushort)val1)
                 .WithValue((ushort)val2)
                 .Build();
 
-            _op.Execute(args);
+            Operation.Execute(args);
 
             VariableManagerMockery
-                .VerifyStoreWord((ushort)(val1 + val2));
+                .UShortWasStored((ushort) result);
         }
     }
 }

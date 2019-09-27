@@ -15,10 +15,10 @@ namespace ZMachineLib.Unit.Tests.Operations
         public IVariableManager Object => _variableManagerMock.Object;
         
 
-        public VariableManagerMockery SetupGetWord(ushort returnValue)
+        public VariableManagerMockery UShortWasRetrieved(ushort returnValue)
         {
             _variableManagerMock.Setup(m
-                    => m.GetWord(
+                    => m.GetUShort(
                         It.IsAny<byte>(),
                         It.IsAny<bool>())
                 )
@@ -27,16 +27,16 @@ namespace ZMachineLib.Unit.Tests.Operations
             return this;
         }
 
-        public VariableManagerMockery VerifyStoreWord(ushort expectedValue)
+        public VariableManagerMockery UShortWasStored(ushort expectedValue)
         {
-            _variableManagerMock.Verify(m => m.StoreWord(
+            _variableManagerMock.Verify(m => m.StoreUShort(
                 It.IsAny<byte>(),
                 It.Is<ushort>(v => v == expectedValue),
                 It.Is<bool>(b => b)), Times.Once);
 
             return this;
         }
-        public VariableManagerMockery VerifyStoreByte(byte expectedValue)
+        public VariableManagerMockery ByteWasStored(byte expectedValue)
         {
             _variableManagerMock.Verify(m => m.StoreByte(
                 It.IsAny<byte>(),

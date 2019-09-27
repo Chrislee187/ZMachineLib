@@ -14,7 +14,7 @@ namespace ZMachineLib.Operations.OP0
         {
             if (Contents.Stack.Pop().StoreResult)
             {
-                Contents.VariableManager.StoreWord(Contents.GetCurrentByteAndInc(), 1);
+                Contents.VariableManager.StoreUShort(Contents.GetCurrentByteAndInc(), 1);
             }
         }
     }

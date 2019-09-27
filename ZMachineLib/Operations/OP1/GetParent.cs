@@ -27,7 +27,7 @@ namespace ZMachineLib.Operations.OP1
             }
             else
             {
-                Contents.VariableManager.StoreWord(storageType, zObj.Parent);
+                Contents.VariableManager.StoreUShort(storageType, zObj.Parent);
             }
         }
     }

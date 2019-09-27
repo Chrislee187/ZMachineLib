@@ -1,27 +1,20 @@
 using NUnit.Framework;
-using Shouldly;
 using ZMachineLib.Operations.OP2;
 
 // ReSharper disable PossibleInvalidOperationException
 
 namespace ZMachineLib.Unit.Tests.Operations.OP2
 {
-    public class JeTests : OperationsTestsBase
+    public class JeTests : OperationsTestsBase<Je>
     {
-        private Je _op;
-        private bool? _jumped;
-
         [SetUp]
         public void SetUp()
         {
-            _jumped = null;
-            _op = new Je(MemoryMock);
-            _op.Jump = b => _jumped = b;
-            
+            base.Setup();
         }
 
-        [TestCase((ushort) 0, (ushort)1)]
-        [TestCase((ushort)0, (ushort)2)]
+        [TestCase((ushort) 0, new ushort[] { 1})]
+        [TestCase((ushort)0, new ushort[] { 2 })]
         [TestCase((ushort)0, new ushort[] {1,2,3,4} )]
         public void Should_NOT_jump_when_no_values_matches_first_argument(ushort firstValue, params ushort[] toMatch)
         {
@@ -30,10 +23,9 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
                 .WithValues(toMatch)
                 .Build();
 
-            _op.Execute(args);
+            Operation.Execute(args);
 
-            _jumped.HasValue.ShouldBeTrue();
-            _jumped.Value.ShouldBeFalse();
+            JumpedWith(false);
         }
 
         [TestCase((ushort)1, (ushort)1)]
@@ -46,10 +38,9 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
                 .WithValues(toMatch)
                 .Build();
 
-            _op.Execute(args);
+            Operation.Execute(args);
 
-            _jumped.HasValue.ShouldBeTrue();
-            _jumped.Value.ShouldBeTrue();
+            JumpedWith(true);
         }
     }
 }

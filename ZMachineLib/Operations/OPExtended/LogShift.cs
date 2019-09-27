@@ -20,7 +20,7 @@ namespace ZMachineLib.Operations.OPExtended
                 val >>= -operands[1];
 
             var dest = Contents.GetCurrentByteAndInc();
-            Contents.VariableManager.StoreWord(dest, val);
+            Contents.VariableManager.StoreUShort(dest, val);
         }
     }
 }

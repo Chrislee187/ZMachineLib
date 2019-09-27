@@ -5,17 +5,18 @@ using ZMachineLib.Operations.OP2;
 // ReSharper disable PossibleInvalidOperationException
 namespace ZMachineLib.Unit.Tests.Operations.OP2
 {
-    public class JlTests : OperationsTestsBase
+    public class JlTests : OperationsTestsBase<Jl>
     {
-        private Jl _op;
+
         private bool? _jumped;
 
         [SetUp]
         public void SetUp()
         {
+            base.Setup();
             _jumped = null;
-            _op = new Jl(MemoryMock);
-            _op.Jump = b => _jumped = b;
+
+            Operation.Jump = b => _jumped = b;
 
         }
 
@@ -28,7 +29,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
                 .WithValue(secondArg)
                 .Build();
 
-            _op.Execute(args);
+            Operation.Execute(args);
 
             _jumped.HasValue.ShouldBeTrue();
             _jumped.Value.ShouldBeTrue();
@@ -44,7 +45,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
                 .WithValue(secondArg)
                 .Build();
 
-            _op.Execute(args);
+            Operation.Execute(args);
 
             _jumped.HasValue.ShouldBeTrue();
             _jumped.Value.ShouldBeFalse();

@@ -111,7 +111,7 @@ namespace ZMachineLib.Managers
                     break;
                 case OperandType.Variable:
                     var b = _memoryManager.Get(_stack.Peek().PC++);
-                    arg = _variableManager.GetWord(b);
+                    arg = _variableManager.GetUShort(b);
                     break;
             }
 

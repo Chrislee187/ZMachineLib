@@ -28,7 +28,7 @@ namespace ZMachineLib.Operations.OP1
             }
             else
             {
-                Contents.VariableManager.StoreWord(storageType, zObj.Child);
+                Contents.VariableManager.StoreUShort(storageType, zObj.Child);
             }
 
             Jump(zObj.Child != 0);

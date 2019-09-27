@@ -4,17 +4,13 @@ using TestAttribute = NUnit.Framework.TestAttribute;
 
 namespace ZMachineLib.Unit.Tests.Operations.OP2
 {
-    public class TestTests : OperationsTestsBase
+    public class TestTests : OperationsTestsBase<Test>
     {
-        private Test _op;
-
-
         [SetUp]
         public void SetUp()
         {
             Setup();
-            _op = new Test(MemoryMock);
-            MockJump(_op);
+            MockJump(b => Jumped = b);
         }
 
         [Test]
@@ -28,7 +24,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
                 .WithValue(flags)
                 .Build();
 
-            _op.Execute(args);
+            Operation.Execute(args);
 
             JumpedWith(true);
         }
@@ -43,7 +39,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
                 .WithValue(flags)
                 .Build();
 
-            _op.Execute(args);
+            Operation.Execute(args);
 
             JumpedWith(false);
         }

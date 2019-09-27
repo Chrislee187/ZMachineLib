@@ -25,7 +25,7 @@ namespace ZMachineLib.Operations.OP1
                 Contents.VariableManager.StoreByte(storageType, (byte)zObj.Sibling);
             }
             else
-                Contents.VariableManager.StoreWord(storageType, zObj.Sibling);
+                Contents.VariableManager.StoreUShort(storageType, zObj.Sibling);
 
             Jump(zObj.Sibling != 0);
         }

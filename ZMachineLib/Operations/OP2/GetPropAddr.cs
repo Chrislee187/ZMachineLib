@@ -19,7 +19,7 @@ namespace ZMachineLib.Operations.OP2
             var zObj = Contents.ObjectTree[obj];
             var addr = zObj.GetProperty(prop).DataAddress;
 
-            Contents.VariableManager.StoreWord(dest, addr);
+            Contents.VariableManager.StoreUShort(dest, addr);
         }
     }
 }

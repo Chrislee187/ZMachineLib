@@ -21,7 +21,7 @@ namespace ZMachineLib.Operations.OPVAR
                 val = (ushort)(_random.Next(0, operands[0]) + 1);
 
             var dest = Contents.GetCurrentByteAndInc();
-            Contents.VariableManager.StoreWord(dest, val);
+            Contents.VariableManager.StoreUShort(dest, val);
         }
     }
 }

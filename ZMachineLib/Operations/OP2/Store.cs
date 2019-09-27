@@ -13,7 +13,7 @@ namespace ZMachineLib.Operations.OP2
         public override void Execute(List<ushort> operands)
         {
             ushort value = operands[1];
-            Contents.VariableManager.StoreWord((byte)operands[0], value, false);
+            Contents.VariableManager.StoreUShort((byte)operands[0], value, false);
         }
     }
 }

@@ -6,17 +6,16 @@ using ZMachineLib.Operations.OP2;
 
 namespace ZMachineLib.Unit.Tests.Operations.OP2
 {
-    public class JgTests : OperationsTestsBase
+    public class JgTests : OperationsTestsBase<Jg>
     {
-        private Jg _op;
         private bool? _jumped;
 
         [SetUp]
         public void SetUp()
         {
+            Setup();
             _jumped = null;
-            _op = new Jg(MemoryMock);
-            _op.Jump = b => _jumped = b;
+            Operation.Jump = b => _jumped = b;
 
         }
 
@@ -29,7 +28,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
                 .WithValue(secondArg)
                 .Build();
 
-            _op.Execute(args);
+            Operation.Execute(args);
 
             _jumped.HasValue.ShouldBeTrue();
             _jumped.Value.ShouldBeTrue();
@@ -45,7 +44,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
                 .WithValue(secondArg)
                 .Build();
 
-            _op.Execute(args);
+            Operation.Execute(args);
 
             _jumped.HasValue.ShouldBeTrue();
             _jumped.Value.ShouldBeFalse();

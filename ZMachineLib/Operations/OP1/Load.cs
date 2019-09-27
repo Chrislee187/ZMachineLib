@@ -13,7 +13,7 @@ namespace ZMachineLib.Operations.OP1
         public override void Execute(List<ushort> operands)
         {
             var dest = Contents.GetCurrentByteAndInc();
-            var val = Contents.VariableManager.GetWord((byte)operands[0], false);
+            var val = Contents.VariableManager.GetUShort((byte)operands[0], false);
             byte value = (byte)val;
             Contents.VariableManager.StoreByte(dest, value);
         }

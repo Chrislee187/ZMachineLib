@@ -29,7 +29,7 @@ namespace ZMachineLib.Operations.OP0
                 }
                 else
                 {
-                    Contents.VariableManager.StoreWord(Contents.GetCurrentByteAndInc(), saveSuccessful.ToOneOrZero());
+                    Contents.VariableManager.StoreUShort(Contents.GetCurrentByteAndInc(), saveSuccessful.ToOneOrZero());
                 }
             }
             catch

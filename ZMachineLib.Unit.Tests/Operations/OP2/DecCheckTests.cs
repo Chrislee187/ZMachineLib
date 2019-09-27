@@ -4,16 +4,13 @@ using TestAttribute = NUnit.Framework.TestAttribute;
 
 namespace ZMachineLib.Unit.Tests.Operations.OP2
 {
-    public class DecCheckTests : OperationsTestsBase
+    public class DecCheckTests : OperationsTestsBase<DecCheck>
     {
-        private DecCheck _op;
 
         [SetUp]
         public void SetUp()
         {
             Setup();
-            _op = new DecCheck(MemoryMock);
-            MockJump(_op);
         }
 
         [Test]
@@ -26,13 +23,13 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
                 .WithValue(comparison)
                 .Build();
 
-            VariableManagerMockery.SetupGetWord(initialValue);
+            VariableManagerMockery.UShortWasRetrieved(initialValue);
 
-            _op.Execute(args);
+            Operation.Execute(args);
 
             var expectedValue = initialValue - 1;
 
-            VariableManagerMockery.VerifyStoreWord((ushort)expectedValue);
+            VariableManagerMockery.UShortWasStored((ushort)expectedValue);
 
             JumpedWith(true);
         }
@@ -47,13 +44,13 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
                 .WithValue(comparison)
                 .Build();
 
-            VariableManagerMockery.SetupGetWord(initialValue);
+            VariableManagerMockery.UShortWasRetrieved(initialValue);
 
-            _op.Execute(args);
+            Operation.Execute(args);
 
             var expectedValue = initialValue - 1;
 
-            VariableManagerMockery.VerifyStoreWord((ushort)expectedValue);
+            VariableManagerMockery.UShortWasStored((ushort)expectedValue);
 
             JumpedWith(false);
         }

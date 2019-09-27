@@ -16,7 +16,8 @@ namespace ZMachineLib.Operations.OP2
 
         public override void Execute(List<ushort> operands)
         {
-            Contents.ObjectTree[operands[0]].ClearAttribute(operands[1]);
+            Contents.ObjectTree[operands[0]]
+                .ClearAttribute(operands[1]);
         }
     }
 }

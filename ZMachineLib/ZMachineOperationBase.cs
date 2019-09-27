@@ -26,7 +26,7 @@ namespace ZMachineLib
                 if (storeResult)
                 {
                     var dest = GetCurrentByteAndInc();
-                    Contents.VariableManager.StoreWord(dest, 0);
+                    Contents.VariableManager.StoreUShort(dest, 0);
                 }
 
                 return;
@@ -117,7 +117,7 @@ namespace ZMachineLib
         {
             if (Contents.Stack.Pop().StoreResult)
             {
-                Contents.VariableManager.StoreWord(Contents.GetCurrentByteAndInc(), (ushort) (val ? 1 : 0));
+                Contents.VariableManager.StoreUShort(Contents.GetCurrentByteAndInc(), (ushort) (val ? 1 : 0));
             }
         }
 

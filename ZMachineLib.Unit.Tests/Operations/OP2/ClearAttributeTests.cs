@@ -5,20 +5,20 @@ using ZMachineLib.Operations.OP2;
 
 namespace ZMachineLib.Unit.Tests.Operations.OP2
 {
-    public class ClearAttributeTests : OperationsTestsBase
+    /// <summary>
+    /// 2OP:12 C clear_attr object attribute
+    /// Make object not have the attribute numbered attribute
+    /// </summary>
+    public class ClearAttributeTests : OperationsTestsBase<ClearAttribute>
     {
-        private ClearAttribute _op;
-        
         [SetUp]
         public void SetUp()
         {
             Setup();
-            _op = new ClearAttribute(MemoryMock);
-            MockPeekNextByte(_op);
         }
 
         [NUnit.Framework.Test]
-        public void Should_store_attribute_on_object()
+        public void Should_clear_attribute()
         {
             ushort obj = 1234;
             ushort attribute = 0x02;
@@ -29,11 +29,11 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
             var zObj = new Mock<IZMachineObject>();
 
             ObjectTreeMockery.SetupGetIndexerReturns(zObj.Object);
-//            ObjectManagerMockery.SetupSequenceGetObject(zObj.Object);
 
-            _op.Execute(args);
+            Operation.Execute(args);
             
-            zObj.Verify(o => o.ClearAttribute(It.Is<ushort>(v => v == attribute)));
+            zObj.Verify(o => o.ClearAttribute(
+                It.Is<ushort>(v => v == attribute)));
 
         }
     }

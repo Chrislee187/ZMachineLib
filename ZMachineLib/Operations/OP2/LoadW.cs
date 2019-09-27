@@ -14,7 +14,7 @@ namespace ZMachineLib.Operations.OP2
         {
             var addr = (ushort)(operands[0] + 2 * operands[1]);
             var dest = GetCurrentByteAndInc();
-            Contents.VariableManager.StoreWord(dest, Contents.Manager.GetUShort(addr));
+            Contents.VariableManager.StoreUShort(dest, Contents.Manager.GetUShort(addr));
         }
     }
 }

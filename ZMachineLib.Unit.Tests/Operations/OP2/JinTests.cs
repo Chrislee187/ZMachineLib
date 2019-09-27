@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using NUnit.Framework;
 using ZMachineLib.Operations.OP2;
 using TestAttribute = NUnit.Framework.TestAttribute;
@@ -7,16 +8,12 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
     /// <summary>
     /// Jump if object a is a direct child of b, i.e., if parent of a is b.
     /// </summary>
-    public class JinTests : OperationsTestsBase
+    public class JinTests : OperationsTestsBase<Jin>
     {
-        private Jin _op;
-
         [SetUp]
         public void SetUp()
         {
             Setup();
-            _op = new Jin(MemoryMock);
-            MockJump(_op);
         }
 
         [Test]
@@ -35,7 +32,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
                 .WithValue(parent)
                 .Build();
 
-            _op.Execute(operands);
+            Operation.Execute(operands);
 
             JumpedWith(true);
         }
@@ -51,7 +48,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
                     .Build()
             );
             // TODO: Create an ObjectTreeMockery for this;
-            _op.Execute(new OpArgBuilder()
+            Operation.Execute(new OpArgBuilder()
                 .WithValues(parent, notParent)
                 .Build());
 

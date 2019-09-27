@@ -30,7 +30,7 @@ namespace ZMachineLib.Operations.OP0
             }
             else
             {
-                Contents.VariableManager.StoreWord(Contents.GetCurrentByteAndInc(), 1);
+                Contents.VariableManager.StoreUShort(Contents.GetCurrentByteAndInc(), 1);
             }
         }
 

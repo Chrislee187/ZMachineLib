@@ -19,7 +19,7 @@ namespace ZMachineLib.Operations.OP2
 
             var val = (short)((short)operands[0] / (short)operands[1]);
             ushort value = (ushort)val;
-            Contents.VariableManager.StoreWord(dest, value);
+            Contents.VariableManager.StoreUShort(dest, value);
         }
     }
 }

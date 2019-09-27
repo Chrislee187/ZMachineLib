@@ -31,7 +31,7 @@ namespace ZMachineLib.Operations.OP2
             for (var i = 0; i < propValues.Data.Length; i++)
                 valNew |= (ushort)(propValues.Data[i] << (propValues.Data.Length - 1 - i) * 8);
 
-            Contents.VariableManager.StoreWord(dest, valNew);
+            Contents.VariableManager.StoreUShort(dest, valNew);
         }
     }
 }

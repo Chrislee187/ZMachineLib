@@ -21,7 +21,7 @@ namespace ZMachineLib.Operations.OPExtended
 
             var dest = Contents.GetCurrentByteAndInc();
             ushort value = (ushort)val;
-            Contents.VariableManager.StoreWord(dest, value);
+            Contents.VariableManager.StoreUShort(dest, value);
         }
     }
 }
