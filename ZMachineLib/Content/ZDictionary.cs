@@ -1,4 +1,5 @@
 ﻿using System;
+using ZMachineLib.Managers;
 
 namespace ZMachineLib.Content
 {
@@ -8,19 +9,19 @@ namespace ZMachineLib.Content
         public ushort WordStart { get; }
 
         public string[] Words { get; }
-        public ZDictionary(Span<byte> data, ZAbbreviations abbreviations)
+        public ZDictionary(ZHeader header, IMemoryManager manager, ZAbbreviations abbreviations)
         {
-            var bytes = data.ToArray();
-            ushort ptr = 0;
+            var bytes = manager.AsSpan(header.Dictionary);
+            ushort addr = 0;
 
-            var numOfInputCodes = bytes[ptr++];
-            InputCodes = bytes.AsSpan(ptr, numOfInputCodes - 1).ToArray();
-            ptr += numOfInputCodes;
+            var numOfInputCodes = bytes[addr++];
+            InputCodes = bytes.Slice(addr, numOfInputCodes - 1).ToArray();
+            addr += numOfInputCodes;
 
-            var zsciiStringArray = new ZsciiStringArray(bytes.AsSpan(ptr), abbreviations);
+            var zsciiStringArray = new ZsciiStringArray(bytes.Slice(addr), abbreviations);
             Words = zsciiStringArray.Words;
             EntryLength = zsciiStringArray.EntryLength;
-            WordStart = (ushort) (ptr + zsciiStringArray.WordStart);
+            WordStart = (ushort) (addr + zsciiStringArray.WordStart);
 
         }
 

@@ -17,9 +17,9 @@ namespace ZMachineLib.Content
         // ReSharper disable once UnusedAutoPropertyAccessor.Local
         private Dictionary<int, byte[]> DefaultProperties { get; set; }
 
-        public ZObjectTree(ZHeader header, 
-            ZAbbreviations abbreviations,
-            IMemoryManager manager)
+        public ZObjectTree(ZHeader header,
+            IMemoryManager manager,
+            ZAbbreviations abbreviations)
         {
             var objectTableData = manager.AsSpan(header.ObjectTable);// memory.AsSpan(header.ObjectTable);
 

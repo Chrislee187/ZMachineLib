@@ -67,8 +67,8 @@ namespace ZMachineLib.Content
 
             Abbreviations = new ZAbbreviations(Header, Manager);
 
-            Dictionary = new ZDictionary(data.AsSpan(Header.Dictionary), Abbreviations);
-            ObjectTree = new ZObjectTree(Header, Abbreviations, Manager);
+            Dictionary = new ZDictionary(Header, Manager, Abbreviations);
+            ObjectTree = new ZObjectTree(Header, Manager, Abbreviations);
 
             Globals = new ZGlobals(Header, Manager);
 
