@@ -65,9 +65,7 @@ namespace ZMachineLib.Content
 
             Offsets = VersionedOffsets.For(Header.Version);
 
-            Abbreviations = new ZAbbreviations(
-                data.AsSpan(Header.AbbreviationsTable), 
-                data.AsSpan(0, Header.DynamicMemorySize).ToArray());
+            Abbreviations = new ZAbbreviations(Header, Manager);
 
             Dictionary = new ZDictionary(data.AsSpan(Header.Dictionary), Abbreviations);
             ObjectTree = new ZObjectTree(Header, Abbreviations, Manager);
