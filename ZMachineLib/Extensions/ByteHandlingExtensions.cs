@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace ZMachineLib.Extensions
 {
@@ -85,5 +86,7 @@ namespace ZMachineLib.Extensions
             stream.Read(buffer, 0, (int)stream.Length);
             return buffer;
         }
+
+        public static byte ToOneOrZero(this bool value) => value ? (byte) 1 : (byte) 0;
     }
 }

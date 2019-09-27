@@ -33,10 +33,10 @@ namespace ZMachineLib
             }
         }
 
-        public void RunFile(string filename)
+        public void RunFile(string filename, bool terminateOnInput = false)
         {
             var fileStream = File.OpenRead(filename);
-            RunFile(fileStream);
+            RunFile(fileStream, terminateOnInput);
         }
 
         private bool Run(bool terminateOnInput = false)
@@ -61,7 +61,8 @@ namespace ZMachineLib
 
                 Log.WriteLine($" OP: {opCodeEnum:D} ({(byte)opCodeEnum:X2}) - {operation.GetType().Name})");
 
-                operation.Execute(_zMemory.OperandManager.GetOperands(opCode));
+                var args = _zMemory.OperandManager.GetOperands(opCode);
+                operation.Execute(args);
 
                 Log.Flush();
             }

@@ -66,23 +66,14 @@ namespace ZMachineLib
         }
         private void JumpImpl(bool flag)
         {
-            bool branch;
 
             var offset = GetCurrentByteAndInc();
             short newOffset;
 
-            if ((offset & 0x80) == 0x80)
-            {
-                Log.Write(" [TRUE] ");
-                branch = true;
-            }
-            else
-            {
-                Log.Write(" [FALSE] ");
-                branch = false;
-            }
+            bool branch = (offset & 0x80) == 0x80;
+            Log.Write($" [{branch.ToString().ToUpper()}] ");
 
-            var executeBranch = branch && flag || !branch && !flag;
+            var executeBranch = branch && flag || !(branch || flag);
 
             if ((offset & 0x40) == 0x40)
             {

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Runtime.Serialization.Json;
 using ZMachineLib.Content;
+using ZMachineLib.Extensions;
 using ZMachineLib.Managers;
 
 namespace ZMachineLib.Operations.OP0
@@ -20,16 +21,15 @@ namespace ZMachineLib.Operations.OP0
 
             try
             {
-                var val = Io.Save(state);
+                var saveSuccessful = Io.Save(state);
                 state.Dispose();
                 if (Contents.Header.Version < 5)
                 {
-                    Jump(val);
+                    Jump(saveSuccessful);
                 }
                 else
                 {
-                    ushort value = (ushort)(val ? 1 : 0);
-                    Contents.VariableManager.StoreWord(Contents.GetCurrentByteAndInc(), value);
+                    Contents.VariableManager.StoreWord(Contents.GetCurrentByteAndInc(), saveSuccessful.ToOneOrZero());
                 }
             }
             catch
