@@ -5,6 +5,11 @@ using ZMachineLib.Operations.OP2;
 // ReSharper disable PossibleInvalidOperationException
 namespace ZMachineLib.Unit.Tests.Operations.OP2
 {
+    /// <summary>
+    /// 2OP:2 2 jl a b ?(label)
+    /// Jump if a < b (using a signed 16-bit comparison).
+    /// </summary>
+
     public class JlTests : OperationsTestsBase<Jl>
     {
 

@@ -3,6 +3,10 @@ using ZMachineLib.Operations.OP2;
 
 namespace ZMachineLib.Unit.Tests.Operations.OP2
 {
+    /// <summary>
+    /// 2OP:21 15 sub a b -> (result)
+    /// Signed 16-bit subtraction.
+    /// </summary>
     public class SubTests : OperationsTestsBase<Sub>
     {
         [SetUp]

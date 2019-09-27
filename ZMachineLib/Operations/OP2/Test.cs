@@ -4,7 +4,8 @@ using ZMachineLib.Content;
 namespace ZMachineLib.Operations.OP2
 {
     /// <summary>
-    /// Jump if all of the flags in bitmap are set (i.e. if bitmap & flags == flags).
+    /// 2OP:7 7 test bitmap flags? (label)
+    /// Jump if all of the flags in bitmap are set(i.e. if bitmap & flags == flags).
     /// </summary>
     public sealed class Test : ZMachineOperationBase
     {

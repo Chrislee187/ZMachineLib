@@ -6,6 +6,7 @@ using TestAttribute = NUnit.Framework.TestAttribute;
 namespace ZMachineLib.Unit.Tests.Operations.OP2
 {
     /// <summary>
+    /// 2OP:6 6 jin obj1 obj2 ?(label)
     /// Jump if object a is a direct child of b, i.e., if parent of a is b.
     /// </summary>
     public class JinTests : OperationsTestsBase<Jin>

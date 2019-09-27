@@ -3,6 +3,10 @@ using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP2
 {
+    /// <summary>
+    /// 2OP:2 2 jl a b ?(label)
+    /// Jump if a < b (using a signed 16-bit comparison).
+    /// </summary>
     public sealed class Jl : ZMachineOperationBase
     {
         public Jl(IZMemory contents)

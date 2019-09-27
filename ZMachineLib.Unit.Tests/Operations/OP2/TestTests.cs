@@ -4,6 +4,11 @@ using TestAttribute = NUnit.Framework.TestAttribute;
 
 namespace ZMachineLib.Unit.Tests.Operations.OP2
 {
+    /// <summary>
+    /// 2OP:7 7 test bitmap flags? (label)
+    /// Jump if all of the flags in bitmap are set(i.e. if bitmap & flags == flags).
+    /// </summary>
+
     public class TestTests : OperationsTestsBase<Test>
     {
         [SetUp]

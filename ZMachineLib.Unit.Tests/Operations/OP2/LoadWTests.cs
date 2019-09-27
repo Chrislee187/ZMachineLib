@@ -3,10 +3,14 @@ using ZMachineLib.Operations.OP2;
 
 namespace ZMachineLib.Unit.Tests.Operations.OP2
 {
+    /// <summary>
+    /// 2OP:15 F loadw array word-index -> (result)
+    /// Stores array-->word-index(i.e., the word at address
+    /// array+2*word-index, which must lie in static or dynamic
+    /// memory).
+    /// </summary>
     public class LoadWTests : OperationsTestsBase<LoadW>
     {
-
-
         [SetUp]
         public void SetUp()
         {

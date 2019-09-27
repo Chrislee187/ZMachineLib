@@ -5,6 +5,12 @@ using ZMachineLib.Operations.OP2;
 
 namespace ZMachineLib.Unit.Tests.Operations.OP2
 {
+    /// <summary>
+    /// 2OP:1 1 je a b c d ?(label)
+    /// Jump if a is equal to any of the subsequent operands.
+    /// (Thus @je a never jumps and @je a b jumps if a = b.)
+    /// je with just 1 operand is not permitted.
+    /// </summary>
     public class JeTests : OperationsTestsBase<Je>
     {
         [SetUp]

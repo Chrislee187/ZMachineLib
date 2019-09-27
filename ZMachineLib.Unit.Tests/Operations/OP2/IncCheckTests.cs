@@ -5,6 +5,10 @@ using TestAttribute = NUnit.Framework.TestAttribute;
 
 namespace ZMachineLib.Unit.Tests.Operations.OP2
 {
+    /// <summary>
+    /// 2OP:5 5 inc_chk (variable) value ?(label)
+    /// Increment variable, and branch if now greater than value.
+    /// </summary>
     public class IncCheckTests : OperationsTestsBase<IncCheck>
     {
 

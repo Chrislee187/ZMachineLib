@@ -3,6 +3,10 @@ using ZMachineLib.Operations.OP2;
 
 namespace ZMachineLib.Unit.Tests.Operations.OP2
 {
+    /// <summary>
+    /// 2OP:8 8 or a b -> (result)
+    /// Bitwise OR.
+    /// </summary>
     public class OrTests : OperationsTestsBase<Or>
     {
         [SetUp]

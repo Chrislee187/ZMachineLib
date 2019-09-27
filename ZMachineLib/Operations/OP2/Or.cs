@@ -4,7 +4,8 @@ using ZMachineLib.Content;
 namespace ZMachineLib.Operations.OP2
 {
     /// <summary>
-    /// Bitwise OR
+    /// 2OP:8 8 or a b -> (result)
+    /// Bitwise OR.
     /// </summary>
     public sealed class Or : ZMachineOperationBase
     {

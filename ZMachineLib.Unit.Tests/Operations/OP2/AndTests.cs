@@ -3,6 +3,10 @@ using ZMachineLib.Operations.OP2;
 
 namespace ZMachineLib.Unit.Tests.Operations.OP2
 {
+    /// <summary>
+    /// 2OP:9 9 and a b -> (result)
+    /// Bitwise AND.
+    /// </summary>
     public class AndTests : OperationsTestsBase<And>
     {
         [SetUp]
