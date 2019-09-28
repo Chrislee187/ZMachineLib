@@ -125,20 +125,16 @@ namespace ZMachineLib.Unit.Tests.Operations
             return this;
         }
 
-        public OperationsMockery StackFramePushed(in bool storeOrNot, ushort expectedPC = 0)
+        public OperationsMockery PCMoved(in ushort expectedPC)
         {
             var zStackFrame = _zStack.Peek();
-            zStackFrame.StoreResult.ShouldBe(storeOrNot);
-
-            if (expectedPC != 0)
-            {
-                zStackFrame.PC.ShouldBe(expectedPC);
-            }
+            zStackFrame.PC.ShouldBe(expectedPC);
 
             return this;
         }
 
-        public OperationsMockery RoutineArgsInitialisedFromMemory(int argCount)
+
+        public OperationsMockery LocalVariablesInitialisedFromMemory(int argCount)
         {
             // V4 Specific
             _memoryManager
@@ -149,7 +145,7 @@ namespace ZMachineLib.Unit.Tests.Operations
             return this;
         }
 
-        public OperationsMockery RoutineArgsStoredOnStackFrame(ushort[] routineArgs)
+        public OperationsMockery RoutineArgsStoredInLocalVariables(ushort[] routineArgs)
         {
             var zStackFrame = _zStack.Peek();
 

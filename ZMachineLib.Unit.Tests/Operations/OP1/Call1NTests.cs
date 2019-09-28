@@ -22,10 +22,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP1
         public void Should_set_call_routine_and_ignore_result()
         {
             const ushort packedRoutineAddress = 1234;
-            const ushort routineArg1 = 1;
-            const ushort routineArg2 = 2;
-            const ushort routineArg3 = 3;
-            var routineArgs = new[] {routineArg1, routineArg2, routineArg3};
+            var routineArgs = new[] {(ushort) 1, (ushort) 2, (ushort) 3};
 
             var args = new OperandBuilder()
                 .WithArg(packedRoutineAddress)
@@ -42,10 +39,11 @@ namespace ZMachineLib.Unit.Tests.Operations.OP1
             var expectedPC = (ushort) (unpackedAddress + routineArgsOffset);
 
             Mockery
-                .StackFramePushed(NoStoreExpected, expectedPC)
-                .RoutineArgsInitialisedFromMemory(routineArgs.Length)
-                .RoutineArgsStoredOnStackFrame(routineArgs)
-                .NoResultWasStored();
+                .PCMoved(expectedPC)
+                .NoResultWasStored()
+                .LocalVariablesInitialisedFromMemory(routineArgs.Length)
+                .RoutineArgsStoredInLocalVariables(routineArgs)
+                ;
         }
 
         [Test]
