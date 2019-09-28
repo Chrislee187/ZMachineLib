@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OPVAR
@@ -18,6 +19,9 @@ namespace ZMachineLib.Operations.OPVAR
         {
             Contents.ReadTextAddr = args[0];
             Contents.ReadParseAddr = args[1];
+//            Debug.Assert(Contents.ReadParseAddr == 0);
+//            Debug.Assert(Contents.ReadTextAddr == 0);
+
 
             if (Contents.TerminateOnInput)
                 Contents.Running = false;
