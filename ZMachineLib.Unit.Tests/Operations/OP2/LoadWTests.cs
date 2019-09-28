@@ -34,7 +34,9 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
             Operation.Execute(args);
 
 
-            Mockery.ResultStored(expectedValue);
+            Mockery
+                .ResultDestinationRetrievedFromPC()
+                .ResultStored(expectedValue);
 
 
         }

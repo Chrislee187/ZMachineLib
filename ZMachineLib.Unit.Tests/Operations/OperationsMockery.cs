@@ -9,7 +9,7 @@ namespace ZMachineLib.Unit.Tests.Operations
     public class OperationsMockery
     {
         /// <summary>
-        /// NOTE: Do we want subclasses per Mock<> instance?
+        /// NOTE: Do we want subclasses per Mock instance?
         /// Pros
         ///  * Small classes
         ///

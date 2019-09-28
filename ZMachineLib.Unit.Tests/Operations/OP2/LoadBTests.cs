@@ -20,7 +20,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         [Test]
         public void Should_store_the_value_from_addr_plus_index()
         {
-            // TODO: Crap test , doen't check the address used to retrieve the array item is correcet
+            // TODO: Crap test , doesn't check the address used to retrieve the array item is correct
             ushort addr = 1234;
             ushort index = 12;
             var args = new OperandBuilder()
@@ -31,6 +31,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
             Operation.Execute(args);
 
             Mockery
+                .ResultDestinationRetrievedFromPC()
                 .ResultStoredWasByte(0);
         }
     }

@@ -89,7 +89,7 @@ namespace ZMachineLib.Content
                 ? (uint) (address * 2) 
                 : version <= 5 
                     ? (uint) (address * 4) 
-                    : (uint) 0;
+                    : 0;
         }
         
         // TODO: Think these two can be localised.

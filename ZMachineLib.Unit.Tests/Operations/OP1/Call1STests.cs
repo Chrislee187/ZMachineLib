@@ -4,11 +4,7 @@ using ZMachineLib.Operations.OP1;
 
 namespace ZMachineLib.Unit.Tests.Operations.OP1
 {
-    /// <summary>
-    /// 1OP:143 F 5 call_1n routine
-    /// Executes routine() and throws away result.
-    /// </summary>
-    public class Call1NTests : OperationsTestsBase<Call1N>
+    public class Call1STests : OperationsTestsBase<Call1S>
     {
 
         [SetUp]
@@ -18,7 +14,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP1
         }
 
         [Test]
-        public void Should_set_call_routine_and_ignore_result()
+        public void Should_set_call_routine_and_store_result()
         {
             const ushort packedRoutineAddress = 1234;
             var routineArgs = new[] {(ushort) 1, (ushort) 2, (ushort) 3};
@@ -39,7 +35,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP1
 
             Mockery
                 .ProgramCounterEquals(expectedPC)
-                .NoResultWasStored()
+                .ResultWillBeStored()
                 .LocalVariablesInitialisedFromMemory(routineArgs.Length)
                 .RoutineArgsStoredInLocalVariables(routineArgs)
                 ;
@@ -62,8 +58,8 @@ namespace ZMachineLib.Unit.Tests.Operations.OP1
             Operation.Execute(args);
 
             Mockery
-                .AssertStackIsEmpty()
-                .NoResultWasStored();
+                .ResultDestinationRetrievedFromPC()
+                .ResultStoredWasByte(0);
         }
     }
 }

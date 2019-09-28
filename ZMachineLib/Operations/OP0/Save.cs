@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Json;
@@ -52,7 +52,8 @@ namespace ZMachineLib.Operations.OP0
 
             bw.Write(((MemoryManager)(Contents.Manager)).Buffer, 0, Contents.Header.DynamicMemorySize - 1);
 
-            var frames = (Contents.Stack as Stack<ZStackFrame>).Select(f => f).ToArray();
+            var frames = ((Contents.Stack as Stack<ZStackFrame>) ?? throw new InvalidOperationException())
+                .Select(f => f).ToArray();
             var dcs = new DataContractJsonSerializer(typeof(ZStackFrame[]));
             dcs.WriteObject(ms, frames);
             return ms;

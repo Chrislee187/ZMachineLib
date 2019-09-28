@@ -24,11 +24,6 @@ namespace ZMachineLib.Managers
         public void IncrementPC(uint value = 1) => Peek().PC += value;
         public void IncrementPC(short value = 1) => Peek().PC += (uint) value;
         public void IncrementPC(int value = 1) => Peek().PC += (uint) value;
-
-        Stack<ZStackFrame> RootStack()
-        {
-            return this;
-        }
     }
 
     public interface IStack<T>
