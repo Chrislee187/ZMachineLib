@@ -1,3 +1,4 @@
+using Microsoft.VisualBasic.CompilerServices;
 using NUnit.Framework;
 using ZMachineLib.Operations.OP2;
 
@@ -15,9 +16,9 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
             Setup();
         }
 
-        [TestCase((short)1, (short)2)]
-        [TestCase((short)-1, (short)-1)]
-        public void Should_store_AND_result(short val1, short val2)
+        [TestCase((short)2, (short)1, (short) 1)]
+        [TestCase((short)-1, (short)1, (short) -2)]
+        public void Should_store_AND_result(short val1, short val2, short expected)
         {
             var args = new OperandBuilder()
                 .WithArg((ushort)val1)
@@ -26,8 +27,9 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
 
             Operation.Execute(args);
 
-            VariableManagerMockery
-                .UShortWasStored((ushort)(val1 - val2));
+            Mockery
+                .ResultDestinationRetrievedFromPC()
+                .ResultStored(expected);
         }
     }
 }

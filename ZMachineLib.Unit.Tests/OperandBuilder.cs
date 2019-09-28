@@ -15,6 +15,11 @@ namespace ZMachineLib.Unit.Tests
             _values.Add(value);
             return this;
         }
+        public OperandBuilder WithArg(short value)
+        {
+            _values.Add((ushort)value);
+            return this;
+        }
         public OperandBuilder WithAnyArg()
         {
             _values.Add(0);

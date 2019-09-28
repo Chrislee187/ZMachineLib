@@ -5,11 +5,9 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
 {
     /// <summary>
     /// 2OP:23 17 div a b -> (result)
-    /// Signed 16-bit division.
-    /// Division by zero should halt the interpreter with a suitable error message.
+    /// Signed 16-bit multiplication.
     /// </summary>
-
-    public class DivTests : OperationsTestsBase<Div>
+    public class MulTests : OperationsTestsBase<Mul>
     {
 
         [SetUp]
@@ -18,9 +16,9 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
             Setup();
         }
 
-        [TestCase((short) 1, (short) 2, (short) 0)]
-        [TestCase((short) 2, (short) 1, (short) 2)]
-        [TestCase((short) 2, (short) -1, (short) -2)]
+        [TestCase((short)1, (short)2, (short)2)]
+        [TestCase((short)2, (short)2, (short)4)]
+        [TestCase((short)2, (short)-2,(short)-4)]
         public void Should_store_AND_result(short val1, short val2, short expected)
         {
             var args = new OperandBuilder()

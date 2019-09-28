@@ -15,20 +15,23 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
             Setup();
         }
 
-        [TestCase((ushort)0x01, (ushort)0x02)]
-        public void Should_store_bitwise_AND_result(ushort val1, ushort val2)
+
+        [TestCase((ushort)0b0, (ushort)0b0, (ushort)0b0)]
+        [TestCase((ushort)0b0, (ushort)0b1, (ushort)0b0)]
+        [TestCase((ushort)0b1, (ushort)0b0, (ushort)0b0)]
+        [TestCase((ushort)0b1, (ushort)0b1, (ushort)0b1)]
+        public void Should_store_bitwise_AND_result(ushort argA, ushort argB, ushort expected)
         {
             var args = new OperandBuilder()
-                .WithArg(val1)
-                .WithArg(val2)
+                .WithArg(argA)
+                .WithArg(argB)
                 .Build();
 
-            // TODO: Need to be able to Mock Memory & Stack interactions
             Operation.Execute(args);
 
-            var expectedValue = (ushort)(val1 & val2);
-            VariableManagerMockery
-                .UShortWasStored(expectedValue);
+            Mockery
+                .ResultDestinationRetrievedFromPC()
+                .ResultStored(expected);
 
         }
 

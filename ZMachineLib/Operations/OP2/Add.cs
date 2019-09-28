@@ -18,6 +18,8 @@ namespace ZMachineLib.Operations.OP2
         {
             var val = (short)(args[0] + args[1]);
             var resultDestination = Contents.GetCurrentByteAndInc();
+
+            
             Contents.VariableManager.Store(
                 resultDestination, 
                 (ushort) val
