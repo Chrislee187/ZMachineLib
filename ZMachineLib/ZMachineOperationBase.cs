@@ -39,7 +39,7 @@ namespace ZMachineLib
 
             var routineArgs = Contents.GetCurrentByteAndInc();
 
-            InitialiseArgs(routineArgs, zsf); // V4 Specific
+            InitialiseLocalVariables(routineArgs, zsf); // V4 Specific
 
             CopyArgsToLocalVariables(args, zsf);
         }
@@ -52,7 +52,7 @@ namespace ZMachineLib
             zsf.ArgumentCount = args.Count - 1;
         }
 
-        private void InitialiseArgs(byte routineArgs, ZStackFrame zsf)
+        private void InitialiseLocalVariables(byte routineArgs, ZStackFrame zsf)
         {
             if (Contents.Header.Version <= 4)
             {

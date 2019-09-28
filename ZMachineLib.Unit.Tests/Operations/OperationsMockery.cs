@@ -8,6 +8,14 @@ namespace ZMachineLib.Unit.Tests.Operations
 {
     public class OperationsMockery
     {
+        /// <summary>
+        /// NOTE: Do we want subclasses per Mock<> instance?
+        /// Pros
+        ///  * Small classes
+        ///
+        /// Cons
+        ///  * ?
+        /// </summary>
         private readonly Mock<IZMemory> _memoryMock;
         private readonly Mock<IZObjectTree> _objectsMock;
         private readonly Mock<IVariableManager> _variablesMock;
@@ -39,6 +47,12 @@ namespace ZMachineLib.Unit.Tests.Operations
                 .SetupGet(m => m.Stack)
                 .Returns(_zStack);
         }
+
+        /// <summary>
+        /// Setup up the next call to get a variable from memory to return <paramref name="value"/>
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public OperationsMockery VariableRetrieves(ushort value)
         {
             _variablesMock.Setup(m
@@ -50,6 +64,9 @@ namespace ZMachineLib.Unit.Tests.Operations
             return this;
         }
 
+        /// <summary>
+        /// Verifies a word (short/ushort) result was stored
+        /// </summary>
         public OperationsMockery ResultStored(ushort expected)
         {
             _variablesMock.Verify(m => m.Store(
@@ -58,8 +75,17 @@ namespace ZMachineLib.Unit.Tests.Operations
                 It.Is<bool>(b => b)), Times.Once);
             return this;
         }
+        /// <summary>
+        /// Verifies a word (short/ushort) result was stored
+        /// </summary>
         public OperationsMockery ResultStored(short expected)
             => ResultStored((ushort)expected);
+
+        /// <summary>
+        /// Verifies a byte result was stored
+        /// </summary>
+        /// <param name="expected"></param>
+        /// <returns></returns>
         public OperationsMockery ResultStoredWasByte(byte expected)
         {
             _variablesMock.Verify(m => m.Store(
@@ -68,8 +94,28 @@ namespace ZMachineLib.Unit.Tests.Operations
 
             return this;
         }
+
+        /// <summary>
+        /// Verifies that the StoreResult for the current stackframe is false
+        /// </summary>
+        public OperationsMockery ResultWillBeStored()
+        {
+            _zStack.Peek().StoreResult.ShouldBeTrue();
+
+            return this;
+        }
+
+        /// <summary>
+        /// Verifies that no call was made to set a destination variable and
+        /// that the StoreResult for the current stackframe is false
+        /// </summary>
+        
         public OperationsMockery NoResultWasStored()
         {
+            if (_zStack.Count > 0)
+            {
+                _zStack.Peek().StoreResult.ShouldBeFalse();
+            }
             _variablesMock.Verify(m => m.Store(
                     It.IsAny<byte>(),
                     It.IsAny<byte>())
@@ -83,9 +129,13 @@ namespace ZMachineLib.Unit.Tests.Operations
 
             return this;
         }
-
+        /// <summary>
+        /// Verifies that a destination variable type was read and implicitly that
+        /// the program counter is incremented by one
+        /// </summary>
         public OperationsMockery ResultDestinationRetrievedFromPC()
         {
+            // TODO: ZMemory unit tests.
             // NOTE: We would like to check that the PC was used
             // and incremented here (as 'Store' operations use a byte
             // from the PC to identify the destination for the result,
@@ -95,14 +145,62 @@ namespace ZMachineLib.Unit.Tests.Operations
             // typically only want a method to do ONE thing. As we cannot explicitly
             // test both the 'Get' and the 'Inc' here, we will have to rely on
             // ZMemory unit tests to ensure both these happen correctly.
-            // TODO: ZMemory unit tests.
             _memoryMock.Verify(
                 m => m.GetCurrentByteAndInc(),
                 Times.Once);
             return this;
         }
-        
+
+
+        /// <summary>
+        /// Verifies the <paramref name="argCount"/> number of calls were made to retrieve
+        /// values for local var initialisation
+        /// </summary>
+        /// <param name="argCount"></param>
+        /// <returns></returns>
+        public OperationsMockery LocalVariablesInitialisedFromMemory(int argCount)
+        {
+            // V4 Specific
+            _memoryManager
+                .Verify(m 
+                    => m.GetUShort(It.IsAny<int>()), 
+                    Times.AtLeast(argCount));
+
+            return this;
+        }
+
+        /// <summary>
+        /// Verifies that the values from <paramref name="routineArgs"/> are stored in the
+        ///  routines local variables
+        /// </summary>
+        /// <param name="routineArgs"></param>
+        /// <returns></returns>
+        public OperationsMockery RoutineArgsStoredInLocalVariables(ushort[] routineArgs)
+        {
+            var zStackFrame = _zStack.Peek();
+
+            for (int i = 0; i < routineArgs.Length; i++)
+            {
+                zStackFrame.Variables[i].ShouldBe(routineArgs[i]);
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the next byte returned, for use by Call() when handling routine arguments
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public OperationsMockery SetRoutineArgCount(byte value) => SetNextByte(value);
+
+        public OperationsMockery AssertStackIsEmpty()
+        {
+            Should.Throw<Exception>(() => _zStack.Peek());
+            return this;
+        }
+
+
         public OperationsMockery SetNextByte(byte value)
         {
             _memoryMock
@@ -125,41 +223,11 @@ namespace ZMachineLib.Unit.Tests.Operations
             return this;
         }
 
-        public OperationsMockery PCMoved(in ushort expectedPC)
+        public OperationsMockery ProgramCounterEquals(in ushort expectedPC)
         {
             var zStackFrame = _zStack.Peek();
             zStackFrame.PC.ShouldBe(expectedPC);
 
-            return this;
-        }
-
-
-        public OperationsMockery LocalVariablesInitialisedFromMemory(int argCount)
-        {
-            // V4 Specific
-            _memoryManager
-                .Verify(m 
-                    => m.GetUShort(It.IsAny<int>()), 
-                    Times.AtLeast(argCount));
-
-            return this;
-        }
-
-        public OperationsMockery RoutineArgsStoredInLocalVariables(ushort[] routineArgs)
-        {
-            var zStackFrame = _zStack.Peek();
-
-            for (int i = 0; i < routineArgs.Length; i++)
-            {
-                zStackFrame.Variables[i].ShouldBe(routineArgs[i]);
-            }
-
-            return this;
-        }
-
-        public OperationsMockery AssertStackIsEmpty()
-        {
-            Should.Throw<Exception>(() => _zStack.Peek());
             return this;
         }
     }
