@@ -44,9 +44,9 @@ namespace ZMachineLib
             {
                 for (var i = 0; i < count; i++)
                 {
-                    uint address = Contents.Stack.Peek().PC;
+                    uint address = Contents.Stack.GetPC();
                     zsf.Variables[i] = Contents.Manager.GetUShort((int) address);
-                    Contents.Stack.Peek().PC += 2;
+                    Contents.Stack.IncrementPC(2);
                 }
             }
 
@@ -108,9 +108,9 @@ namespace ZMachineLib
             }
 
             if (executeBranch)
-                Contents.Stack.Peek().PC += (uint)newOffset;
+                Contents.Stack.IncrementPC((uint)newOffset);
 
-            Log.Write($"-> { Contents.Stack.Peek().PC:X5}");
+            Log.Write($"-> { Contents.Stack.GetPC():X5}");
         }
 
         private void OpCodeRBoolean(bool val)

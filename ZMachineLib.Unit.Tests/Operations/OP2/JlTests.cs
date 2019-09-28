@@ -7,7 +7,9 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
 {
     /// <summary>
     /// 2OP:2 2 jl a b ?(label)
+    /// <![CDATA[
     /// Jump if a < b (using a signed 16-bit comparison).
+    /// ]]>
     /// </summary>
 
     public class JlTests : OperationsTestsBase<Jl>
@@ -18,7 +20,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         [SetUp]
         public void SetUp()
         {
-            base.Setup();
+            Setup();
             _jumped = null;
 
             Operation.Jump = b => _jumped = b;

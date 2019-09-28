@@ -12,8 +12,9 @@ namespace ZMachineLib.Operations.OP1
 
         public override void Execute(List<ushort> operands)
         {
-            Contents.Stack.Peek().PC = (uint)(Contents.Stack.Peek().PC + (short)(operands[0] - 2));
-            Log.Write($"-> {Contents.Stack.Peek().PC:X5}");
+            var offset = (short)(operands[0] - 2);
+            Contents.Stack.IncrementPC(offset);
+            Log.Write($"-> {Contents.Stack.GetPC():X5}");
         }
     }
 }

@@ -13,11 +13,11 @@ namespace ZMachineLib.Operations.OP0
 
         public override void Execute(List<ushort> operands)
         {
-            var array = Contents.Manager.AsSpan((int)Contents.Stack.Peek().PC);
+            var array = Contents.Manager.AsSpan((int)Contents.Stack.GetPC());
 
             var zStr = new ZsciiString(array, Contents.Abbreviations);
 
-            Contents.Stack.Peek().PC += zStr.BytesUsed;
+            Contents.Stack.IncrementPC(zStr.BytesUsed);
 
             Io.Print(zStr.String);
             Log.Write($"[{zStr.String}]");

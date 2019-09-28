@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using ZMachineLib.Content;
+﻿using ZMachineLib.Content;
 
 namespace ZMachineLib.Managers
 {
@@ -10,12 +9,13 @@ namespace ZMachineLib.Managers
         void StoreByte(byte dest, byte value);
     }
 
+
     public class VariableManager : IVariableManager
     {
-        private readonly Stack<ZStackFrame> _stack;
+        private readonly IZStack _stack;
         private readonly ZGlobals _globals;
 
-        public VariableManager(Stack<ZStackFrame> stack, ZGlobals globals)
+        public VariableManager(IZStack stack, ZGlobals globals)
         {
             _globals = globals;
             _stack = stack;
@@ -49,17 +49,16 @@ namespace ZMachineLib.Managers
 
         private ushort GetUShortFromVariables(byte variable)
         {
-            var val = _stack.Peek().Variables[variable - 1];
+            var val = _stack.Variable((byte) (variable - 1));
             Log.Write($"L{variable - 1:X2} ({val:X4}), ");
             return val;
         }
 
         private ushort GetUShortFromStack(bool andRemove)
         {
-            ushort val;
-            val = andRemove 
-                ? _stack.Peek().RoutineStack.Pop() 
-                : _stack.Peek().RoutineStack.Peek();
+            var val = andRemove
+                ? _stack.PopCurrentRoutine()
+                : _stack.PeekCurrentRoutine();
 
             Log.Write($"SP ({val:X4}), ");
             return val;
@@ -90,9 +89,9 @@ namespace ZMachineLib.Managers
 
         private void StoreUShortInVariable(byte dest, ushort value)
         {
-            var variablesIdx = dest - 1;
+            var variablesIdx =(byte) (dest - 1);
             Log.Write($"-> VAR{variablesIdx:X2} ({value:X4}), ");
-            _stack.Peek().Variables[variablesIdx] = value;
+            _stack.Variable(variablesIdx, value);
         }
 
         private void StoreUShortOnStack(ushort value, bool newEntry)
@@ -100,10 +99,10 @@ namespace ZMachineLib.Managers
             if (!newEntry)
             {
                 Log.Write($"-> STK POP BEFORE... ");
-                _stack.Peek().RoutineStack.Pop();
+                _stack.PopCurrentRoutine();
             }
             Log.Write($"-> STK PUSH({value:X4}), ");
-            _stack.Peek().RoutineStack.Push(value);
+            _stack.PushNewRoutine(value);
         }
 
         public void StoreByte(byte dest, byte value)
@@ -131,15 +130,15 @@ namespace ZMachineLib.Managers
 
         private void StoreByteInVariable(byte dest, byte value)
         {
-            var variableIdx = dest - 1;
+            var variableIdx = (byte) (dest - 1);
             Log.Write($"-> VAR{variableIdx:X2} = ({value:X2}), ");
-            _stack.Peek().Variables[variableIdx] = value;
+            _stack.Variable(variableIdx, value);
         }
 
         private void StoreByteOnStack(byte value)
         {
             Log.Write($"-> STK PUSH({value:X2})");
-            _stack.Peek().RoutineStack.Push(value);
+            _stack.PushNewRoutine(value);
         }
 
         private bool DestinationIsStack(byte dest) => dest == 0;

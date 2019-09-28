@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using ZMachineLib.Managers;
 
 namespace ZMachineLib.Content
 {
     public interface IZMemory
     {
-        Stack<ZStackFrame> Stack { get; set; }
+        IZStack Stack { get; set; }
         ZHeader Header { get; }
         ZDictionary Dictionary { get; }
         ZAbbreviations Abbreviations { get; }
@@ -35,7 +34,7 @@ namespace ZMachineLib.Content
     public class ZMemory : IZMemory
     {
         private readonly Action _restart;
-        public Stack<ZStackFrame> Stack { get; set; }
+        public IZStack Stack { get; set; }
         public ZHeader Header { get; }
         public ZDictionary Dictionary { get; }
         public ZAbbreviations Abbreviations { get; }
@@ -46,7 +45,7 @@ namespace ZMachineLib.Content
         public ZGlobals Globals { get; set; }
 
 
-        public byte[] Memory { get; }
+        private byte[] Memory { get; }
         public VersionedOffsets Offsets { get; private set; }
         public ushort DictionaryWordStart => (ushort) (Header.Dictionary + Dictionary.WordStart);
 
@@ -69,41 +68,27 @@ namespace ZMachineLib.Content
             ObjectTree = new ZObjectTree(Header, Manager, Abbreviations);
             Globals = new ZGlobals(Header, Manager);
 
-            Stack = new Stack<ZStackFrame>();
-
+            Stack = new ZStack();
             // Simple managers abstracting variable and argument usage
             VariableManager = new VariableManager(Stack, Globals);
             OperandManager = new OperandManager(Manager, Stack, VariableManager);
         }
 
-        public byte PeekNextByte()
-        {
-            return Memory[Stack.Peek().PC+1];
-        }
-        public byte PeekPreviousByte()
-        {
-            return Memory[Stack.Peek().PC-1];
-        }
+        public byte PeekCurrentByte() => Memory[Stack.GetPC()];
+        public byte PeekNextByte() => Memory[Stack.GetPC() + 1];
+        public byte PeekPreviousByte() => Memory[Stack.GetPC() - 1];
 
-        public byte PeekCurrentByte()
-        {
-            return Memory[Stack.Peek().PC];
-        }
-        public byte GetCurrentByteAndInc()
-        {
-            return Memory[Stack.Peek().PC++];
-        }
+        public byte GetCurrentByteAndInc() => Memory[Stack.GetPCAndInc()];
+        public uint GetPackedAddress(ushort address) => ZMemory.GetPackedAddress(address, Header.Version);
 
-        public uint GetPackedAddress(ushort address)
+        public static uint GetPackedAddress(ushort address, byte version = 3)
         {
-            if (Header.Version <= 3)
-                return (uint)(address * 2);
-            if (Header.Version <= 5)
-                return (uint)(address * 4);
-
-            return 0;
+            return version <= 3 
+                ? (uint) (address * 2) 
+                : version <= 5 
+                    ? (uint) (address * 4) 
+                    : (uint) 0;
         }
-        
         public ushort ReadTextAddr { get; set; }
         public ushort ReadParseAddr { get; set; }
 

@@ -13,10 +13,9 @@ namespace ZMachineLib.Operations.OP0
 
         public override void Execute(List<ushort> operands)
         {
-            var routineStack = Contents.Stack.Peek().RoutineStack;
-            if (routineStack.Any())
+            if (Contents.Stack.CurrentRoutingAvailable())
             {
-                routineStack.Pop();
+                Contents.Stack.PopCurrentRoutine();
             }
             else
             {

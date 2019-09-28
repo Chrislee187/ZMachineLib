@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using NUnit.Framework;
 using ZMachineLib.Operations.OP2;
 using TestAttribute = NUnit.Framework.TestAttribute;

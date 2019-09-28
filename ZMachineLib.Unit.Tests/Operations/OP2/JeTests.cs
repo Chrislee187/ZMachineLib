@@ -16,7 +16,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         [SetUp]
         public void SetUp()
         {
-            base.Setup();
+            Setup();
         }
 
         [TestCase((ushort) 0, new ushort[] { 1})]
