@@ -22,8 +22,6 @@ namespace ZMachineLib.Content
         byte GetCurrentByteAndInc();
 
         bool TerminateOnInput { get; set; }
-        ushort ReadTextAddr { get; set; }
-        ushort ReadParseAddr { get; set; }
 
         bool Running { get; set; }
         ZGlobals Globals { get; set; }
@@ -95,8 +93,6 @@ namespace ZMachineLib.Content
         }
         
         // TODO: Think these two can be localised.
-        public ushort ReadTextAddr { get; set; }
-        public ushort ReadParseAddr { get; set; }
 
         public bool TerminateOnInput { get; set; }
         public bool Running { get; set; }

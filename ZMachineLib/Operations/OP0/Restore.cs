@@ -40,12 +40,6 @@ namespace ZMachineLib.Operations.OP0
             var br = new BinaryReader(stream);
             stream.Position = 0;
 
-            Contents.ReadParseAddr = br.ReadUInt16();
-            Contents.ReadTextAddr = br.ReadUInt16();
-
-            Debug.Assert(Contents.ReadParseAddr == 0);
-            Debug.Assert(Contents.ReadTextAddr == 0);
-
             stream.Read(((MemoryManager)(Contents.Manager)).Buffer, 0, Contents.Header.DynamicMemorySize - 1);
             var dcs = new DataContractJsonSerializer(typeof(ZStackFrame[]));
             var zStackFrames = (ZStackFrame[])dcs.ReadObject(stream);

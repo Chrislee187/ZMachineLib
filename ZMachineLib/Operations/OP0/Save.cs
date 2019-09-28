@@ -46,17 +46,13 @@ namespace ZMachineLib.Operations.OP0
             var ms = new MemoryStream();
             var bw = new BinaryWriter(ms);
 
-            Debug.Assert(Contents.ReadParseAddr == 0);
-            Debug.Assert(Contents.ReadTextAddr == 0);
+            // NOTE: We used to save two extra words here, addresses for Text and Parse tables but they
+            // were always zero, the values are only used whilst reading user input so have been removed from
+            // the save/restore code. There is a common save format available that maybe used them, needs checking
 
-
-            bw.Write(Contents.ReadParseAddr);
-            bw.Write(Contents.ReadTextAddr);
             bw.Write(((MemoryManager)(Contents.Manager)).Buffer, 0, Contents.Header.DynamicMemorySize - 1);
 
             var frames = (Contents.Stack as Stack<ZStackFrame>).Select(f => f).ToArray();
-            //            ZStackFrame[] frames = new ZStackFrame[stack.Count];
-            //            stack.CopyTo(frames,0);
             var dcs = new DataContractJsonSerializer(typeof(ZStackFrame[]));
             dcs.WriteObject(ms, frames);
             return ms;
