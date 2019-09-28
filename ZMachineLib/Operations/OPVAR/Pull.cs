@@ -12,7 +12,7 @@ namespace ZMachineLib.Operations.OPVAR
 
         public override void Execute(List<ushort> operands)
         {
-            var val = Contents.Stack.Peek().RoutineStack.Pop();
+            var val = Contents.Stack.PopCurrentRoutine();
             Contents.VariableManager.StoreUShort((byte)operands[0], val, false);
         }
     }

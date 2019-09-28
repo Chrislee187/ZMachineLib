@@ -61,15 +61,17 @@ namespace ZMachineLib.Content
             Offsets = VersionedOffsets.For(Header.Version);
 
             Manager = new MemoryManager(Memory);
-            
+
             // ZMachine tables
             Abbreviations = new ZAbbreviations(Header, Manager);
             Dictionary = new ZDictionary(Header, Manager, Abbreviations);
             ObjectTree = new ZObjectTree(Header, Manager, Abbreviations);
             Globals = new ZGlobals(Header, Manager);
 
+            // Custom Stack with some abstractions for better testing.
             Stack = new ZStack();
-            // Simple managers abstracting variable and argument usage
+
+            // Simple managers to abstract variable and argument usage
             VariableManager = new VariableManager(Stack, Globals);
             OperandManager = new OperandManager(Manager, Stack, VariableManager);
         }
@@ -89,6 +91,8 @@ namespace ZMachineLib.Content
                     ? (uint) (address * 4) 
                     : (uint) 0;
         }
+        
+        // TODO: Think these two can be localised.
         public ushort ReadTextAddr { get; set; }
         public ushort ReadParseAddr { get; set; }
 

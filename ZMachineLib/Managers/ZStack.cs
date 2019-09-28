@@ -6,9 +6,9 @@ namespace ZMachineLib.Managers
 {
     public class ZStack : Stack<ZStackFrame>, IZStack
     {
-        public ushort PopCurrentRoutine() => Peek().RoutineStack.Peek(); 
+        public ushort PopCurrentRoutine() => Peek().RoutineStack.Pop(); 
 
-        public ushort PeekCurrentRoutine()=> Peek().RoutineStack.Pop();
+        public ushort PeekCurrentRoutine()=> Peek().RoutineStack.Peek();
 
         public bool CurrentRoutingAvailable() => Peek().RoutineStack.Any();
 

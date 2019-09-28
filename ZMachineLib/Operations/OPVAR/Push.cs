@@ -12,7 +12,7 @@ namespace ZMachineLib.Operations.OPVAR
 
         public override void Execute(List<ushort> operands)
         {
-            Contents.Stack.Peek().RoutineStack.Push(operands[0]);
+            Contents.Stack.PushNewRoutine(operands[0]);
         }
     }
 }
