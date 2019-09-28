@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace ZMachineLib.Unit.Tests
 {
-    public class OpArgBuilder
+    public class OperandBuilder
     {
         private readonly List<ushort> _values = new List<ushort>();
         public List<ushort> Build()
@@ -10,17 +10,17 @@ namespace ZMachineLib.Unit.Tests
             return _values;
         }
 
-        public OpArgBuilder WithValue(ushort value)
+        public OperandBuilder WithArg(ushort value)
         {
             _values.Add(value);
             return this;
         }
-        public OpArgBuilder WithAnyValue()
+        public OperandBuilder WithAnyArg()
         {
             _values.Add(0);
             return this;
         }
-        public OpArgBuilder WithValues(params ushort[] values)
+        public OperandBuilder WithArgs(params ushort[] values)
         {
             _values.AddRange(values);
             return this;

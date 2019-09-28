@@ -11,17 +11,17 @@ namespace ZMachineLib.Operations.OPVAR
         {
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
             ushort val = 0;
 
-            if ((short)operands[0] <= 0)
-                _random = new System.Random(-operands[0]);
+            if ((short)args[0] <= 0)
+                _random = new System.Random(-args[0]);
             else
-                val = (ushort)(_random.Next(0, operands[0]) + 1);
+                val = (ushort)(_random.Next(0, args[0]) + 1);
 
             var dest = Contents.GetCurrentByteAndInc();
-            Contents.VariableManager.StoreUShort(dest, val);
+            Contents.VariableManager.Store(dest, val);
         }
     }
 }

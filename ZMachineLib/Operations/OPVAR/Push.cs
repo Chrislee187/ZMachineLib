@@ -10,9 +10,9 @@ namespace ZMachineLib.Operations.OPVAR
         {
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
-            Contents.Stack.PushNewRoutine(operands[0]);
+            Contents.Stack.PushNewRoutine(args[0]);
         }
     }
 }

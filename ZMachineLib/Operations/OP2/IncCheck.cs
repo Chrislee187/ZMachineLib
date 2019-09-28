@@ -14,14 +14,14 @@ namespace ZMachineLib.Operations.OP2
         {
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
             var variableManager = Contents.VariableManager;
-            var val = (short)variableManager.GetUShort((byte)operands[0]);
+            var val = (short)variableManager.GetUShort((byte)args[0]);
             val++;
             ushort value = (ushort)val;
-            variableManager.StoreUShort((byte)operands[0], value);
-            Jump(val > (short)operands[1]);
+            variableManager.Store((byte)args[0], value);
+            Jump(val > (short)args[1]);
         }
     }
 }

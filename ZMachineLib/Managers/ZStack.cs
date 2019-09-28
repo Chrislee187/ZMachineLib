@@ -12,7 +12,7 @@ namespace ZMachineLib.Managers
 
         public bool CurrentRoutingAvailable() => Peek().RoutineStack.Any();
 
-        public void PushNewRoutine(ushort value)=> Peek().RoutineStack.Push(value);
+        public void PushNewRoutine(ushort value) => Peek().RoutineStack.Push(value);
 
 
         public ushort Variable(byte variable) => Peek().Variables[variable];

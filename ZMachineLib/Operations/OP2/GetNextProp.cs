@@ -23,10 +23,10 @@ namespace ZMachineLib.Operations.OP2
         {
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
-            var obj = operands[0];
-            var prop = operands[1];
+            var obj = args[0];
+            var prop = args[1];
 
             var next = prop == 0;
 
@@ -67,7 +67,7 @@ namespace ZMachineLib.Operations.OP2
                 if (next)
                 {
                     Debug.Assert(propNum == nextPropNum);
-                    Contents.VariableManager.StoreByte(dest, propNum);
+                    Contents.VariableManager.Store(dest, propNum);
                     return;
                 }
 
@@ -78,7 +78,7 @@ namespace ZMachineLib.Operations.OP2
             }
 
             Debug.Assert(0 == nextPropNum);
-            Contents.VariableManager.StoreByte(dest, 0);
+            Contents.VariableManager.Store(dest, 0);
         }
     }
 }

@@ -13,13 +13,13 @@ namespace ZMachineLib.Operations.OPVAR
             _io = io;
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
             var key = _io.ReadChar();
 
             var dest = Contents.GetCurrentByteAndInc();
             byte value = (byte)key;
-            Contents.VariableManager.StoreByte(dest, value);
+            Contents.VariableManager.Store(dest, value);
         }
     }
 }

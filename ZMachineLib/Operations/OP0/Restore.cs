@@ -15,7 +15,7 @@ namespace ZMachineLib.Operations.OP0
         {
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
             var stream = Io.Restore();
             if (stream != null)
@@ -30,7 +30,7 @@ namespace ZMachineLib.Operations.OP0
             }
             else
             {
-                Contents.VariableManager.StoreUShort(Contents.GetCurrentByteAndInc(), 1);
+                Contents.VariableManager.Store(Contents.GetCurrentByteAndInc(), 1);
             }
         }
 

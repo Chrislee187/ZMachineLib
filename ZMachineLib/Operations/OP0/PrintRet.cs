@@ -16,7 +16,7 @@ namespace ZMachineLib.Operations.OP0
             _rTrue = rTrue;
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
             var array = Contents.Manager.AsSpan((int)Contents.Stack.GetPC());
 

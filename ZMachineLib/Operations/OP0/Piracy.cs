@@ -11,6 +11,6 @@ namespace ZMachineLib.Operations.OP0
 
         }
 
-        public override void Execute(List<ushort> operands) => Jump(true);
+        public override void Execute(List<ushort> args) => Jump(true);
     }
 }

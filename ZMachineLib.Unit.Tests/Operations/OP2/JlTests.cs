@@ -31,9 +31,9 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         [TestCase((ushort)5, (ushort)7)]
         public void Should_jump_when_first_arg_less_than_second_arg(ushort firstArg, ushort secondArg)
         {
-            var args = new OpArgBuilder()
-                .WithValue(firstArg)
-                .WithValue(secondArg)
+            var args = new OperandBuilder()
+                .WithArg(firstArg)
+                .WithArg(secondArg)
                 .Build();
 
             Operation.Execute(args);
@@ -47,9 +47,9 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         [TestCase((ushort)1, (ushort)0)]
         public void Should_NOT_jump_when_first_arg_greaterthan_or_equal_second_arg(ushort firstArg, ushort secondArg)
         {
-            var args = new OpArgBuilder()
-                .WithValue(firstArg)
-                .WithValue(secondArg)
+            var args = new OperandBuilder()
+                .WithArg(firstArg)
+                .WithArg(secondArg)
                 .Build();
 
             Operation.Execute(args);

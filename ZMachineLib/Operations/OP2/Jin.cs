@@ -14,11 +14,11 @@ namespace ZMachineLib.Operations.OP2
         {
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
-            var zObj = Contents.ObjectTree[operands[0]]; // ObjectManager.GetObject(operands[0]);
+            var zObj = Contents.ObjectTree[args[0]]; // ObjectManager.GetObject(args[0]);
 
-            Jump(zObj.Parent == operands[1]);
+            Jump(zObj.Parent == args[1]);
         }
     }
 }

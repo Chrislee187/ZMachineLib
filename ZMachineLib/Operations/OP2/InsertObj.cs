@@ -17,14 +17,14 @@ namespace ZMachineLib.Operations.OP2
         {
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
-            if (operands[0] == 0 || operands[1] == 0)
+            if (args[0] == 0 || args[1] == 0)
                 return;
 
 
-            var obj1Number = operands[0];
-            var obj2Number = operands[1];
+            var obj1Number = args[0];
+            var obj2Number = args[1];
 
             var zObj1 = Contents.ObjectTree[obj1Number];
             var zObj2 = Contents.ObjectTree[obj2Number];

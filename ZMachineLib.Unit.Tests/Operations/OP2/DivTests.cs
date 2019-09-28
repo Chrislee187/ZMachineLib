@@ -22,9 +22,9 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         [TestCase((short)-1, (short)-1)]
         public void Should_store_AND_result(short val1, short val2)
         {
-            var args = new OpArgBuilder()
-                .WithValue((ushort)val1)
-                .WithValue((ushort)val2)
+            var args = new OperandBuilder()
+                .WithArg((ushort)val1)
+                .WithArg((ushort)val2)
                 .Build();
 
             Operation.Execute(args);

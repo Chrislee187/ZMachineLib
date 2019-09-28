@@ -19,21 +19,21 @@ namespace ZMachineLib.Operations.OP1
         {
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
             var dest = Contents.GetCurrentByteAndInc();
-            var propInfo = Contents.Manager.Get(operands[0] - 1);
+            var propInfo = Contents.Manager.Get(args[0] - 1);
             byte len;
             if (Contents.Header.Version > 3 && (propInfo & 0x80) == 0x80)
             {
-                len = (byte) (Contents.Manager.Get(operands[0] - 1) & 0x3f);
+                len = (byte) (Contents.Manager.Get(args[0] - 1) & 0x3f);
                 if (len == 0)
                     len = 64;
             }
             else
                 len = (byte)((propInfo >> ((ushort) Contents.Header.Version <= 3 ? 5 : 6)) + 1);
 
-            Contents.VariableManager.StoreByte(dest, len);
+            Contents.VariableManager.Store(dest, len);
         }
     }
 }

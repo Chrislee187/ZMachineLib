@@ -10,10 +10,10 @@ namespace ZMachineLib.Operations.OP2
         {
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
-            var obj = operands[0];
-            var attr = operands[1];
+            var obj = args[0];
+            var attr = args[1];
 
             if (obj == 0)
                 return;

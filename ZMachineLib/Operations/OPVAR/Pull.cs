@@ -10,10 +10,10 @@ namespace ZMachineLib.Operations.OPVAR
         {
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
             var val = Contents.Stack.PopCurrentRoutine();
-            Contents.VariableManager.StoreUShort((byte)operands[0], val, false);
+            Contents.VariableManager.Store((byte)args[0], val, false);
         }
     }
 }

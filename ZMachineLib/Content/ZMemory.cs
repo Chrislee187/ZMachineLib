@@ -45,7 +45,6 @@ namespace ZMachineLib.Content
         public ZGlobals Globals { get; set; }
 
 
-        private byte[] Memory { get; }
         public VersionedOffsets Offsets { get; private set; }
         public ushort DictionaryWordStart => (ushort) (Header.Dictionary + Dictionary.WordStart);
 
@@ -53,14 +52,13 @@ namespace ZMachineLib.Content
             Action restart)
         {
             _restart = restart;
-            Memory = data;
             Header = new ZHeader(data.AsSpan(0, 31));
             if (Header.Version > 3) throw new NotSupportedException("ZMachine > V3 not currently supported");
 
             // Version specific offsets - not used every yet
             Offsets = VersionedOffsets.For(Header.Version);
 
-            Manager = new MemoryManager(Memory);
+            Manager = new MemoryManager(data);
 
             // ZMachine tables
             Abbreviations = new ZAbbreviations(Header, Manager);
@@ -76,11 +74,15 @@ namespace ZMachineLib.Content
             OperandManager = new OperandManager(Manager, Stack, VariableManager);
         }
 
-        public byte PeekCurrentByte() => Memory[Stack.GetPC()];
-        public byte PeekNextByte() => Memory[Stack.GetPC() + 1];
-        public byte PeekPreviousByte() => Memory[Stack.GetPC() - 1];
+        public byte PeekCurrentByte() => Manager.Get(Stack.GetPC());
+        public byte PeekNextByte() => Manager.Get(Stack.GetPC() + 1);
+        public byte PeekPreviousByte() => Manager.Get(Stack.GetPC() - 1);
 
-        public byte GetCurrentByteAndInc() => Memory[Stack.GetPCAndInc()];
+        /// <summary>
+        /// Get the byte pointed to by the current Program Counter and increment the counter by 1
+        /// </summary>
+        /// <returns></returns>
+        public byte GetCurrentByteAndInc() => Manager.Get(Stack.GetPCAndInc());
         public uint GetPackedAddress(ushort address) => ZMemory.GetPackedAddress(address, Header.Version);
 
         public static uint GetPackedAddress(ushort address, byte version = 3)

@@ -23,9 +23,9 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         {
             ushort initialValue = 10;
             ushort comparison = 10;
-            var args = new OpArgBuilder()
-                .WithValue(AnyValue)
-                .WithValue(comparison)
+            var args = new OperandBuilder()
+                .WithArg(AnyValue)
+                .WithArg(comparison)
                 .Build();
             
             VariableManagerMockery.UShortWasRetrieved(initialValue);
@@ -44,9 +44,9 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         {
             ushort initialValue = 10;
             ushort comparison = 15;
-            var args = new OpArgBuilder()
-                .WithValue(AnyValue)
-                .WithValue(comparison)
+            var args = new OperandBuilder()
+                .WithArg(AnyValue)
+                .WithArg(comparison)
                 .Build();
 
             VariableManagerMockery.UShortWasRetrieved(initialValue);

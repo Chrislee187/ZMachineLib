@@ -14,9 +14,9 @@ namespace ZMachineLib.Operations.OP1
             _io = io;
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
-            var packedAddress = Contents.GetPackedAddress(operands[0]);
+            var packedAddress = Contents.GetPackedAddress(args[0]);
             var s = ZsciiString.Get(Contents.Manager.AsSpan(packedAddress), 
                 Contents.Abbreviations);
             _io.Print(s);

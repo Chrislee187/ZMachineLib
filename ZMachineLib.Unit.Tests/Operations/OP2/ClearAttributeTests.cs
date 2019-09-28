@@ -22,9 +22,9 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         {
             ushort obj = 1234;
             ushort attribute = 0x02;
-            var args = new OpArgBuilder()
-                .WithValue(obj)
-                .WithValue(attribute)
+            var args = new OperandBuilder()
+                .WithArg(obj)
+                .WithArg(attribute)
                 .Build();
             var zObj = new Mock<IZMachineObject>();
 

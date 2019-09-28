@@ -14,10 +14,10 @@ namespace ZMachineLib.Operations.OPVAR
             _io = io;
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
-            Contents.ReadTextAddr = operands[0];
-            Contents.ReadParseAddr = operands[1];
+            Contents.ReadTextAddr = args[0];
+            Contents.ReadParseAddr = args[1];
 
             if (Contents.TerminateOnInput)
                 Contents.Running = false;
@@ -75,7 +75,7 @@ namespace ZMachineLib.Operations.OPVAR
                 if (Contents.Header.Version >= 5)
                 {
                     var dest = Contents.GetCurrentByteAndInc();
-                    Contents.VariableManager.StoreByte(dest, 10);
+                    Contents.VariableManager.Store(dest, 10);
                 }
 
                 Contents.ReadTextAddr = 0;

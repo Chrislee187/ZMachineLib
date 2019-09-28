@@ -17,7 +17,7 @@ namespace ZMachineLib
             Contents = contents;
         }
 
-        public abstract void Execute(List<ushort> operands);
+        public abstract void Execute(List<ushort> args);
 
         protected void Call(List<ushort> args, bool storeResult)
         {
@@ -25,8 +25,8 @@ namespace ZMachineLib
             {
                 if (storeResult)
                 {
-                    var dest = GetCurrentByteAndInc();
-                    Contents.VariableManager.StoreUShort(dest, 0);
+                    var dest = Contents.GetCurrentByteAndInc();
+                    Contents.VariableManager.Store(dest, 0);
                 }
 
                 return;
@@ -38,7 +38,7 @@ namespace ZMachineLib
             var zsf = new ZStackFrame { PC = pc, StoreResult = storeResult };
             Contents.Stack.Push(zsf);
 
-            var count = GetCurrentByteAndInc();
+            var count = Contents.GetCurrentByteAndInc();
 
             if (Contents.Header.Version <= 4)
             {
@@ -67,7 +67,7 @@ namespace ZMachineLib
         private void JumpImpl(bool flag)
         {
 
-            var offset = GetCurrentByteAndInc();
+            var offset = Contents.GetCurrentByteAndInc();
             short newOffset;
 
             bool branch = (offset & 0x80) == 0x80;
@@ -97,7 +97,7 @@ namespace ZMachineLib
             }
             else
             {
-                var offset2 = GetCurrentByteAndInc();
+                var offset2 = Contents.GetCurrentByteAndInc();
                 var final = (ushort)((offset & 0x3f) << 8 | offset2);
 
                 // this is a 14-bit number, so set the sign bit properly because we can jump backwards
@@ -117,15 +117,8 @@ namespace ZMachineLib
         {
             if (Contents.Stack.Pop().StoreResult)
             {
-                Contents.VariableManager.StoreUShort(Contents.GetCurrentByteAndInc(), (ushort) (val ? 1 : 0));
+                Contents.VariableManager.Store(Contents.GetCurrentByteAndInc(), (ushort) (val ? 1 : 0));
             }
-        }
-
-        private Func<byte> _customPeekNextByte;
-        public Func<byte> GetCurrentByteAndInc
-        {
-            protected get => _customPeekNextByte ?? Contents.GetCurrentByteAndInc;
-            set => _customPeekNextByte = value;
         }
     }
 }

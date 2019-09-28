@@ -10,10 +10,10 @@ namespace ZMachineLib.Operations.OPVAR
         {
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
-            var addr = (ushort)(operands[0] + 2 * operands[1]);
-            ushort value = operands[2];
+            var addr = (ushort)(args[0] + 2 * args[1]);
+            ushort value = args[2];
             Contents.Manager.SetUShort(addr, value);
         }
     }

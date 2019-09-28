@@ -13,9 +13,9 @@ namespace ZMachineLib.Operations.OPVAR
             _io = io;
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
-            _io.SplitWindow(operands[0]);
+            _io.SplitWindow(args[0]);
         }
     }
 }

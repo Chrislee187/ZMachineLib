@@ -17,17 +17,18 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
 
         [TestCase((short) 1, (short) 2, 3)]
         [TestCase((short)-1, (short)-1, -2)]
-        public void Should_store_Add_result(short val1, short val2, short result)
+        public void Should_store_Add_result(short argA, short ArgB, short expected)
         {
-            var args = new OpArgBuilder()
-                .WithValue((ushort)val1)
-                .WithValue((ushort)val2)
+            var args = new OperandBuilder()
+                .WithArg((ushort)argA)
+                .WithArg((ushort)ArgB)
                 .Build();
 
             Operation.Execute(args);
 
-            VariableManagerMockery
-                .UShortWasStored((ushort) result);
+            Mockery
+                .ResultDestinationRetrievedFromPC()
+                .ResultStored(expected);
         }
     }
 }

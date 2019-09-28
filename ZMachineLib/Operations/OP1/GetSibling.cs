@@ -14,18 +14,18 @@ namespace ZMachineLib.Operations.OP1
         {
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
-            var obj = operands[0];
+            var obj = args[0];
             var zObj = Contents.ObjectTree.GetOrDefault(obj).RefreshFromMemory();
             var storageType = Contents.GetCurrentByteAndInc();
 
             if (Contents.Header.Version <= 3)
             {
-                Contents.VariableManager.StoreByte(storageType, (byte)zObj.Sibling);
+                Contents.VariableManager.Store(storageType, (byte)zObj.Sibling);
             }
             else
-                Contents.VariableManager.StoreUShort(storageType, zObj.Sibling);
+                Contents.VariableManager.Store(storageType, zObj.Sibling);
 
             Jump(zObj.Sibling != 0);
         }

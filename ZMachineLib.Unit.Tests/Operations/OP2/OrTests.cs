@@ -18,9 +18,9 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         [TestCase((ushort) 0x01, (ushort) 0x02 )]
         public void Should_store_bitwise_OR_result(ushort val1, ushort val2)
         {
-            var args = new OpArgBuilder()
-                .WithValue(val1)
-                .WithValue(val2)
+            var args = new OperandBuilder()
+                .WithArg(val1)
+                .WithArg(val2)
                 .Build();
 
             Operation.Execute(args);

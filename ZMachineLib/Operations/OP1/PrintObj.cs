@@ -14,9 +14,9 @@ namespace ZMachineLib.Operations.OP1
             _io = io;
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
-            var obj = operands[0];
+            var obj = args[0];
             var zObj = Contents.ObjectTree.GetOrDefault(obj);
             _io.Print(zObj.Name);
             Log.Write($"[{zObj.Name}]");

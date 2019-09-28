@@ -21,9 +21,9 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         public void Should_store_the_value_from_addr_plus_index(ushort addr, ushort index)
         {
             var expectedValue = (ushort)0;
-            var args = new OpArgBuilder()
-                .WithValue(addr)
-                .WithValue(expectedValue)
+            var args = new OperandBuilder()
+                .WithArg(addr)
+                .WithArg(expectedValue)
                 .Build();
 
             Operation.Execute(args);

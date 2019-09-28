@@ -27,9 +27,9 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
                     .Build()
             );
 
-            var operands = new OpArgBuilder()
-                .WithAnyValue()
-                .WithValue(parent)
+            var operands = new OperandBuilder()
+                .WithAnyArg()
+                .WithArg(parent)
                 .Build();
 
             Operation.Execute(operands);
@@ -48,8 +48,8 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
                     .Build()
             );
             // TODO: Create an ObjectTreeMockery for this;
-            Operation.Execute(new OpArgBuilder()
-                .WithValues(parent, notParent)
+            Operation.Execute(new OperandBuilder()
+                .WithArgs(parent, notParent)
                 .Build());
 
             JumpedWith(false);

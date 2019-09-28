@@ -10,14 +10,14 @@ namespace ZMachineLib.Operations.OP0
         {
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
             var stackFrame = Contents.Stack.Pop();
 
             if (stackFrame.StoreResult)
             {
                 ushort value = stackFrame.RoutineStack.Pop();
-                Contents.VariableManager.StoreUShort(GetCurrentByteAndInc(), value);
+                Contents.VariableManager.Store(Contents.GetCurrentByteAndInc(), value);
             }
         }
     }

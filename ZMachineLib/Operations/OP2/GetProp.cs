@@ -19,11 +19,11 @@ namespace ZMachineLib.Operations.OP2
         {
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
-            var dest = GetCurrentByteAndInc();
-            var obj = operands[0];
-            byte prop = (byte)operands[1];
+            var dest = Contents.GetCurrentByteAndInc();
+            var obj = args[0];
+            byte prop = (byte)args[1];
             var zObj = Contents.ObjectTree[obj];
 
             ushort valNew = 0;
@@ -31,7 +31,7 @@ namespace ZMachineLib.Operations.OP2
             for (var i = 0; i < propValues.Data.Length; i++)
                 valNew |= (ushort)(propValues.Data[i] << (propValues.Data.Length - 1 - i) * 8);
 
-            Contents.VariableManager.StoreUShort(dest, valNew);
+            Contents.VariableManager.Store(dest, valNew);
         }
     }
 }

@@ -7,7 +7,6 @@ namespace ZMachineLib.Operations
     {
         ushort Code { get; }
         Action<bool> Jump { set; }
-        Func<byte> GetCurrentByteAndInc { set; }
-        void Execute(List<ushort> operands);
+        void Execute(List<ushort> args);
     }
 }

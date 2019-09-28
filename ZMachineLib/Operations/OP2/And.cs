@@ -14,10 +14,10 @@ namespace ZMachineLib.Operations.OP2
         {
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
-            var dest = GetCurrentByteAndInc();
-            Contents.VariableManager.StoreUShort(dest, (ushort)(operands[0] & operands[1]));
+            var dest = Contents.GetCurrentByteAndInc();
+            Contents.VariableManager.Store(dest, (ushort)(args[0] & args[1]));
         }
     }
 }

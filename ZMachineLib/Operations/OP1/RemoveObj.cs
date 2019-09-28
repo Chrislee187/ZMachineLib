@@ -16,9 +16,9 @@ namespace ZMachineLib.Operations.OP1
 
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
-            var rootObjectNumber = operands[0];
+            var rootObjectNumber = args[0];
             if (rootObjectNumber == 0)
                 return;
 

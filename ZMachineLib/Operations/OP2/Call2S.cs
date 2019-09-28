@@ -14,9 +14,9 @@ namespace ZMachineLib.Operations.OP2
         {
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
-            Call(operands, true);
+            Call(args, true);
         }
     }
 }

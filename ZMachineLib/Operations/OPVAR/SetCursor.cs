@@ -13,12 +13,12 @@ namespace ZMachineLib.Operations.OPVAR
             _io = io;
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
             _io.SetCursor(
-                operands[0], 
-                operands[1], 
-                (ushort)(operands.Count == 3 ? operands[2] : 0));
+                args[0], 
+                args[1], 
+                (ushort)(args.Count == 3 ? args[2] : 0));
 
         }
     }

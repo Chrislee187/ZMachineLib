@@ -5,8 +5,8 @@ namespace ZMachineLib.Managers
     public interface IVariableManager
     {
         ushort GetUShort(byte variable, bool andRemove = true);
-        void StoreUShort(byte dest, ushort value, bool newEntry = true);
-        void StoreByte(byte dest, byte value);
+        void Store(byte dest, ushort value, bool newEntry = true);
+        void Store(byte dest, byte value);
     }
 
 
@@ -64,37 +64,37 @@ namespace ZMachineLib.Managers
             return val;
         }
         
-        public void StoreUShort(byte dest, ushort value, bool newEntry = true)
+        public void Store(byte dest, ushort value, bool newEntry = true)
         {
             if (DestinationIsStack(dest))
             {
-                StoreUShortOnStack(value, newEntry);
+                StoreOnStack(value, newEntry);
             }
             else if (DestinationIsVariable(dest))
             {
-                StoreUShortInVariable(dest, value);
+                StoreInVariables(dest, value);
             }
             else
             {
-                StoreUShortInGlobal(dest, value);
+                StoreInGlobals(dest, value);
             }
         }
 
-        private void StoreUShortInGlobal(byte dest, ushort value)
+        private void StoreInGlobals(byte dest, ushort value)
         {
             Log.Write($"-> GLB{ZGlobals.GetGlobalsNumber(dest):X2} ({value:X4}), ");
 
             _globals.Set(ZGlobals.GetGlobalsNumber(dest), value);
         }
 
-        private void StoreUShortInVariable(byte dest, ushort value)
+        private void StoreInVariables(byte dest, ushort value)
         {
             var variablesIdx =(byte) (dest - 1);
             Log.Write($"-> VAR{variablesIdx:X2} ({value:X4}), ");
             _stack.Variable(variablesIdx, value);
         }
 
-        private void StoreUShortOnStack(ushort value, bool newEntry)
+        private void StoreOnStack(ushort value, bool newEntry)
         {
             if (!newEntry)
             {
@@ -105,37 +105,37 @@ namespace ZMachineLib.Managers
             _stack.PushNewRoutine(value);
         }
 
-        public void StoreByte(byte dest, byte value)
+        public void Store(byte dest, byte value)
         {
             if (DestinationIsStack(dest))
             {
-                StoreByteOnStack(value);
+                StoreOnStack(value);
             }
             else if (DestinationIsVariable(dest))
             {
-                StoreByteInVariable(dest, value);
+                StoreInVariables(dest, value);
             }
             else
             {
-                StoreByteInGlobals(dest, value);
+                StoreGlobals(dest, value);
             }
         }
 
-        private void StoreByteInGlobals(byte dest, byte value)
+        private void StoreGlobals(byte dest, byte value)
         {
             var globalsIdx = ZGlobals.GetGlobalsNumber(dest);
             Log.Write($"-> GLB{globalsIdx:X2} = ({value:X2}), ");
             _globals.Set(globalsIdx, value);
         }
 
-        private void StoreByteInVariable(byte dest, byte value)
+        private void StoreInVariables(byte dest, byte value)
         {
             var variableIdx = (byte) (dest - 1);
             Log.Write($"-> VAR{variableIdx:X2} = ({value:X2}), ");
             _stack.Variable(variableIdx, value);
         }
 
-        private void StoreByteOnStack(byte value)
+        private void StoreOnStack(byte value)
         {
             Log.Write($"-> STK PUSH({value:X2})");
             _stack.PushNewRoutine(value);

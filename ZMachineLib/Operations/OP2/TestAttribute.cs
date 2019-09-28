@@ -14,10 +14,10 @@ namespace ZMachineLib.Operations.OP2
         {
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
-            var obj = operands[0];
-            var attr = operands[1];
+            var obj = args[0];
+            var attr = args[1];
             var zObj = Contents.ObjectTree[obj];
 
             Jump(zObj.TestAttribute(attr));

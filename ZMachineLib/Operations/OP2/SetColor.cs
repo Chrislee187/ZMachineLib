@@ -14,9 +14,9 @@ namespace ZMachineLib.Operations.OP2
             _io = io;
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
-            _io.SetColor((ZColor)operands[0], (ZColor)operands[1]);
+            _io.SetColor((ZColor)args[0], (ZColor)args[1]);
 
         }
     }

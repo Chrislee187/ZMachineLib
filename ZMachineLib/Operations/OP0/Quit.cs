@@ -13,7 +13,7 @@ namespace ZMachineLib.Operations.OP0
             _io = io;
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
             Contents.Running = false;
             _io.Quit();

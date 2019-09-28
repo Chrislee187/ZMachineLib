@@ -10,10 +10,10 @@ namespace ZMachineLib.Operations.OP2
         {
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
-            ushort value = operands[1];
-            Contents.VariableManager.StoreUShort((byte)operands[0], value, false);
+            ushort value = args[1];
+            Contents.VariableManager.Store((byte)args[0], value, false);
         }
     }
 }

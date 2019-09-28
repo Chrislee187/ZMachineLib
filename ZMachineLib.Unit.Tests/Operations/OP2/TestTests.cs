@@ -24,9 +24,9 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
             ushort bitmap = 0xFF;
             ushort flags = 0x0F;
 
-            var args = new OpArgBuilder()
-                .WithValue(bitmap)
-                .WithValue(flags)
+            var args = new OperandBuilder()
+                .WithArg(bitmap)
+                .WithArg(flags)
                 .Build();
 
             Operation.Execute(args);
@@ -39,9 +39,9 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
             ushort bitmap = 0x0E;
             ushort flags = 0x0F;
 
-            var args = new OpArgBuilder()
-                .WithValue(bitmap)
-                .WithValue(flags)
+            var args = new OperandBuilder()
+                .WithArg(bitmap)
+                .WithArg(flags)
                 .Build();
 
             Operation.Execute(args);

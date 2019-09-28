@@ -13,9 +13,9 @@ namespace ZMachineLib.Operations.OPVAR
             _io = io;
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
-            var s = operands[0].ToString();
+            var s = args[0].ToString();
             _io.Print(s);
             Log.Write($"[{s}]");
         }

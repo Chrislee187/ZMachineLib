@@ -9,7 +9,7 @@ namespace ZMachineLib.Operations.OP0
             : base((ushort)OpCodes.Restart, memory)
         {
         }
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
             Contents.Restart();
         }

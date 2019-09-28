@@ -15,7 +15,7 @@ namespace ZMachineLib.Operations.OP0
             Io = io;
         }
 
-        public abstract override void Execute(List<ushort> operands);
+        public abstract override void Execute(List<ushort> args);
 
     }
 }

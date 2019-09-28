@@ -13,6 +13,6 @@ namespace ZMachineLib.Operations.OP0
             _io = io;
         }
 
-        public override void Execute(List<ushort> operands) => _io.ShowStatus();
+        public override void Execute(List<ushort> args) => _io.ShowStatus();
     }
 }

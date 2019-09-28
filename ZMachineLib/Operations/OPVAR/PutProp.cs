@@ -23,11 +23,11 @@ namespace ZMachineLib.Operations.OPVAR
         {
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
-            var obj = operands[0];
-            var propertyNumber = operands[1];
-            var value = operands[2];
+            var obj = args[0];
+            var propertyNumber = args[1];
+            var value = args[2];
 
             var zObj = Contents.ObjectTree.GetOrDefault(obj);
 

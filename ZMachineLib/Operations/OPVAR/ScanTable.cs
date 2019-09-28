@@ -10,33 +10,33 @@ namespace ZMachineLib.Operations.OPVAR
         {
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
             var dest = Contents.GetCurrentByteAndInc();
             byte len = 0x02;
 
-            if (operands.Count == 4)
-                len = (byte)(operands[3] & 0x7f);
+            if (args.Count == 4)
+                len = (byte)(args[3] & 0x7f);
 
-            for (var i = 0; i < operands[2]; i++)
+            for (var i = 0; i < args[2]; i++)
             {
-                var addr = (ushort)(operands[1] + i * len);
+                var addr = (ushort)(args[1] + i * len);
                 ushort val;
 
-                if (operands.Count == 3 || (operands[3] & 0x80) == 0x80)
+                if (args.Count == 3 || (args[3] & 0x80) == 0x80)
                     val = Contents.Manager.GetUShort(addr);
                 else
                     val = Contents.Manager.Get(addr);
 
-                if (val == operands[0])
+                if (val == args[0])
                 {
-                    Contents.VariableManager.StoreUShort(dest, addr);
+                    Contents.VariableManager.Store(dest, addr);
                     Jump(true);
                     return;
                 }
             }
 
-            Contents.VariableManager.StoreUShort(dest, 0);
+            Contents.VariableManager.Store(dest, 0);
             Jump(false);
         }
     }

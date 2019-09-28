@@ -15,7 +15,7 @@ namespace ZMachineLib.Operations.OP0
         {
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
             var state = CreateState();
 
@@ -29,7 +29,7 @@ namespace ZMachineLib.Operations.OP0
                 }
                 else
                 {
-                    Contents.VariableManager.StoreUShort(Contents.GetCurrentByteAndInc(), saveSuccessful.ToOneOrZero());
+                    Contents.VariableManager.Store(Contents.GetCurrentByteAndInc(), saveSuccessful.ToOneOrZero());
                 }
             }
             catch

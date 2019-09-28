@@ -16,11 +16,11 @@ namespace ZMachineLib.Operations.OP2
         {
         }
 
-        public override void Execute(List<ushort> operands)
+        public override void Execute(List<ushort> args)
         {
-            var addr = (ushort)(operands[0] + 2 * operands[1]);
-            var dest = GetCurrentByteAndInc();
-            Contents.VariableManager.StoreUShort(dest, Contents.Manager.GetUShort(addr));
+            var addr = (ushort)(args[0] + 2 * args[1]);
+            var dest = Contents.GetCurrentByteAndInc();
+            Contents.VariableManager.Store(dest, Contents.Manager.GetUShort(addr));
         }
     }
 }
