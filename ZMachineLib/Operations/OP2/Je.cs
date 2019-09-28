@@ -28,7 +28,7 @@ namespace ZMachineLib.Operations.OP2
                 }
             }
 
-            Jump(equal);
+            Contents.Jump(equal);
         }
     }
 }

@@ -22,7 +22,7 @@ namespace ZMachineLib.Operations.OP2
             val--;
             ushort value = (ushort)val;
             Contents.VariableManager.Store((byte)args[0], value);
-            Jump(val < (short)args[1]);
+            Contents.Jump(val < (short)args[1]);
         }
     }
 }

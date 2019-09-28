@@ -25,7 +25,7 @@ namespace ZMachineLib.Operations.OP0
                 state.Dispose();
                 if (Contents.Header.Version < 5)
                 {
-                    Jump(saveSuccessful);
+                    Contents.Jump(saveSuccessful);
                 }
                 else
                 {

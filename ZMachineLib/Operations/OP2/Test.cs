@@ -16,7 +16,7 @@ namespace ZMachineLib.Operations.OP2
 
         public override void Execute(List<ushort> args)
         {
-            Jump((args[0] & args[1]) == args[1]);
+            Contents.Jump((args[0] & args[1]) == args[1]);
         }
     }
 }

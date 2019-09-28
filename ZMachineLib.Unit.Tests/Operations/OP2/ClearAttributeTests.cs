@@ -26,9 +26,10 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
                 .WithArg(obj)
                 .WithArg(attribute)
                 .Build();
+            
             var zObj = new Mock<IZMachineObject>();
 
-            ObjectTreeMockery.SetupGetIndexerReturns(zObj.Object);
+            Mockery.SetNextObject(zObj.Object);
 
             Operation.Execute(args);
             

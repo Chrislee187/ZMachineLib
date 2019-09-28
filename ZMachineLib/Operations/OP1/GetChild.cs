@@ -31,7 +31,7 @@ namespace ZMachineLib.Operations.OP1
                 Contents.VariableManager.Store(storageType, zObj.Child);
             }
 
-            Jump(zObj.Child != 0);
+            Contents.Jump(zObj.Child != 0);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace ZMachineLib.Operations.OP0
 
             if (Contents.Header.Version < 5)
             {
-                Jump(true);
+                Contents.Jump(true);
             }
             else
             {

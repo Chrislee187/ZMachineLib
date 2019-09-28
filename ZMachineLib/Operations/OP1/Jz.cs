@@ -12,7 +12,7 @@ namespace ZMachineLib.Operations.OP1
 
         public override void Execute(List<ushort> args)
         {
-            Jump(args[0] == 0);
+            Contents.Jump(args[0] == 0);
         }
     }
 }

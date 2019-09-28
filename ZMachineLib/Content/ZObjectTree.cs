@@ -62,53 +62,47 @@ namespace ZMachineLib.Content
             }
         }
 
-
-        #region IReadOnlyDictionary<>
-
         private (Dictionary<int, byte[]> defaultProps, ushort bytesRead) GetDefaultProps(Span<byte> data)
         {
             // Section 12.2 - Default Property Table
             // NOTE: Default properties values are fixed at 2 bytes (words)
             const int propCountV3 = 31;
             var defaultProps = new Dictionary<int, byte[]>();
-            
+
             for (int i = 0; i < propCountV3; i++)
             {
-                defaultProps.Add(i+1, data.Slice(i * 2, 2).ToArray());
+                defaultProps.Add(i + 1, data.Slice(i * 2, 2).ToArray());
             }
 
             return (defaultProps, propCountV3 * 2);
         }
 
-        public IEnumerator<KeyValuePair<ushort, IZMachineObject>> GetEnumerator()
-        {
-            return _dict.GetEnumerator();
-        }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return ((IEnumerable)_dict).GetEnumerator();
-        }
+        #region IReadOnlyDictionary<>
+
+        public IEnumerator<KeyValuePair<ushort, IZMachineObject>> GetEnumerator() 
+            => _dict.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() 
+            => ((IEnumerable)_dict).GetEnumerator();
 
         public int Count => _dict.Count;
 
-        public bool ContainsKey(ushort key)
-        {
-            return _dict.ContainsKey(key);
-        }
-
-        public bool TryGetValue(ushort key, out IZMachineObject value)
-        {
-            var found = _dict.TryGetValue(key, out value);
-            if(found) value.RefreshFromMemory();
-            return found;
-        }
+        public bool ContainsKey(ushort key) 
+            => _dict.ContainsKey(key);
 
         public IZMachineObject this[ushort key] => GetOrDefault(key);
 
         public IEnumerable<ushort> Keys => _dict.Keys;
 
-        public IEnumerable<IZMachineObject> Values => _dict.Values; 
+        public IEnumerable<IZMachineObject> Values => _dict.Values;
+
+        public bool TryGetValue(ushort key, out IZMachineObject value)
+        {
+            var found = _dict.TryGetValue(key, out value);
+            if (found) value.RefreshFromMemory();
+            return found;
+        }
         #endregion
     }
 }

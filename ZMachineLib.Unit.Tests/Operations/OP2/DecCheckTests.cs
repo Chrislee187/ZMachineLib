@@ -28,15 +28,15 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
                 .WithArg(comparison)
                 .Build();
 
-            VariableManagerMockery.UShortWasRetrieved(initialValue);
+            Mockery.VariableRetrieves(initialValue);
 
             Operation.Execute(args);
 
             var expectedValue = initialValue - 1;
 
-            VariableManagerMockery.UShortWasStored((ushort)expectedValue);
-
-            JumpedWith(true);
+            Mockery
+                .ResultStored((ushort)expectedValue)
+                .JumpedWith(true);
         }
 
         [Test]
@@ -49,15 +49,15 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
                 .WithArg(comparison)
                 .Build();
 
-            VariableManagerMockery.UShortWasRetrieved(initialValue);
+            Mockery.VariableRetrieves(initialValue);
 
             Operation.Execute(args);
 
             var expectedValue = initialValue - 1;
 
-            VariableManagerMockery.UShortWasStored((ushort)expectedValue);
-
-            JumpedWith(false);
+            Mockery
+                .ResultStored((ushort)expectedValue)
+                .JumpedWith(false);
         }
     }
 }

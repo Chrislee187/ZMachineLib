@@ -1,4 +1,5 @@
 ﻿using System;
+using ZMachineLib.Extensions;
 using ZMachineLib.Managers;
 
 namespace ZMachineLib.Content
@@ -29,6 +30,7 @@ namespace ZMachineLib.Content
         ZGlobals Globals { get; set; }
 
         void Restart();
+        void Jump(bool flag);
     }
 
     public class ZMemory : IZMemory
@@ -83,7 +85,7 @@ namespace ZMachineLib.Content
         /// </summary>
         /// <returns></returns>
         public byte GetCurrentByteAndInc() => Manager.Get(Stack.GetPCAndInc());
-        public uint GetPackedAddress(ushort address) => ZMemory.GetPackedAddress(address, Header.Version);
+        public uint GetPackedAddress(ushort address) => GetPackedAddress(address, Header.Version);
 
         public static uint GetPackedAddress(ushort address, byte version = 3)
         {
@@ -104,6 +106,63 @@ namespace ZMachineLib.Content
         public void Restart()
         {
             _restart();
+        }
+
+        public void Jump(bool flag)
+        {
+
+            var offset = GetCurrentByteAndInc();
+            short newOffset;
+
+            bool branch = (offset & 0x80) == 0x80;
+            Log.Write($" [{branch.ToString().ToUpper()}] ");
+
+            var executeBranch = branch && flag || !(branch || flag);
+
+            if ((offset & 0x40) == 0x40)
+            {
+                offset = (byte)(offset & 0x3f);
+
+                if (offset == 0 && executeBranch)
+                {
+                    Log.Write(" RFALSE ");
+                    OperationReturnBoolean(false);
+                    return;
+                }
+
+                if (offset == 1 && executeBranch)
+                {
+                    Log.Write(" RTRUE ");
+                    OperationReturnBoolean(true);
+                    return;
+                }
+
+                newOffset = (short)(offset - 2);
+            }
+            else
+            {
+                var offset2 = GetCurrentByteAndInc();
+                var final = (ushort)((offset & 0x3f) << 8 | offset2);
+
+                // this is a 14-bit number, so set the sign bit properly because we can jump backwards
+                if ((final & 0x2000) == 0x2000)
+                    final |= 0xc000;
+
+                newOffset = (short)(final - 2);
+            }
+
+            if (executeBranch)
+                Stack.IncrementPC((uint)newOffset);
+
+            Log.Write($"-> { Stack.GetPC():X5}");
+        }
+        private void OperationReturnBoolean(bool val)
+        {
+            // NOTE: This does the same as the RTrue/RFalse operations
+            if (Stack.Pop().StoreResult)
+            {
+                VariableManager.Store(GetCurrentByteAndInc(), val.ToOneOrZero());
+            }
         }
     }
 }

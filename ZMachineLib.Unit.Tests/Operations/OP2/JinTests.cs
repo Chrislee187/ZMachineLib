@@ -21,11 +21,11 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         {
             ushort parent = 1234;
 
-            ObjectTreeMockery.SetupGetIndexerReturns(
+            Mockery.SetNextObject(
                 new ZMachineObjectBuilder()
-                    .WithParent(parent)
-                    .Build()
-            );
+                .WithParent(parent)
+                .Build()
+                );
 
             var operands = new OperandBuilder()
                 .WithAnyArg()
@@ -34,7 +34,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
 
             Operation.Execute(operands);
 
-            JumpedWith(true);
+            Mockery.JumpedWith(true);
         }
 
         [Test]
@@ -42,17 +42,18 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         {
             const ushort parent = 1234;
             const ushort notParent = 4321;
-            ObjectTreeMockery.SetupGetIndexerReturns(
+
+            Mockery.SetNextObject(
                 new ZMachineObjectBuilder()
-                    .WithParent(parent)
-                    .Build()
-            );
-            // TODO: Create an ObjectTreeMockery for this;
+                .WithParent(parent)
+                .Build()
+                );
+
             Operation.Execute(new OperandBuilder()
                 .WithArgs(parent, notParent)
                 .Build());
 
-            JumpedWith(false);
+            Mockery.JumpedWith(false);
         }
 
     }

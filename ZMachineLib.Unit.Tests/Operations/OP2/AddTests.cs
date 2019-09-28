@@ -17,11 +17,11 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
 
         [TestCase((short) 1, (short) 2, 3)]
         [TestCase((short)-1, (short)-1, -2)]
-        public void Should_store_Add_result(short argA, short ArgB, short expected)
+        public void Should_store_Add_result(short argA, short argB, short expected)
         {
             var args = new OperandBuilder()
                 .WithArg((ushort)argA)
-                .WithArg((ushort)ArgB)
+                .WithArg((ushort)argB)
                 .Build();
 
             Operation.Execute(args);

@@ -1,59 +1,67 @@
 using Moq;
 using ZMachineLib.Content;
-using ZMachineLib.Extensions;
 using ZMachineLib.Managers;
 
 namespace ZMachineLib.Unit.Tests.Operations
 {
     public class OperationsMockery
     {
-        private readonly VariableManagerMockery _vmMockery;
-        private readonly ObjectTreeMockery _otMockery;
         private readonly Mock<IZMemory> _memoryMock;
+        private readonly Mock<IZObjectTree> _objectsMock;
+        private readonly Mock<IVariableManager> _variablesMock;
 
         public IZMemory Memory => _memoryMock.Object;
 
-        public OperationsMockery(VariableManagerMockery vmMockery,
-            ObjectTreeMockery otMockery)
+        public OperationsMockery()
         {
-            _otMockery = otMockery;
-            _vmMockery = vmMockery;
             _memoryMock = new Mock<IZMemory>();
-
+            _objectsMock = new Mock<IZObjectTree>();
+            _variablesMock = new Mock<IVariableManager>();
             _memoryMock
                 .SetupGet(m => m.VariableManager)
-                .Returns(vmMockery.Mock.Object);
+                .Returns(_variablesMock.Object);
 
             _memoryMock
-                 .SetupGet(m => m.Manager)
+                .SetupGet(m => m.Manager)
                 .Returns(new Mock<IMemoryManager>().Object);
 
             _memoryMock
                 .SetupGet(m => m.ObjectTree)
-                .Returns(_otMockery.Object);
+                .Returns(_objectsMock.Object);
 
         }
-        public OperationsMockery VariableRetrieved(ushort expected)
+        public OperationsMockery VariableRetrieves(ushort value)
         {
-            _vmMockery.UShortWasRetrieved(expected);
+            _variablesMock.Setup(m
+                    => m.GetUShort(
+                        It.IsAny<byte>(),
+                        It.IsAny<bool>())
+                )
+                .Returns(value);
             return this;
         }
 
         public OperationsMockery ResultStored(ushort expected)
         {
-            _vmMockery.UShortWasStored(expected);
+            _variablesMock.Verify(m => m.Store(
+                It.IsAny<byte>(),
+                It.Is<ushort>(v => v == expected),
+                It.Is<bool>(b => b)), Times.Once);
             return this;
         }
         public OperationsMockery ResultStored(short expected)
             => ResultStored((ushort)expected);
 
-        public OperationsMockery ResultStored(byte expected)
+        public OperationsMockery ResultStoredWasByte(byte expected)
         {
-            _vmMockery.ByteWasStored(expected);
+            _variablesMock.Verify(m => m.Store(
+                It.IsAny<byte>(),
+                It.Is<byte>(v => v == expected)), Times.Once);
+
             return this;
         }
 
-
+        
         public OperationsMockery ResultDestinationRetrievedFromPC()
         {
             // NOTE: We would like to check that the PC was used
@@ -79,50 +87,18 @@ namespace ZMachineLib.Unit.Tests.Operations
                 .Returns(value);
             return this;
         }
-
-    }
-
-
-    public class VariableManagerMockery
-    {
-        public readonly Mock<IVariableManager> Mock;
-
-        public VariableManagerMockery()
+        public OperationsMockery SetNextObject(IZMachineObject value)
         {
-            Mock = new Mock<IVariableManager>();
-        }
-
-        public IVariableManager Object => Mock.Object;
-        
-
-        public VariableManagerMockery UShortWasRetrieved(ushort returnValue)
-        {
-            Mock.Setup(m
-                    => m.GetUShort(
-                        It.IsAny<byte>(),
-                        It.IsAny<bool>())
-                )
-                .Returns(returnValue);
-
+            _objectsMock
+                .Setup(m => m.GetOrDefault(It.IsAny<ushort>()))
+                .Returns(value);
             return this;
         }
 
-        public VariableManagerMockery UShortWasStored(ushort expectedValue)
+        public OperationsMockery JumpedWith(bool value)
         {
-            Mock.Verify(m => m.Store(
-                It.IsAny<byte>(),
-                It.Is<ushort>(v => v == expectedValue),
-                It.Is<bool>(b => b)), Times.Once);
-
-            return this;
-        }
-        public VariableManagerMockery ByteWasStored(byte expectedValue)
-        {
-            Mock.Verify(m => m.Store(
-                It.IsAny<byte>(),
-                It.Is<byte>(v => v == expectedValue)
-                ), Times.Once);
-
+            // TODO: Testing of the jump/branch needs to be a little better i think
+            _memoryMock.Verify(m => m.Jump(It.Is<bool>(b => b.Equals(value))));
             return this;
         }
     }

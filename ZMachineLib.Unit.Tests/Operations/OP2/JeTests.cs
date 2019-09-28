@@ -31,7 +31,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
 
             Operation.Execute(args);
 
-            JumpedWith(false);
+            Mockery.JumpedWith(false);
         }
 
         [TestCase((ushort)1, (ushort)1)]
@@ -46,7 +46,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
 
             Operation.Execute(args);
 
-            JumpedWith(true);
+            Mockery.JumpedWith(true);
         }
     }
 }

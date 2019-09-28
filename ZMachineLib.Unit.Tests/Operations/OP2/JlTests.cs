@@ -1,5 +1,4 @@
 using NUnit.Framework;
-using Shouldly;
 using ZMachineLib.Operations.OP2;
 
 // ReSharper disable PossibleInvalidOperationException
@@ -15,16 +14,11 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
     public class JlTests : OperationsTestsBase<Jl>
     {
 
-        private bool? _jumped;
 
         [SetUp]
         public void SetUp()
         {
             Setup();
-            _jumped = null;
-
-            Operation.Jump = b => _jumped = b;
-
         }
 
         [TestCase((ushort)1, (ushort)2)]
@@ -38,8 +32,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
 
             Operation.Execute(args);
 
-            _jumped.HasValue.ShouldBeTrue();
-            _jumped.Value.ShouldBeTrue();
+            Mockery.JumpedWith(true);
         }
 
         [TestCase((ushort)1, (ushort)1)]
@@ -54,8 +47,8 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
 
             Operation.Execute(args);
 
-            _jumped.HasValue.ShouldBeTrue();
-            _jumped.Value.ShouldBeFalse();
+            Mockery.JumpedWith(false);
+
         }
     }
 }

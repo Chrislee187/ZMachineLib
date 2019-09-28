@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using ZMachineLib.Operations.OP2;
+using TestAttribute = NUnit.Framework.TestAttribute;
 
 namespace ZMachineLib.Unit.Tests.Operations.OP2
 {
@@ -10,17 +11,18 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
     /// </summary>
     public class LoadBTests : OperationsTestsBase<LoadB>
     {
-
-
         [SetUp]
         public void SetUp()
         {
             Setup();
         }
 
-        [TestCase((ushort)0x01, (ushort)0x02)]
-        public void Should_store_the_value_from_addr_plus_index(ushort addr, ushort index)
+        [Test]
+        public void Should_store_the_value_from_addr_plus_index()
         {
+            // TODO: Crap test , doen't check the address used to retrieve the array item is correcet
+            ushort addr = 1234;
+            ushort index = 12;
             var args = new OperandBuilder()
                 .WithArg(addr)
                 .WithArg(index)
@@ -28,10 +30,8 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
 
             Operation.Execute(args);
 
-            var expectedValue = (byte) 0;
-            VariableManagerMockery.ByteWasStored(expectedValue);
-
+            Mockery
+                .ResultStoredWasByte(0);
         }
-
     }
 }

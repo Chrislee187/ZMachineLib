@@ -20,7 +20,7 @@ namespace ZMachineLib.Operations.OP2
             var attr = args[1];
             var zObj = Contents.ObjectTree[obj];
 
-            Jump(zObj.TestAttribute(attr));
+            Contents.Jump(zObj.TestAttribute(attr));
         }
     }
 

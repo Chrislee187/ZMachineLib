@@ -15,7 +15,6 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
         public void SetUp()
         {
             Setup();
-            MockJump(b => Jumped = b);
         }
 
         [Test]
@@ -31,7 +30,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
 
             Operation.Execute(args);
 
-            JumpedWith(true);
+            Mockery.JumpedWith(true);
         }
         [Test]
         public void Should_NOT_jump_if_any_flags_NOT_set()
@@ -46,7 +45,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
 
             Operation.Execute(args);
 
-            JumpedWith(false);
+            Mockery.JumpedWith(false);
         }
 
     }

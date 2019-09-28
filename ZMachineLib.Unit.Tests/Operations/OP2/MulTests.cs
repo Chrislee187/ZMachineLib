@@ -9,7 +9,6 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
     /// </summary>
     public class MulTests : OperationsTestsBase<Mul>
     {
-
         [SetUp]
         public void SetUp()
         {
