@@ -16,7 +16,7 @@ namespace ZMachineLib.Operations.OP1
 
         public override void Execute(List<ushort> args)
         {
-            var packedAddress = Contents.GetPackedAddress(args[0]);
+            var packedAddress = ZMemory.GetPackedAddress(args[0]);
             var s = ZsciiString.Get(Contents.Manager.AsSpan(packedAddress), 
                 Contents.Abbreviations);
             _io.Print(s);

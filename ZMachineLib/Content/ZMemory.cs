@@ -20,7 +20,6 @@ namespace ZMachineLib.Content
         byte PeekPreviousByte();
         byte PeekCurrentByte();
         byte GetCurrentByteAndInc();
-        uint GetPackedAddress(ushort address);
 
         bool TerminateOnInput { get; set; }
         ushort ReadTextAddr { get; set; }
@@ -85,7 +84,6 @@ namespace ZMachineLib.Content
         /// </summary>
         /// <returns></returns>
         public byte GetCurrentByteAndInc() => Manager.Get(Stack.GetPCAndInc());
-        public uint GetPackedAddress(ushort address) => GetPackedAddress(address, Header.Version);
 
         public static uint GetPackedAddress(ushort address, byte version = 3)
         {

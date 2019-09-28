@@ -1,4 +1,6 @@
+using System;
 using Moq;
+using Shouldly;
 using ZMachineLib.Content;
 using ZMachineLib.Managers;
 
@@ -9,6 +11,8 @@ namespace ZMachineLib.Unit.Tests.Operations
         private readonly Mock<IZMemory> _memoryMock;
         private readonly Mock<IZObjectTree> _objectsMock;
         private readonly Mock<IVariableManager> _variablesMock;
+        private readonly ZStack _zStack;
+        private readonly Mock<IMemoryManager> _memoryManager;
 
         public IZMemory Memory => _memoryMock.Object;
 
@@ -17,18 +21,23 @@ namespace ZMachineLib.Unit.Tests.Operations
             _memoryMock = new Mock<IZMemory>();
             _objectsMock = new Mock<IZObjectTree>();
             _variablesMock = new Mock<IVariableManager>();
+            _memoryManager = new Mock<IMemoryManager>();
             _memoryMock
                 .SetupGet(m => m.VariableManager)
                 .Returns(_variablesMock.Object);
 
             _memoryMock
                 .SetupGet(m => m.Manager)
-                .Returns(new Mock<IMemoryManager>().Object);
+                .Returns(_memoryManager.Object);
 
             _memoryMock
                 .SetupGet(m => m.ObjectTree)
                 .Returns(_objectsMock.Object);
 
+            _zStack = new ZStack();
+            _memoryMock
+                .SetupGet(m => m.Stack)
+                .Returns(_zStack);
         }
         public OperationsMockery VariableRetrieves(ushort value)
         {
@@ -51,7 +60,6 @@ namespace ZMachineLib.Unit.Tests.Operations
         }
         public OperationsMockery ResultStored(short expected)
             => ResultStored((ushort)expected);
-
         public OperationsMockery ResultStoredWasByte(byte expected)
         {
             _variablesMock.Verify(m => m.Store(
@@ -60,8 +68,22 @@ namespace ZMachineLib.Unit.Tests.Operations
 
             return this;
         }
+        public OperationsMockery NoResultWasStored()
+        {
+            _variablesMock.Verify(m => m.Store(
+                    It.IsAny<byte>(),
+                    It.IsAny<byte>())
+                , Times.Never);
 
-        
+            _variablesMock.Verify(m => m.Store(
+                    It.IsAny<byte>(),
+                    It.IsAny<ushort>(),
+                    It.IsAny<bool>())
+                , Times.Never);
+
+            return this;
+        }
+
         public OperationsMockery ResultDestinationRetrievedFromPC()
         {
             // NOTE: We would like to check that the PC was used
@@ -79,7 +101,8 @@ namespace ZMachineLib.Unit.Tests.Operations
                 Times.Once);
             return this;
         }
-
+        
+        public OperationsMockery SetRoutineArgCount(byte value) => SetNextByte(value);
         public OperationsMockery SetNextByte(byte value)
         {
             _memoryMock
@@ -99,6 +122,48 @@ namespace ZMachineLib.Unit.Tests.Operations
         {
             // TODO: Testing of the jump/branch needs to be a little better i think
             _memoryMock.Verify(m => m.Jump(It.Is<bool>(b => b.Equals(value))));
+            return this;
+        }
+
+        public OperationsMockery StackFramePushed(in bool storeOrNot, ushort expectedPC = 0)
+        {
+            var zStackFrame = _zStack.Peek();
+            zStackFrame.StoreResult.ShouldBe(storeOrNot);
+
+            if (expectedPC != 0)
+            {
+                zStackFrame.PC.ShouldBe(expectedPC);
+            }
+
+            return this;
+        }
+
+        public OperationsMockery RoutineArgsInitialisedFromMemory(int argCount)
+        {
+            // V4 Specific
+            _memoryManager
+                .Verify(m 
+                    => m.GetUShort(It.IsAny<int>()), 
+                    Times.AtLeast(argCount));
+
+            return this;
+        }
+
+        public OperationsMockery RoutineArgsStoredOnStackFrame(ushort[] routineArgs)
+        {
+            var zStackFrame = _zStack.Peek();
+
+            for (int i = 0; i < routineArgs.Length; i++)
+            {
+                zStackFrame.Variables[i].ShouldBe(routineArgs[i]);
+            }
+
+            return this;
+        }
+
+        public OperationsMockery AssertStackIsEmpty()
+        {
+            Should.Throw<Exception>(() => _zStack.Peek());
             return this;
         }
     }

@@ -31,28 +31,38 @@ namespace ZMachineLib
                 return;
             }
 
-            var pc = Contents.GetPackedAddress(args[0]);
+            var pc = ZMemory.GetPackedAddress(args[0]);
             Log.Write($"New PC: {pc:X5}");
 
             var zsf = new ZStackFrame { PC = pc, StoreResult = storeResult };
             Contents.Stack.Push(zsf);
 
-            var count = Contents.GetCurrentByteAndInc();
+            var routineArgs = Contents.GetCurrentByteAndInc();
 
+            InitialiseArgs(routineArgs, zsf); // V4 Specific
+
+            CopyArgsToLocalVariables(args, zsf);
+        }
+
+        private static void CopyArgsToLocalVariables(List<ushort> args, ZStackFrame zsf)
+        {
+            for (var i = 0; i < args.Count - 1; i++)
+                zsf.Variables[i] = args[i + 1];
+
+            zsf.ArgumentCount = args.Count - 1;
+        }
+
+        private void InitialiseArgs(byte routineArgs, ZStackFrame zsf)
+        {
             if (Contents.Header.Version <= 4)
             {
-                for (var i = 0; i < count; i++)
+                for (var i = 0; i < routineArgs; i++)
                 {
                     uint address = Contents.Stack.GetPC();
                     zsf.Variables[i] = Contents.Manager.GetUShort((int) address);
                     Contents.Stack.IncrementPC(2);
                 }
             }
-
-            for (var i = 0; i < args.Count - 1; i++)
-                zsf.Variables[i] = args[i + 1];
-
-            zsf.ArgumentCount = args.Count - 1;
         }
     }
 }
