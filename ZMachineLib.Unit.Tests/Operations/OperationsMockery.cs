@@ -28,11 +28,17 @@ namespace ZMachineLib.Unit.Tests.Operations
 
         public OperationsMockery()
         {
+
             _userIoMock = new Mock<IUserIo>();
             _memoryMock = new Mock<IZMemory>();
             _objectsMock = new Mock<IZObjectTree>();
             _variablesMock = new Mock<IVariableManager>();
-            _memoryManager = new Mock<IMemoryManager>();
+
+            // TODO: Consider using strict mocking on the MemoryManager (maybe variables as well)
+            // to ensure no side effects, specifically on memory pointers etc, typically strict mocking
+            // can make the tests brittle but that should not be the case here as the core implementations
+            // of operations are unlikely to change
+            _memoryManager = new Mock<IMemoryManager>(/*MockBehavior.Strict*/);
 
             _memoryManager
                 .Setup(m => m.AsSpan(It.IsAny<short>()))

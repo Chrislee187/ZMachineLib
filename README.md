@@ -28,17 +28,6 @@ Individual operations (Ops) that the ZMachine supports get and set the values re
 * I found a special command(in Zork I at least, not checked elsewhere yet) called `#rand` that seems to allow me to set a seed for testing so that the play-thru is consistent, by consistent we mean that any random in-game events while happen at the same time/place for a given seed.
 * The `#rand` command has allowed me to partially develop (it's a WIP) a complete walk-thru of Zork I that can be executed very quickly to ensure that nothing is broken.
 
-# Todos
-
-Some things I've been thinking about doing;
-
-* Full Operation logging (via .NET Core logging ofc)
-* Better save game handling
-* Command line options for ZPlay (to control logging amongst other things)
-* Command line options for ZDump to allow individual dump sections to be switched on/off etc. Maybe some hex/dec options
-* More "tree" like display to ZDump's object tree dump
-
-
 
 # NOTES
 
@@ -50,3 +39,47 @@ Some things I've been thinking about doing;
 # REFERENCES
 
 * Heavy use was made of (The ZMachine Standards document)[http://inform-fiction.org/zmachine/standards/z1point1/index.html], amazing effort over the years on that, great job!
+
+
+
+# Todos
+
+Some things I've been thinking about doing;
+
+* Full Operation logging (via .NET Core logging ofc)
+* Better save game handling
+	* Can prompt for filename in IUserIO/IFileIO hooks
+	* Offer default filename
+
+* Command line options for ZPlay (to control logging amongst other things)
+* Command line options for ZDump to allow individual dump sections to be switched on/off etc. Maybe some hex/dec options
+* More "tree" like display to ZDump's object tree dump
+
+## Logging
+
+Several types of logging could be useful, includng;
+
+* game play logging, logs all game text and user inputs to a file
+* operation logging, logs all Operations executed
+* trace/debug/exception logging, typical logging you might see in any program
+
+### Game Play Logging
+
+Hook in to the IUserIO interface, log all Print()'s and the results of Reads() to single file. Prefix user input with '> '
+
+Probably just open our own file in the IUserIO hooks
+
+### Operation Logging (ZMachine debug log)
+
+Logs the inputs and outputs of every operation, giving a debug trace of ZMachine execution
+
+Possibly have terse, verbose modes;
+
+* terse mode - single line of detail
+* verbose mode - expanded detail of everything that happened in a operation
+
+### trace/debug/exception logging
+
+Typical logging of other areas of the code as required. 
+Use standard ILogger patterns and approaches
+

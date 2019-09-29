@@ -8,8 +8,10 @@ namespace ZPlay
 {
     class Program
     {
+        private static IConfiguration _config;
         static void Main(string[] args)
         {
+            _config = Config.Get();
             string zFile = string.Empty;
             zFile = GetZFileToPlay(args, zFile);
             
@@ -36,21 +38,20 @@ namespace ZPlay
             }
             else
             {
-                var configuration = new ConfigurationBuilder()
-                    .SetBasePath(Directory.GetCurrentDirectory())
-                    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                    .Build();
-                zFile = SelectFile(configuration["zFileDir"]);
+                zFile = SelectFile(_config["zFileDir"]);
             }
 
             return zFile;
         }
 
-        private static void RunZFile(string zFile) =>
+        private static void RunZFile(string zFile)
+        {
             new ZMachine2(
-                new UserIo(), 
-                new FileIo(Path.GetFileNameWithoutExtension(zFile))
+                new UserIo(),
+                new FileIo(Path.GetFileNameWithoutExtension(zFile)),
+                LoggerSetup.Create<ZMachine2>()
             ).RunFile(zFile);
+        }
 
         private static void Abort(string s)
         {

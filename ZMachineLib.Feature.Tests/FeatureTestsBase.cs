@@ -1,5 +1,7 @@
 using System.IO;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
+using NUnit.Framework.Internal;
 using Shouldly;
 
 namespace ZMachineLib.Feature.Tests
@@ -22,7 +24,10 @@ namespace ZMachineLib.Feature.Tests
             MockUserIo = new Mock<IUserIo>();
             MockFileIo = new Mock<IFileIo>();
             Feature = new ZMachineFeatureTester(MockUserIo);
-            _machine = new ZMachine2(MockUserIo.Object, MockFileIo.Object);
+            _machine = new ZMachine2(
+                MockUserIo.Object, 
+                MockFileIo.Object, 
+                NullLogger.Instance);
         }
     }
 }

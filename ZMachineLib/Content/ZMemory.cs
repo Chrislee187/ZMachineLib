@@ -93,8 +93,6 @@ namespace ZMachineLib.Content
                     ? (uint) (address * 4) 
                     : 0;
         }
-        
-        // TODO: Think these two can be localised.
 
         public bool TerminateOnInput { get; set; }
         public bool Running { get; set; }

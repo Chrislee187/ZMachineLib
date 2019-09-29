@@ -20,11 +20,16 @@ namespace ZMachineLib.Operations.OP2
             var dest = Contents.GetCurrentByteAndInc();
 
             if (args[1] == 0)
+            {
+                // TODO: Log
                 return;
+            }
 
-            var val = (short)((short)args[0] / (short)args[1]);
-            ushort value = (ushort)val;
-            Contents.VariableManager.Store(dest, value);
+            ushort result = (ushort)((short)args[0] / (short)args[1]);
+
+            OpLogging.Op2WithStore(this.GetType().Name.ToUpper(), args[0], args[1], result, dest);
+
+            Contents.VariableManager.Store(dest, result);
         }
     }
 }

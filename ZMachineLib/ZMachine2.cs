@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Microsoft.Extensions.Logging;
 using ZMachineLib.Operations;
 using ZMachineLib.Content;
 using ZMachineLib.Extensions;
@@ -16,9 +17,13 @@ namespace ZMachineLib
         private byte[] _restartState;
 
         private ZOperations _zOperations;
+        private readonly ILogger _logger;
 
-        public ZMachine2(IUserIo io, IFileIo fileIo)
+        public ZMachine2(IUserIo io, IFileIo fileIo,
+            ILogger logger = null)
         {
+
+            _logger = logger;
             _fileIo = fileIo;
             _io = io;
         }
@@ -72,14 +77,17 @@ namespace ZMachineLib
 
         private void LoadFile(Stream stream)
         {
+
             byte[] memory = stream.ToByteArray();
-            _restartState = (byte[])memory.Clone();
-            Execute(memory);
+
+            InitialiseMachine(memory);
         }
 
-        private void Execute(byte[] memory)
+        private void InitialiseMachine(byte[] memory)
         {
-            _zMemory = new ZMemory(memory, () => Execute(_restartState));
+            _logger.InfoMessage("Initialising ZMachine");
+            _restartState = (byte[]) memory.Clone();
+            _zMemory = new ZMemory(memory, () => InitialiseMachine(_restartState));
             _zOperations = new ZOperations(_io, _fileIo, _zMemory);
 
             _zMemory.Stack.Push(new ZStackFrame { PC = _zMemory.Header.Pc });

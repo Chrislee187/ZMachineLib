@@ -12,10 +12,12 @@ namespace ZMachineLib.Operations.OP2
 
         public override void Execute(List<ushort> args)
         {
-            var val = (short)((short)args[0] % (short)args[1]);
             var dest = Contents.GetCurrentByteAndInc();
-            ushort value = (ushort)val;
-            Contents.VariableManager.Store(dest, value);
+            var result = args[0] % args[1];
+
+            OpLogging.Op2WithStore(this.GetType().Name.ToUpper(), args[0], args[1], result, dest);
+
+            Contents.VariableManager.Store(dest, (ushort) result);
         }
     }
 }

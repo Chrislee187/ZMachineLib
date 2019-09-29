@@ -141,9 +141,30 @@ namespace ZMachineLib.Managers
             _stack.PushNewRoutine(value);
         }
 
-        private bool DestinationIsStack(byte dest) => dest == 0;
+        private static bool DestinationIsStack(byte dest) => dest == 0;
 
-        private bool DestinationIsVariable(byte dest) => dest < 0x10;
+        private static bool DestinationIsVariable(byte dest) => dest < 0x10;
+
+        public static VariableDestinations VariableDestination(byte dest) =>
+            DestinationIsStack(dest)
+                ? VariableDestinations.Local
+                : DestinationIsVariable(dest) 
+                    ? VariableDestinations.Variable 
+                    : VariableDestinations.Global;
+
+        public static byte VariableId(byte dest)
+        {
+            var variableDestinations = VariableDestination(dest);
+            return variableDestinations == VariableDestinations.Local
+                ? (byte) 0
+                : variableDestinations == VariableDestinations.Variable
+                    ? (byte) (dest - 1)
+                    : ZGlobals.GetGlobalsNumber(dest);
+        }
     }
 
+    public enum VariableDestinations
+    {
+        Local, Variable, Global
+    }
 }
