@@ -3,6 +3,10 @@ using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP1
 {
+    /// <summary>
+    /// 1OP:133 5 inc (variable)
+    /// Increment variable by 1. (This is signed, so -1 increments to 0.)
+    /// </summary>
     public sealed class Inc : ZMachineOperationBase
     {
         public Inc(IZMemory memory)

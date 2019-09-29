@@ -6,6 +6,7 @@ namespace ZMachineLib.Unit.Tests.Operations
 {
     public class OperationsTestsBase<T> : OperationsTestsBase where T : IOperation
     {
+        public const byte AnyVariable = 0x7f;
 
         protected new void Setup()
         {

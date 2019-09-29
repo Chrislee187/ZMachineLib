@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using ZMachineLib.Content;
+using NUnit.Framework;
+using ZMachineLib.Operations.OP1;
 
-namespace ZMachineLib.Operations.OP1
+namespace ZMachineLib.Unit.Tests.Operations.OP1
 {
     /// <summary>
     /// jump
@@ -21,18 +21,30 @@ namespace ZMachineLib.Operations.OP1
     ///
     /// This is analogous to the calculation for branch offsets.
     /// </summary>
-    public sealed class Jump : ZMachineOperationBase
+    public class JumpTests : OperationsTestsBase<Jump>
     {
-        public Jump(IZMemory memory)
-            : base((ushort)OpCodes.Jump, memory)
+        [SetUp]
+        public void SetUp()
         {
+            Setup();
         }
 
-        public override void Execute(List<ushort> args)
+        [TestCase((short)10, (short) 108 )]
+        [TestCase((short)0, (short) 98)]
+        [TestCase((short)-110, (short) -12)]
+        public void Should_increment_program_counter_by_offset_minus_two(short offset, short expected)
         {
-            var offset = (short)(args[0] - 2);
-            Contents.Stack.IncrementPC(offset);
-            Log.Write($"-> {Contents.Stack.GetPC():X5}");
+            Mockery
+                .StartingPC(100);
+
+            var args = new OperandBuilder()
+                .WithArg(offset)
+                .Build();
+
+            Operation.Execute(args);
+
+            Mockery
+                .ProgramCounterEquals(expected);
         }
     }
 }

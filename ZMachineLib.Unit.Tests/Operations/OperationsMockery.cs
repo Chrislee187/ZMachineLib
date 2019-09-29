@@ -63,6 +63,21 @@ namespace ZMachineLib.Unit.Tests.Operations
                 .Returns(value);
             return this;
         }
+        /// <summary>
+        /// Setup up the next call to get a variable from memory to return <paramref name="value"/>
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public OperationsMockery VariableRetrieves(short value)
+        {
+            _variablesMock.Setup(m
+                    => m.GetUShort(
+                        It.IsAny<byte>(),
+                        It.IsAny<bool>())
+                )
+                .Returns((ushort)value);
+            return this;
+        }
 
         /// <summary>
         /// Verifies a word (short/ushort) result was stored
@@ -201,6 +216,11 @@ namespace ZMachineLib.Unit.Tests.Operations
         }
 
 
+        public OperationsMockery StartingPC(int pc)
+        {
+            _zStack.Push(new ZStackFrame {PC = (uint) pc});
+            return this;
+        }
         public OperationsMockery SetNextByte(byte value)
         {
             _memoryMock
@@ -225,10 +245,17 @@ namespace ZMachineLib.Unit.Tests.Operations
 
         public OperationsMockery ProgramCounterEquals(in ushort expectedPC)
         {
-            var zStackFrame = _zStack.Peek();
-            zStackFrame.PC.ShouldBe(expectedPC);
+            _zStack.Peek().PC.ShouldBe(expectedPC);
 
             return this;
         }
+        public OperationsMockery ProgramCounterEquals(in short expectedPC)
+        {
+            var pc = (short)(_zStack.Peek().PC);
+            pc.ShouldBe<short>((short) expectedPC);
+
+            return this;
+        }
+
     }
 }
