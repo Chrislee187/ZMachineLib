@@ -43,28 +43,27 @@ namespace ZMachineLib.Extensions
         public static uint GetUInt(this byte[] buffer, int address)
             => buffer.AsSpan(address, sizeof(uint)).GetUInt();
 
-        public static ushort GetUShort(this Span<byte> data, int address) 
-            => data.Slice(address,2).GetUShort();
-
         public static ushort GetUShort(this byte[] buffer, int address) 
-            => GetUShort(buffer.AsSpan(address, 2));
+            => buffer.AsSpan(address, 2).GetUShort();
         
         /// <summary>
         /// Gets a short from the next two bytes
         /// </summary>
         /// <param name="bytes"></param>
         /// <returns></returns>
-        public static ushort GetUShort(this Span<byte> bytes) 
+        public static ushort GetUShort(this byte[] bytes) 
             => (ushort)(bytes[0] << 8 | bytes[1]);
-
+        public static ushort GetUShort(this Span<byte> bytes)
+            => (ushort)(bytes[0] << 8 | bytes[1]);
         /// <summary>
         /// Gets a uint from the next four bytes
         /// </summary>
         /// <param name="bytes"></param>
         /// <returns></returns>
+        public static uint GetUInt(this byte[] bytes)
+            => (uint)(bytes[0] << 24 | bytes[1] << 16 | bytes[2] << 8 | bytes[3]);
         public static uint GetUInt(this Span<byte> bytes)
             => (uint)(bytes[0] << 24 | bytes[1] << 16 | bytes[2] << 8 | bytes[3]);
-
         public static byte FromBitNumber(this byte bitNumber)
             => (byte) (1 << bitNumber);
 

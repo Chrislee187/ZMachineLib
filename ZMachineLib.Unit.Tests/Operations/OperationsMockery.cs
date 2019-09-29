@@ -21,15 +21,23 @@ namespace ZMachineLib.Unit.Tests.Operations
         private readonly Mock<IVariableManager> _variablesMock;
         private readonly ZStack _zStack;
         private readonly Mock<IMemoryManager> _memoryManager;
+        private readonly Mock<IUserIo> _userIoMock;
 
         public IZMemory Memory => _memoryMock.Object;
+        public IUserIo UserIo => _userIoMock.Object;
 
         public OperationsMockery()
         {
+            _userIoMock = new Mock<IUserIo>();
             _memoryMock = new Mock<IZMemory>();
             _objectsMock = new Mock<IZObjectTree>();
             _variablesMock = new Mock<IVariableManager>();
             _memoryManager = new Mock<IMemoryManager>();
+
+            _memoryManager
+                .Setup(m => m.AsSpan(It.IsAny<short>()))
+                .Returns(new byte[] {});
+
             _memoryMock
                 .SetupGet(m => m.VariableManager)
                 .Returns(_variablesMock.Object);
@@ -46,6 +54,7 @@ namespace ZMachineLib.Unit.Tests.Operations
             _memoryMock
                 .SetupGet(m => m.Stack)
                 .Returns(_zStack);
+
         }
 
         /// <summary>
@@ -263,5 +272,23 @@ namespace ZMachineLib.Unit.Tests.Operations
             return this;
         }
 
+        public OperationsMockery ZsciiStringReturns(string someText)
+        {
+            _memoryMock
+                .Setup(m => m.GetZscii(It.IsAny<ushort>()))
+                .Returns(someText);
+
+            _memoryMock
+                .Setup(m => m.GetZscii(It.IsAny<byte[]>()))
+                .Returns(someText);
+            return this;
+        }
+
+        public OperationsMockery Printed(string someText)
+        {
+            _userIoMock
+                .Verify(m => m.Print(It.Is<string>(s => s == someText)));
+            return this;
+        }
     }
 }

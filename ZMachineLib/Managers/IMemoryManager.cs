@@ -15,11 +15,11 @@ namespace ZMachineLib.Managers
         void SetUShort(uint address, ushort value);
         void Set(ushort address, params byte[] values);
         void Set(int address, params byte[] values);
-        Span<byte> AsSpan();
-        Span<byte> AsSpan(ushort start);
-        Span<byte> AsSpan(ushort start, int length);
-        Span<byte> AsSpan(int start);
-        Span<byte> AsSpan(uint start);
+        byte[] AsSpan();
+        byte[] AsSpan(ushort start);
+        byte[] AsSpan(ushort start, int length);
+        byte[] AsSpan(int start);
+        byte[] AsSpan(uint start);
         void SetLong(uint address, uint value);
     }
 }

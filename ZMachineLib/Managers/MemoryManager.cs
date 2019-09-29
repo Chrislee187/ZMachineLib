@@ -18,11 +18,11 @@ namespace ZMachineLib.Managers
         public ushort GetUShort(int address) => Buffer.GetUShort(address);
         public uint GetUInt(int address) => Buffer.GetUInt(address);
 
-        public Span<byte> AsSpan() => Buffer.AsSpan();
-        public Span<byte> AsSpan(ushort start) => Buffer.AsSpan(start);
-        public Span<byte> AsSpan(int start) => Buffer.AsSpan(start);
-        public Span<byte> AsSpan(uint start) => Buffer.AsSpan((int)start);
-        public Span<byte> AsSpan(ushort start, int length) => Buffer.AsSpan(start, length);
+        public byte[] AsSpan() => Buffer;
+        public byte[] AsSpan(ushort start) => Buffer.AsSpan(start).ToArray();
+        public byte[] AsSpan(int start) => Buffer.AsSpan(start).ToArray();
+        public byte[] AsSpan(uint start) => Buffer.AsSpan((int)start).ToArray();
+        public byte[] AsSpan(ushort start, int length) => Buffer.AsSpan(start, length).ToArray();
 
         public void Set(int address, byte value) => Buffer[address] = value;
         public void Set(ushort address, byte value) => Buffer[address] = value;

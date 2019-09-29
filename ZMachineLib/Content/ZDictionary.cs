@@ -1,4 +1,5 @@
-﻿using ZMachineLib.Managers;
+﻿using System;
+using ZMachineLib.Managers;
 
 namespace ZMachineLib.Content
 {
@@ -14,10 +15,10 @@ namespace ZMachineLib.Content
             ushort addr = 0;
 
             var numOfInputCodes = bytes[addr++];
-            InputCodes = bytes.Slice(addr, numOfInputCodes - 1).ToArray();
+            InputCodes = bytes.AsSpan(addr, numOfInputCodes - 1).ToArray();
             addr += numOfInputCodes;
 
-            var zsciiStringArray = new ZsciiStringArray(bytes.Slice(addr), abbreviations);
+            var zsciiStringArray = new ZsciiStringArray(bytes.AsSpan(addr), abbreviations);
             Words = zsciiStringArray.Words;
             EntryLength = zsciiStringArray.EntryLength;
             WordStart = (ushort) (addr + zsciiStringArray.WordStart);

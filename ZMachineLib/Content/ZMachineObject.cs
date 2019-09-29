@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using ZMachineLib.Extensions;
 using ZMachineLib.Managers;
 
@@ -120,7 +121,7 @@ namespace ZMachineLib.Content
                 var propData = _manager.AsSpan(ptr, propSize);
                 properties.Add(
                     propNum, 
-                    new ZProperty(propNum, dataAddress, propData.ToArray(), _manager)
+                    new ZProperty(propNum, dataAddress, propData, _manager)
                     );
                 ptr += propSize;
             }

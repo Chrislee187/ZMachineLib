@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using ZMachineLib.Extensions;
 using ZMachineLib.Managers;
 
@@ -15,7 +17,7 @@ namespace ZMachineLib.Content
             for (int abbrIdx = 0; abbrIdx < 96; abbrIdx++)
             {
                 var addr = abbreviationsTable.GetUShort((ushort) (abbrIdx * 2));
-                var zStr = ZsciiString.Get(dynamicMemory.Slice((ushort)(addr * 2)), null);
+                var zStr = ZsciiString.Get(dynamicMemory.AsSpan((ushort)(addr * 2)), null);
                 abbrevs.Add(zStr);
             }
 

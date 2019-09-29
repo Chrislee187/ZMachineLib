@@ -28,6 +28,8 @@ namespace ZMachineLib.Content
 
         void Restart();
         void Jump(bool flag);
+        string GetZscii(ushort address);
+        string GetZscii(byte[] data);
     }
 
     public class ZMemory : IZMemory
@@ -149,6 +151,16 @@ namespace ZMachineLib.Content
                 Stack.IncrementPC((uint)newOffset);
 
             Log.Write($"-> { Stack.GetPC():X5}");
+        }
+
+        public string GetZscii(ushort address)
+        {
+            return ZsciiString.Get(Manager.AsSpan(address), Abbreviations);
+        }
+
+        public string GetZscii(byte[] data)
+        {
+            return ZsciiString.Get(data, Abbreviations);
         }
         private void OperationReturnBoolean(bool val)
         {

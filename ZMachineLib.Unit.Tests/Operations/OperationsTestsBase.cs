@@ -1,24 +1,41 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Moq;
+using ZMachineLib.Content;
 using ZMachineLib.Operations;
+using ZMachineLib.Operations.OP1;
 
 namespace ZMachineLib.Unit.Tests.Operations
 {
     public class OperationsTestsBase<T> : OperationsTestsBase where T : IOperation
     {
+
         public const byte AnyVariable = 0x7f;
 
-        protected new void Setup()
+        protected void Setup()
         {
             base.Setup();
 
-            Operation = (IOperation)Activator.CreateInstance(typeof(T), Mockery.Memory);
+
+            if (OperationUsesUserIo<T>())
+            {
+                var args = new object[]{Mockery.Memory, Mockery.UserIo};
+                Operation = (IOperation)Activator.CreateInstance(typeof(T), args: args);
+            }
+            else
+            {
+                Operation = (IOperation)Activator.CreateInstance(typeof(T), Mockery.Memory);
+            }
 
             MockPeekNextByte();
 
             // Default the destination for stored operation results tests to globals to avoid needing a stack
             SetNextDestinationAsGlobals();
         }
+
+        private bool OperationUsesUserIo<T>() 
+            => typeof(T).GetConstructor(new []{typeof(IZMemory), typeof(IUserIo)}) != null;
     }
 
     public abstract class OperationsTestsBase
