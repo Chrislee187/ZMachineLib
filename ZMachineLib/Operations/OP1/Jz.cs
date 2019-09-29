@@ -12,6 +12,7 @@ namespace ZMachineLib.Operations.OP1
 
         public override void Execute(List<ushort> args)
         {
+            // TODO: Refactor the underlying jump code before sorting the test out for this
             Contents.Jump(args[0] == 0);
         }
     }

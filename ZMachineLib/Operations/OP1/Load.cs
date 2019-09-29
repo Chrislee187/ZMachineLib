@@ -3,6 +3,11 @@ using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP1
 {
+    /// <summary>
+    /// 1OP:142 E load(variable) -> (result)
+    /// The value of the variable referred to by the operand is stored in the result.
+    /// (Inform doesn't use this; see the notes to S 14.)
+    /// </summary>
     public sealed class Load : ZMachineOperationBase
     {
         public Load(IZMemory memory)
@@ -12,10 +17,11 @@ namespace ZMachineLib.Operations.OP1
 
         public override void Execute(List<ushort> args)
         {
+            var variable = (byte)args[0];
+            var val = Contents.VariableManager.GetUShort(variable, false);
+
             var dest = Contents.GetCurrentByteAndInc();
-            var val = Contents.VariableManager.GetUShort((byte)args[0], false);
-            byte value = (byte)val;
-            Contents.VariableManager.Store(dest, value);
+            Contents.VariableManager.Store(dest, val); // NOTE: The original code cast the value to byte, don't know why, seems to work ok
         }
     }
 }

@@ -104,7 +104,7 @@ namespace ZMachineLib.Content
 
         public void Jump(bool flag)
         {
-
+            // TODO: Work out whats going on here and refactor
             var offset = GetCurrentByteAndInc();
             short newOffset;
 
