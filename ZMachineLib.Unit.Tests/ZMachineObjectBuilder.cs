@@ -9,6 +9,7 @@ namespace ZMachineLib.Unit.Tests
         private ushort _child;
         private ushort _objectNumber;
         private ushort _sibling;
+        private string _name;
 
         public ZMachineObject Build()
         {
@@ -19,6 +20,7 @@ namespace ZMachineLib.Unit.Tests
                 Parent = _parent,
                 Child = _child,
                 Sibling = _sibling,
+                Name = _name
             };
         }
 
@@ -48,6 +50,12 @@ namespace ZMachineLib.Unit.Tests
             _sibling = sibling;
             return this;
         }
+
+        public ZMachineObjectBuilder WithName(string name)
+        {
+            _name = name;
+            return this;
+        }
     }
 
     public class TestZMachineObject : ZMachineObject
@@ -57,5 +65,4 @@ namespace ZMachineLib.Unit.Tests
             return this;
         }
     }
-
 }

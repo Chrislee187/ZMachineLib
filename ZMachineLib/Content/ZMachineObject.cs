@@ -11,7 +11,7 @@ namespace ZMachineLib.Content
     [DebuggerDisplay("[{ObjectNumber}] '{Name}'")]
     public class ZMachineObject : IZMachineObject
     {
-        public string Name { get; private set; }
+        public string Name { get; set; }
         public ulong Attributes { get; private set; }
         public IDictionary<int, ZProperty> Properties { get; set; }
         private readonly IReadOnlyDictionary<int, byte[]> _defaultProps;
