@@ -174,6 +174,13 @@ namespace ZMachineLib.Unit.Tests.Operations
                 Times.Once);
             return this;
         }
+        public OperationsMockery NoResultDestinationRetrieved()
+        {
+            _memoryMock.Verify(
+                m => m.GetCurrentByteAndInc(),
+                Times.Never);
+            return this;
+        }
 
 
         /// <summary>
@@ -225,9 +232,9 @@ namespace ZMachineLib.Unit.Tests.Operations
         }
 
 
-        public OperationsMockery StartingPC(int pc)
+        public OperationsMockery StartingPC(int pc, bool storeResult = false)
         {
-            _zStack.Push(new ZStackFrame {PC = (uint) pc});
+            _zStack.Push(new ZStackFrame {PC = (uint) pc, StoreResult = storeResult});
             return this;
         }
         public OperationsMockery SetNextByte(byte value)

@@ -3,6 +3,10 @@ using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP1
 {
+    /// <summary>
+    /// 1OP:139 B ret value
+    /// Returns from the current routine with the value given.
+    /// </summary>
     public sealed class Ret : ZMachineOperationBase
     {
         public Ret(IZMemory memory)
