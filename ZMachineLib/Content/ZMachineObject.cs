@@ -52,7 +52,7 @@ namespace ZMachineLib.Content
 
         }
 
-        public ZMachineObject RefreshFromMemory()
+        public virtual ZMachineObject RefreshFromMemory()
         {
             HydrateObject();
             return this;

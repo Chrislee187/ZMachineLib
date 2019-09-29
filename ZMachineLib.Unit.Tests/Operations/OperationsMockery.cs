@@ -243,6 +243,12 @@ namespace ZMachineLib.Unit.Tests.Operations
             return this;
         }
 
+        public OperationsMockery NeverJumps()
+        {
+            // TODO: Testing of the jump/branch needs to be a little better i think
+            _memoryMock.Verify(m => m.Jump(It.IsAny<bool>()), Times.Never);
+            return this;
+        }
         public OperationsMockery ProgramCounterEquals(in ushort expectedPC)
         {
             _zStack.Peek().PC.ShouldBe(expectedPC);
@@ -252,7 +258,7 @@ namespace ZMachineLib.Unit.Tests.Operations
         public OperationsMockery ProgramCounterEquals(in short expectedPC)
         {
             var pc = (short)(_zStack.Peek().PC);
-            pc.ShouldBe<short>((short) expectedPC);
+            pc.ShouldBe(expectedPC);
 
             return this;
         }
