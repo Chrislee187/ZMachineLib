@@ -75,7 +75,7 @@ namespace ZMachineLib.Operations
             _operations.Add(OpCodes.RFalse, new RFalse(memory));
             _operations.Add(OpCodes.Print, new Print(memory, io));
             _operations.Add(OpCodes.PrintRet, new PrintRet(memory, io, (RTrue)_operations[OpCodes.RTrue]));
-            _operations.Add(OpCodes.Nop, new Nop());
+            _operations.Add(OpCodes.Nop, new Nop(memory));
             _operations.Add(OpCodes.Save, new Save(memory, fileIo)); 
             _operations.Add(OpCodes.Restore, new Restore(memory, fileIo));
             _operations.Add(OpCodes.Restart, new Restart(memory));

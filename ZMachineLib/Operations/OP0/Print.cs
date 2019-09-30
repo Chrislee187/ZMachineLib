@@ -13,7 +13,8 @@ namespace ZMachineLib.Operations.OP0
 
         public override void Execute(List<ushort> args)
         {
-            var array = Contents.Manager.AsSpan((int)Contents.Stack.GetPC());
+            var array = Contents.Manager
+                .AsSpan((int)Contents.Stack.GetPC());
 
             var zStr = new ZsciiString(array, Contents.Abbreviations);
 

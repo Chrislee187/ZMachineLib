@@ -16,33 +16,37 @@ namespace ZMachineLib.Unit.Tests.Operations
         /// Cons
         ///  * ?
         /// </summary>
-        private readonly Mock<IZMemory> _memoryMock;
-        private readonly Mock<IZObjectTree> _objectsMock;
-        private readonly Mock<IVariableManager> _variablesMock;
-        private readonly ZStack _zStack;
-        private readonly Mock<IMemoryManager> _memoryManager;
-        private readonly Mock<IUserIo> _userIoMock;
+        private Mock<IZMemory> _memoryMock;
+        private Mock<IZObjectTree> _objectsMock;
+        private Mock<IVariableManager> _variablesMock;
+        private ZStack _zStack;
+        private Mock<IMemoryManager> _memoryManager;
+        private Mock<IUserIo> _userIoMock;
 
         public IZMemory Memory => _memoryMock.Object;
         public IUserIo UserIo => _userIoMock.Object;
 
         public OperationsMockery()
         {
+            InitMocks(MockBehavior.Default);
+        }
 
-            _userIoMock = new Mock<IUserIo>();
-            _memoryMock = new Mock<IZMemory>();
-            _objectsMock = new Mock<IZObjectTree>();
-            _variablesMock = new Mock<IVariableManager>();
+        private void InitMocks(MockBehavior mockBehavior)
+        {
+            _userIoMock = new Mock<IUserIo>(mockBehavior);
+            _memoryMock = new Mock<IZMemory>(mockBehavior);
+            _objectsMock = new Mock<IZObjectTree>(mockBehavior);
+            _variablesMock = new Mock<IVariableManager>(mockBehavior);
 
             // TODO: Consider using strict mocking on the MemoryManager (maybe variables as well)
             // to ensure no side effects, specifically on memory pointers etc, typically strict mocking
             // can make the tests brittle but that should not be the case here as the core implementations
             // of operations are unlikely to change
-            _memoryManager = new Mock<IMemoryManager>(/*MockBehavior.Strict*/);
+            _memoryManager = new Mock<IMemoryManager>(mockBehavior);
 
             _memoryManager
                 .Setup(m => m.AsSpan(It.IsAny<short>()))
-                .Returns(new byte[] {});
+                .Returns(new byte[] { });
 
             _memoryMock
                 .SetupGet(m => m.VariableManager)
@@ -60,9 +64,13 @@ namespace ZMachineLib.Unit.Tests.Operations
             _memoryMock
                 .SetupGet(m => m.Stack)
                 .Returns(_zStack);
-
         }
 
+        public OperationsMockery StrictMode()
+        {
+            InitMocks(MockBehavior.Strict);
+            return this;
+        }
         /// <summary>
         /// Setup up the next call to get a variable from memory to return <paramref name="value"/>
         /// </summary>

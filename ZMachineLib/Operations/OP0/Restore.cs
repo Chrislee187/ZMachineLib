@@ -22,8 +22,7 @@ namespace ZMachineLib.Operations.OP0
             {
                 RestoreState(stream);
             }
-
-
+            
             if (Contents.Header.Version < 5)
             {
                 Contents.Jump(true);

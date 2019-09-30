@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Moq;
 using ZMachineLib.Content;
 using ZMachineLib.Operations;
 
@@ -13,14 +14,19 @@ namespace ZMachineLib.Unit.Tests.Operations
         {
             base.Setup();
 
+            InitOperations();
+        }
+
+        protected void InitOperations()
+        {
             if (OperationUsesUserIo())
             {
-                var args = new object[]{Mockery.Memory, Mockery.UserIo};
-                Operation = (IOperation)Activator.CreateInstance(typeof(T), args: args);
+                var args = new object[] {Mockery.Memory, Mockery.UserIo};
+                Operation = (IOperation) Activator.CreateInstance(typeof(T), args: args);
             }
             else
             {
-                Operation = (IOperation)Activator.CreateInstance(typeof(T), Mockery.Memory);
+                Operation = (IOperation) Activator.CreateInstance(typeof(T), Mockery.Memory);
             }
 
             MockPeekNextByte();

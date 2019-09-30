@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP0
 {
@@ -8,8 +9,8 @@ namespace ZMachineLib.Operations.OP0
             // 
         }
 
-        public Nop(OpCodes opCode = OpCodes.Nop) 
-            : base((ushort)opCode, null)
+        public Nop(IZMemory memory) 
+            : base((ushort) OpCodes.Nop, memory)
         {
         }
     }
