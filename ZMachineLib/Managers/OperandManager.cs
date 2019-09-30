@@ -3,11 +3,6 @@ using ZMachineLib.Extensions;
 
 namespace ZMachineLib.Managers
 {
-    public interface IOperandManager
-    {
-        List<ushort> GetOperands(byte opcode);
-    }
-
     public class OperandManager : IOperandManager
     {
         /// <summary>

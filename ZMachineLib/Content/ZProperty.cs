@@ -1,33 +1,45 @@
-﻿using ZMachineLib.Managers;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
+using ZMachineLib.Managers;
 
 namespace ZMachineLib.Content
 {
     public class ZProperty
     {
-        private byte[] _data;
         private readonly IMemoryManager _manager;
 
-        public byte[] Data
-        {
-            get => _data;
-            set
-            {
-                _data = value;
-                _manager.Set(DataAddress, value);
-            }
-
-        }
 
         public byte Number { get; }
         public ushort DataAddress { get; }
+        public ushort Length => (ushort) Data.Length;
+        public byte[] Data { get; set; }
 
-        public ZProperty(byte number, ushort dataAddress, byte[] data, 
+        // NOTE: These int number overload is a little dodgy
+        public ZProperty(int number, ushort dataAddress, byte[] data,
             IMemoryManager manager)
         {
-            _manager = manager;
+            Number = (byte) number;
+
             Data = data;
-            Number = number;
             DataAddress = dataAddress;
+            
+            _manager = manager;
         }
+        public ZProperty(byte propByte, ushort dataAddress, byte[] data,
+            IMemoryManager manager)
+        {
+            Number = GetPropertyNumber(propByte);
+
+            Data = data;
+            DataAddress = dataAddress;
+            
+            _manager = manager;
+        }
+
+        public static ushort GetPropertySize(byte propInfo)
+            => (ushort)((propInfo >> (byte)PropertyMasks.PropertySizeShiftV3) + 1);
+
+        public static byte GetPropertyNumber(byte propInfo)
+            => (byte)(propInfo & (byte)PropertyMasks.PropertyNumberMaskV3);
     }
 }

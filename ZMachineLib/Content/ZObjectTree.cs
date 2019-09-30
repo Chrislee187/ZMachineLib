@@ -6,10 +6,6 @@ using ZMachineLib.Managers;
 
 namespace ZMachineLib.Content
 {
-    public interface IZObjectTree : IReadOnlyDictionary<ushort, IZMachineObject>
-    {
-        IZMachineObject GetOrDefault(ushort key);
-    }
     public class ZObjectTree : IZObjectTree
     {
         private readonly Dictionary<ushort, IZMachineObject> _dict;
@@ -40,7 +36,7 @@ namespace ZMachineLib.Content
                 lastObject = objectAddress >= min;
                 if (!lastObject)
                 {
-                    var zObj = new ZMachineObject(objNumber, objectAddress, header, manager, abbreviations, defaultProps);
+                    var zObj = new ZMachineObject(objNumber, objectAddress, header, manager, abbreviations, DefaultProperties);
                     _dict.Add(objNumber, zObj);
                     ptr += zObj.BytesRead;
 
@@ -76,8 +72,7 @@ namespace ZMachineLib.Content
 
             return (defaultProps, propCountV3 * 2);
         }
-
-
+        
         #region IReadOnlyDictionary<>
 
         public IEnumerator<KeyValuePair<ushort, IZMachineObject>> GetEnumerator() 

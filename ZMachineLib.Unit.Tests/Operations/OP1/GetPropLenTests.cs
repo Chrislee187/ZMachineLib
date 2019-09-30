@@ -25,7 +25,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP1
         public void Should_return_property_length()
         {
             byte propInfo = 123;
-            var expected = ZMachineObject.GetPropertySize(propInfo);
+            var expected = ZProperty.GetPropertySize(propInfo);
             Mockery
                 .SetNextGet(propInfo);
 

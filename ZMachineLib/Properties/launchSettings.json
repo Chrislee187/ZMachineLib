@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ZMachineLib": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    }
+  }
+}

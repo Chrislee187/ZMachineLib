@@ -30,8 +30,8 @@ namespace ZMachineLib.Content
             for (var i = 0; i < numEntries; i++)
             {
                 var zStr = new ZsciiString(bytes.AsSpan(ptr), abbreviations);
-                //var s = ZsciiString.Get(bytes.AsSpan(ptr), abbreviations); 
-                ptr +=  EntryLength;
+
+                ptr += EntryLength;
                 Words[i] = zStr.String;
             }
         }

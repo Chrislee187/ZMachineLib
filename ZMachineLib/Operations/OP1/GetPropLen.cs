@@ -25,7 +25,7 @@ namespace ZMachineLib.Operations.OP1
             var propInfo = Contents.Manager.Get((ushort) propAddress);
             var dest = Contents.GetCurrentByteAndInc();
             
-            var len = ZMachineObject.GetPropertySize(propInfo);
+            var len = ZProperty.GetPropertySize(propInfo);
 
             Contents.VariableManager.Store(dest, len);
         }

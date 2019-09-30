@@ -62,7 +62,7 @@ namespace ZMachineLib.Content
         {
             if (!Properties.TryGetValue(i, out var value))
             {
-                value = new ZProperty((byte) i, 0, _defaultProps[i], _manager);
+                value = new ZProperty(i, 0, _defaultProps[i], _manager);
             }
             return value;
         }
@@ -108,13 +108,13 @@ namespace ZMachineLib.Content
                 // Section 12.4.1 - V3 Specific
                 var sizeByte = _manager.Get(ptr++);
                 var dataAddress = ptr;
-                var propNum = GetPropertyNumber(sizeByte);
-                var propSize = GetPropertySize(sizeByte);
+                var propNum = ZProperty.GetPropertyNumber(sizeByte);
+                var propSize = ZProperty.GetPropertySize(sizeByte);
 
                 var propData = _manager.AsSpan(ptr, propSize);
                 properties.Add(
                     propNum, 
-                    new ZProperty(propNum, dataAddress, propData, _manager)
+                    new ZProperty(sizeByte, dataAddress, propData, _manager)
                     );
                 ptr += propSize;
             }
@@ -122,11 +122,6 @@ namespace ZMachineLib.Content
             return properties;
         }
 
-        public static ushort GetPropertySize(byte propInfo) 
-            => (ushort) ((propInfo >> (byte) PropertyMasks.PropertySizeShiftV3) + 1);
-
-        public static byte GetPropertyNumber(byte propInfo) 
-            => (byte) (propInfo & (byte) PropertyMasks.PropertyNumberMaskV3);
 
         private void SetAttributes(uint attrs)
         {
@@ -149,19 +144,7 @@ namespace ZMachineLib.Content
         private ushort _parentObjectNumber;
         public ushort Parent
         {
-            get
-            {
-                // NOTE: We should be able to use the memory bytes as the storage but it sometimes
-                // get's the value wrong? Something else must be changing the underlying value, whilst this
-                // instance is still expecting it to be the previous value
-                //                var b = _manager?.Get((ushort)(Address + Offsets.Parent)) ?? 0;
-                //                if (b != _parentObjectNumber)
-                //                {
-                //                    Console.WriteLine($"Expected Parent: {_parentObjectNumber} got from {(Address + Offsets.Parent):X4} = {b}");
-                //                }
-                //                _parentObjectNumber = b;
-                return _parentObjectNumber;
-            }
+            get => _parentObjectNumber;
             set
             {
                 _parentObjectNumber = value;
@@ -172,16 +155,7 @@ namespace ZMachineLib.Content
         private ushort _childObjectNumber;
         public ushort Child
         {
-            get
-            {
-                // NOTE: See note for Parent
-                //                var b = _manager?.Get((ushort)(Address + Offsets.Child)) ?? 0;
-                //                if (b != _childObjectNumber)
-                //                {
-                //                    Debug.WriteLine($"Expected: Child {_childObjectNumber} got from {(Address + Offsets.Child):X4} = {b}");
-                //                }
-                return _childObjectNumber;
-            }
+            get => _childObjectNumber;
             set
             {
 
@@ -193,16 +167,7 @@ namespace ZMachineLib.Content
         private ushort _siblingObjectNumber;
         public ushort Sibling
         {
-            get
-            {
-                // NOTE: See note for Parent
-                //                var b = _manager?.Get((ushort)(Address + Offsets.Sibling)) ?? 0;
-                //                if (b != _siblingObjectNumber)
-                //                {
-                //                    Console.WriteLine($"Expected Sibling: {_siblingObjectNumber} got from {(Address + Offsets.Sibling):X4} = {b}");
-                //                }
-                return _siblingObjectNumber;
-            }
+            get => _siblingObjectNumber;
             set
             {
                 _siblingObjectNumber = value;
