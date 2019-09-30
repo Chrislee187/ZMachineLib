@@ -9,7 +9,7 @@ using ZMachineLib.Managers;
 namespace ZMachineLib.Content
 {
     [DebuggerDisplay("[{ObjectNumber}] '{Name}'")]
-    public class ZMachineObject : IZMachineObject
+    public partial class ZMachineObject : IZMachineObject
     {
         public string Name { get; set; }
         public ulong Attributes { get; private set; }
@@ -102,12 +102,6 @@ namespace ZMachineLib.Content
         {
             Debug.Assert(ptr > 0, "GetProperties ptr not > 0");
 
-            byte GetPropertyNumber(byte sizeByte) 
-                => (byte) (sizeByte & (byte) PropertyMasks.PropertyNumberMaskV3 );
-
-            ushort GetActualSize(byte sizeByte) 
-                =>(ushort) ((sizeByte >> (byte) PropertyMasks.PropertySizeShiftV3) + 1);
-
 
             var properties = new Dictionary<int, ZProperty>();
             while (_manager.Get(ptr) != 0x00)
@@ -116,7 +110,7 @@ namespace ZMachineLib.Content
                 var sizeByte = _manager.Get(ptr++);
                 var dataAddress = ptr;
                 var propNum = GetPropertyNumber(sizeByte);
-                var propSize = GetActualSize(sizeByte);
+                var propSize = GetPropertySize(sizeByte);
 
                 var propData = _manager.AsSpan(ptr, propSize);
                 properties.Add(
@@ -129,12 +123,12 @@ namespace ZMachineLib.Content
             return properties;
         }
 
-        [Flags]
-        private enum PropertyMasks : byte
-        {
-            PropertyNumberMaskV3 = Bits.Bit4 | Bits.Bit3 | Bits.Bit2 | Bits.Bit1 | Bits.Bit0,
-            PropertySizeShiftV3 = 5
-        }
+        public static ushort GetPropertySize(byte propInfo) 
+            => (ushort) ((propInfo >> (byte) PropertyMasks.PropertySizeShiftV3) + 1);
+
+        public static byte GetPropertyNumber(byte propInfo) 
+            => (byte) (propInfo & (byte) PropertyMasks.PropertyNumberMaskV3);
+
         private void SetAttributes(uint attrs)
         {
             Attributes = attrs;

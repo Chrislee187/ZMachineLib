@@ -31,7 +31,7 @@ namespace ZMachineLib
                 return;
             }
 
-            var pc = ZMemory.GetPackedAddress(args[0]);
+            var pc = ZMemory.UnpackedAddress(args[0]);
             Log.Write($"New PC: {pc:X5}");
 
             var zsf = new ZStackFrame { PC = pc, StoreResult = storeResult };

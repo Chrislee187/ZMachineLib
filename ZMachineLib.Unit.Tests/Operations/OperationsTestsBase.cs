@@ -55,7 +55,7 @@ namespace ZMachineLib.Unit.Tests.Operations
         }
 
         protected void MockPeekNextByte(byte value = 0)
-            => Mockery.SetNextByte(value);
+            => Mockery.SetCurrentByte(value);
 
         protected void SetNextDestinationAsGlobals() 
             => MockPeekNextByte(DestinationGlobals);

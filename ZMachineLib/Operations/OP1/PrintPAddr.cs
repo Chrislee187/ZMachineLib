@@ -20,7 +20,7 @@ namespace ZMachineLib.Operations.OP1
 
         public override void Execute(List<ushort> args)
         {
-            var packedAddress = ZMemory.GetPackedAddress(args[0]);
+            var packedAddress = ZMemory.UnpackedAddress(args[0]);
             var array = Contents.Manager.AsSpan(packedAddress);
             var s = Contents.GetZscii(array);
             _io.Print(s);

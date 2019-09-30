@@ -30,7 +30,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP1
             Operation.Execute(args);
 
             var routineArgsOffset = routineArgs.Length * 2;// <= V4 Specific
-            var unpackedAddress = ZMemory.GetPackedAddress(packedRoutineAddress);
+            var unpackedAddress = ZMemory.UnpackedAddress(packedRoutineAddress);
             var expectedPC = (ushort) (unpackedAddress + routineArgsOffset);
 
             Mockery

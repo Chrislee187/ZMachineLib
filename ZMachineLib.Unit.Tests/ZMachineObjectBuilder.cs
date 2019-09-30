@@ -24,6 +24,13 @@ namespace ZMachineLib.Unit.Tests
             };
         }
 
+        public ZMachineObjectBuilder WithRelations(ushort parent, ushort child, ushort sibling)
+        {
+            _parent = parent;
+            _child = child;
+            _sibling = sibling;
+            return this;
+        }
         public ZMachineObjectBuilder WithAddress(ushort address)
         {
             _address = address;
@@ -55,6 +62,27 @@ namespace ZMachineLib.Unit.Tests
         {
             _name = name;
             return this;
+        }
+
+        public static (ZMachineObject childZobj, ZMachineObject parentZobj, ZMachineObject siblingZobj)
+            BuildSimpleRelationship(ushort parent, ushort child, ushort sibling, ushort child2)
+        {
+            var parentZObj = new ZMachineObjectBuilder()
+                .WithObjectNumber(parent)
+                .WithChild(child)
+                .Build();
+
+            var childZObj = new ZMachineObjectBuilder()
+                .WithObjectNumber(child)
+                .WithRelations(parent, child2, sibling)
+                .Build();
+
+            var siblingZObj = new ZMachineObjectBuilder()
+                .WithObjectNumber(sibling)
+                .WithParent(child)
+                .Build();
+
+            return (childZObj, parentZObj, siblingZObj);
         }
     }
 

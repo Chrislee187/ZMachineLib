@@ -229,7 +229,7 @@ namespace ZMachineLib.Unit.Tests.Operations
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public OperationsMockery SetRoutineArgCount(byte value) => SetNextByte(value);
+        public OperationsMockery SetRoutineArgCount(byte value) => SetCurrentByte(value);
 
         public OperationsMockery AssertStackIsEmpty()
         {
@@ -243,10 +243,17 @@ namespace ZMachineLib.Unit.Tests.Operations
             _zStack.Push(new ZStackFrame {PC = (uint) pc, StoreResult = storeResult});
             return this;
         }
-        public OperationsMockery SetNextByte(byte value)
+        public OperationsMockery SetCurrentByte(byte value)
         {
             _memoryMock
                 .Setup(m => m.GetCurrentByteAndInc())
+                .Returns(value);
+            return this;
+        }
+        public OperationsMockery SetNextGet(byte value)
+        {
+            _memoryManager
+                .Setup(m => m.Get(It.IsAny<ushort>()))
                 .Returns(value);
             return this;
         }
@@ -254,6 +261,14 @@ namespace ZMachineLib.Unit.Tests.Operations
         {
             _objectsMock
                 .Setup(m => m.GetOrDefault(It.IsAny<ushort>()))
+                .Returns(value);
+            return this;
+        }
+
+        public OperationsMockery SetGetObject(ushort objNumber, IZMachineObject value)
+        {
+            _objectsMock
+                .Setup(m => m.GetOrDefault(It.Is<ushort>(o => objNumber == o)))
                 .Returns(value);
             return this;
         }

@@ -85,7 +85,7 @@ namespace ZMachineLib.Content
         /// <returns></returns>
         public byte GetCurrentByteAndInc() => Manager.Get(Stack.GetPCAndInc());
 
-        public static uint GetPackedAddress(ushort address, byte version = 3)
+        public static uint UnpackedAddress(ushort address, byte version = 3)
         {
             return version <= 3 
                 ? (uint) (address * 2) 

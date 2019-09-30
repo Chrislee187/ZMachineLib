@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using ZMachineLib.Content;
 
 namespace ZMachineLib.Operations.OP1
@@ -21,17 +22,11 @@ namespace ZMachineLib.Operations.OP1
 
         public override void Execute(List<ushort> args)
         {
+            var propAddress = args[0] - 1;
+            var propInfo = Contents.Manager.Get((ushort) propAddress);
             var dest = Contents.GetCurrentByteAndInc();
-            var propInfo = Contents.Manager.Get(args[0] - 1);
-            byte len;
-            if (Contents.Header.Version > 3 && (propInfo & 0x80) == 0x80)
-            {
-                len = (byte) (Contents.Manager.Get(args[0] - 1) & 0x3f);
-                if (len == 0)
-                    len = 64;
-            }
-            else
-                len = (byte)((propInfo >> ((ushort) Contents.Header.Version <= 3 ? 5 : 6)) + 1);
+            
+            var len = ZMachineObject.GetPropertySize(propInfo);
 
             Contents.VariableManager.Store(dest, len);
         }
