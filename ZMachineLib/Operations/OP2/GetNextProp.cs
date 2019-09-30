@@ -49,6 +49,7 @@ namespace ZMachineLib.Operations.OP2
             var size = Contents.Manager.Get(propHeaderAddr);
             propHeaderAddr += (ushort)(size * 2 + 1);
 
+            // TODO: Refactor to generic propery handling, see GetPropLen
             while (Contents.Manager.Get(propHeaderAddr) != 0x00)
             {
                 var propInfo = Contents.Manager.Get(propHeaderAddr);

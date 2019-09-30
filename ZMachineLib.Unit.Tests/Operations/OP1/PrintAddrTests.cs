@@ -1,4 +1,3 @@
-using Moq;
 using NUnit.Framework;
 using ZMachineLib.Operations.OP1;
 

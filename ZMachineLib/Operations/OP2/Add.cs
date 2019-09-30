@@ -19,7 +19,7 @@ namespace ZMachineLib.Operations.OP2
             var result = (short)(args[0] + args[1]);
             var resultDestination = Contents.GetCurrentByteAndInc();
 
-            OpLogging.Op2WithStore(this.GetType().Name.ToUpper(), args[0], args[1], result, resultDestination);
+            OpLogging.Op2WithStore(GetType().Name.ToUpper(), args[0], args[1], result, resultDestination);
 
             Contents.VariableManager.Store(
                 resultDestination, 

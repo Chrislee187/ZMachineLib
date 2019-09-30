@@ -1,7 +1,6 @@
 using System.IO;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using NUnit.Framework.Internal;
 using Shouldly;
 
 namespace ZMachineLib.Feature.Tests

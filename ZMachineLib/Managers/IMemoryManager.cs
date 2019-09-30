@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ZMachineLib.Managers
+﻿namespace ZMachineLib.Managers
 {
     public interface IMemoryManager
     {

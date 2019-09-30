@@ -1,6 +1,5 @@
 using NUnit.Framework;
 using Shouldly;
-using ZMachineLib.Content;
 using ZMachineLib.Operations.OP1;
 
 namespace ZMachineLib.Unit.Tests.Operations.OP1

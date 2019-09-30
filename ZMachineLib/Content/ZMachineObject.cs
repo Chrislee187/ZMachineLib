@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using ZMachineLib.Extensions;
 using ZMachineLib.Managers;
 
 namespace ZMachineLib.Content
 {
     [DebuggerDisplay("[{ObjectNumber}] '{Name}'")]
-    public partial class ZMachineObject : IZMachineObject
+    public class ZMachineObject : IZMachineObject
     {
         public string Name { get; set; }
         public ulong Attributes { get; private set; }
@@ -28,7 +27,7 @@ namespace ZMachineLib.Content
 
         public byte BytesRead { get; private set; }
 
-        public ZMachineObject()
+        protected ZMachineObject()
         {
             // Used by tests
         }
@@ -192,7 +191,6 @@ namespace ZMachineLib.Content
         }
 
         private ushort _siblingObjectNumber;
-
         public ushort Sibling
         {
             get
@@ -214,11 +212,8 @@ namespace ZMachineLib.Content
 
         public ushort PropertyHeader { get; set; }
 
-        public bool TestAttribute(ushort attr)
-        {
-            var flags = _flagsProviderV3(attr);
-            return (flags & Attributes) == flags;
-        }
+        public bool TestAttribute(ushort attr) 
+            => (_flagsProviderV3(attr) & Attributes) == _flagsProviderV3(attr);
 
         public void ClearAttribute(ushort attr)
         {
@@ -263,8 +258,6 @@ namespace ZMachineLib.Content
 
             }
         }
-        public override string ToString() 
-            => $"[{ObjectNumber:D3}] ({Address:X4}) '{Name}' ";
 
         #region Equals overrides
         public bool Equals(ZMachineObject other)
@@ -306,5 +299,7 @@ namespace ZMachineLib.Content
         #endregion
 
         public static readonly ZMachineObject Object0 = new ZMachineObject(0, 0, default, null, null, null);
+        public override string ToString()
+            => $"[{ObjectNumber:D3}] ({Address:X4}) '{Name}' ";
     }
 }

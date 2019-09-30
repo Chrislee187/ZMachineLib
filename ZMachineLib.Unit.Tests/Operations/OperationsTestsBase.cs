@@ -1,24 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Moq;
 using ZMachineLib.Content;
 using ZMachineLib.Operations;
-using ZMachineLib.Operations.OP1;
 
 namespace ZMachineLib.Unit.Tests.Operations
 {
     public class OperationsTestsBase<T> : OperationsTestsBase where T : IOperation
     {
+        protected const byte AnyVariable = 0x7f;
 
-        public const byte AnyVariable = 0x7f;
-
-        protected void Setup()
+        protected new void Setup()
         {
             base.Setup();
 
-
-            if (OperationUsesUserIo<T>())
+            if (OperationUsesUserIo())
             {
                 var args = new object[]{Mockery.Memory, Mockery.UserIo};
                 Operation = (IOperation)Activator.CreateInstance(typeof(T), args: args);
@@ -34,7 +29,7 @@ namespace ZMachineLib.Unit.Tests.Operations
             SetNextDestinationAsGlobals();
         }
 
-        private bool OperationUsesUserIo<T>() 
+        private bool OperationUsesUserIo() 
             => typeof(T).GetConstructor(new []{typeof(IZMemory), typeof(IUserIo)}) != null;
     }
 

@@ -37,7 +37,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP1
         public void Should_not_store_when_routine_does_not_store()
         {
             Mockery
-                .StartingPC(100, false);
+                .StartingPC(100);
 
             var args = new OperandBuilder()
                 .WithArg(AnyValue)
