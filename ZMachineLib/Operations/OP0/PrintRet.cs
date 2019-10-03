@@ -18,10 +18,10 @@ namespace ZMachineLib.Operations.OP0
 
         public override void Execute(List<ushort> args)
         {
-            var array = Contents.Manager
-                .AsSpan((int)Contents.Stack.GetPC());
+            var array = Memory.Manager
+                .AsSpan((int)Memory.Stack.GetPC());
 
-            var s = Contents.GetZscii(array);
+            var s = Memory.GetZscii(array);
 
             Io.Print(s + Environment.NewLine);
 

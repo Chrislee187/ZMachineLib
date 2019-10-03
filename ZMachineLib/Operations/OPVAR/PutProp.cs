@@ -29,7 +29,7 @@ namespace ZMachineLib.Operations.OPVAR
             var propertyNumber = args[1];
             var value = args[2];
 
-            var zObj = Contents.ObjectTree.GetOrDefault(obj);
+            var zObj = Memory.ObjectTree.GetOrDefault(obj);
 
             zObj.Properties[propertyNumber].Data = value.ToByteArray();
         }

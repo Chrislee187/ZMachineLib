@@ -5,20 +5,20 @@ namespace ZMachineLib.Operations.OP0
 {
     public sealed class Pop : ZMachineOperationBase
     {
-        public Pop(IZMemory contents)
-            : base((ushort)OpCodes.Pop, contents)
+        public Pop(IZMemory memory)
+            : base((ushort)OpCodes.Pop, memory)
         {
         }
 
         public override void Execute(List<ushort> args)
         {
-            if (Contents.Stack.CurrentRoutingAvailable())
+            if (Memory.Stack.CurrentRoutingAvailable())
             {
-                Contents.Stack.PopCurrentRoutine();
+                Memory.Stack.PopCurrentRoutine();
             }
             else
             {
-                Contents.Stack.Pop();
+                Memory.Stack.Pop();
             }
         }
     }

@@ -8,14 +8,6 @@ namespace ZMachineLib.Unit.Tests.Operations
 {
     public class OperationsMockery
     {
-        /// <summary>
-        /// NOTE: Do we want subclasses per Mock instance?
-        /// Pros
-        ///  * Small classes
-        ///
-        /// Cons
-        ///  * ?
-        /// </summary>
         private Mock<IZMemory> _memoryMock;
         private Mock<IZObjectTree> _objectsMock;
         private Mock<IVariableManager> _variablesMock;
@@ -38,10 +30,6 @@ namespace ZMachineLib.Unit.Tests.Operations
             _objectsMock = new Mock<IZObjectTree>(mockBehavior);
             _variablesMock = new Mock<IVariableManager>(mockBehavior);
 
-            // TODO: Consider using strict mocking on the MemoryManager (maybe variables as well)
-            // to ensure no side effects, specifically on memory pointers etc, typically strict mocking
-            // can make the tests brittle but that should not be the case here as the core implementations
-            // of operations are unlikely to change
             _memoryManager = new Mock<IMemoryManager>(mockBehavior);
 
             _memoryManager
@@ -136,7 +124,7 @@ namespace ZMachineLib.Unit.Tests.Operations
         /// <summary>
         /// Verifies that the StoreResult for the current stackframe is false
         /// </summary>
-        public OperationsMockery ResultWillBeStored()
+        public OperationsMockery RoutineResultWillBeStored()
         {
             _zStack.Peek().StoreResult.ShouldBeTrue();
 

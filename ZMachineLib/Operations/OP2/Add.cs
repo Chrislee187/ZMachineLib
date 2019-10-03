@@ -9,19 +9,19 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class Add : ZMachineOperationBase
     {
-        public Add(IZMemory contents)
-            : base((ushort)OpCodes.Add, contents)
+        public Add(IZMemory memory)
+            : base((ushort)OpCodes.Add, memory)
         {
         }
 
         public override void Execute(List<ushort> args)
         {
             var result = (short)(args[0] + args[1]);
-            var resultDestination = Contents.GetCurrentByteAndInc();
+            var resultDestination = Memory.GetCurrentByteAndInc();
 
             OpLogging.Op2WithStore(GetType().Name.ToUpper(), args[0], args[1], result, resultDestination);
 
-            Contents.VariableManager.Store(
+            Memory.VariableManager.Store(
                 resultDestination, 
                 (ushort) result
                 );

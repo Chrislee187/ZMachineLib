@@ -12,8 +12,8 @@ namespace ZMachineLib.Operations.OPExtended
 
         public override void Execute(List<ushort> args)
         {
-            var dest = Contents.GetCurrentByteAndInc();
-            Contents.VariableManager.Store(dest, 0);
+            var dest = Memory.GetCurrentByteAndInc();
+            Memory.VariableManager.Store(dest, 0);
         }
     }
 }

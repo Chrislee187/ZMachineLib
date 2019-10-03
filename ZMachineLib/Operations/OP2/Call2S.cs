@@ -9,8 +9,8 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class Call2S : ZMachineOperationBase
     {
-        public Call2S(IZMemory contents)
-            : base((ushort)OpCodes.Call2S, contents)
+        public Call2S(IZMemory memory)
+            : base((ushort)OpCodes.Call2S, memory)
         {
         }
 

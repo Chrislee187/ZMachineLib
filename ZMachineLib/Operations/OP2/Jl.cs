@@ -11,14 +11,14 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class Jl : ZMachineOperationBase
     {
-        public Jl(IZMemory contents)
-            : base((ushort)OpCodes.Jl, contents)
+        public Jl(IZMemory memory)
+            : base((ushort)OpCodes.Jl, memory)
         {
         }
 
         public override void Execute(List<ushort> args)
         {
-            Contents.Jump((short)args[0] < (short)args[1]);
+            Memory.Jump((short)args[0] < (short)args[1]);
         }
     }
 }

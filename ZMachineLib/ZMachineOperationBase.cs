@@ -8,12 +8,12 @@ namespace ZMachineLib
     {
         public ushort Code { get; }
 
-        protected IZMemory Contents { get; }
+        protected IZMemory Memory { get; }
 
-        protected ZMachineOperationBase(ushort code, IZMemory contents)
+        protected ZMachineOperationBase(ushort code, IZMemory memory)
         {
             Code = code;
-            Contents = contents;
+            Memory = memory;
         }
 
         public abstract void Execute(List<ushort> args);
@@ -24,8 +24,8 @@ namespace ZMachineLib
             {
                 if (storeResult)
                 {
-                    var dest = Contents.GetCurrentByteAndInc();
-                    Contents.VariableManager.Store(dest, 0);
+                    var dest = Memory.GetCurrentByteAndInc();
+                    Memory.VariableManager.Store(dest, 0);
                 }
 
                 return;
@@ -35,9 +35,9 @@ namespace ZMachineLib
             Log.Write($"New PC: {pc:X5}");
 
             var zsf = new ZStackFrame { PC = pc, StoreResult = storeResult };
-            Contents.Stack.Push(zsf);
+            Memory.Stack.Push(zsf);
 
-            var routineArgs = Contents.GetCurrentByteAndInc();
+            var routineArgs = Memory.GetCurrentByteAndInc();
 
             InitialiseLocalVariables(routineArgs, zsf); // V4 Specific
 
@@ -54,13 +54,13 @@ namespace ZMachineLib
 
         private void InitialiseLocalVariables(byte routineArgs, ZStackFrame zsf)
         {
-            if (Contents.Header.Version <= 4)
+            if (Memory.Header.Version <= 4)
             {
                 for (var i = 0; i < routineArgs; i++)
                 {
-                    uint address = Contents.Stack.GetPC();
-                    zsf.Variables[i] = Contents.Manager.GetUShort((int) address);
-                    Contents.Stack.IncrementPC(2);
+                    uint address = Memory.Stack.GetPC();
+                    zsf.Variables[i] = Memory.Manager.GetUShort((int) address);
+                    Memory.Stack.IncrementPC(2);
                 }
             }
         }

@@ -13,15 +13,7 @@ namespace ZMachineLib.Unit.Tests
 
         public ZMachineObject Build()
         {
-            return new TestZMachineObject
-            {
-                ObjectNumber = _objectNumber,
-                Address = _address,
-                Parent = _parent,
-                Child = _child,
-                Sibling = _sibling,
-                Name = _name
-            };
+            return new TestZMachineObject(_name, _address, _objectNumber, _parent, _sibling, _child);
         }
 
         public ZMachineObjectBuilder WithRelations(ushort parent, ushort child, ushort sibling)
@@ -88,6 +80,11 @@ namespace ZMachineLib.Unit.Tests
 
     public class TestZMachineObject : ZMachineObject
     {
+        public TestZMachineObject(in string name, in ushort address, in ushort objectNumber, in ushort parent, in ushort sibling, in ushort child) 
+            : base(name, address, objectNumber, parent, sibling, child)
+        {
+        }
+
         public override ZMachineObject RefreshFromMemory()
         {
             return this;

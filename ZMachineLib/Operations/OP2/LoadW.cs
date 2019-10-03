@@ -11,16 +11,16 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class LoadW : ZMachineOperationBase
     {
-        public LoadW(IZMemory contents)
-            : base((ushort)OpCodes.LoadW, contents)
+        public LoadW(IZMemory memory)
+            : base((ushort)OpCodes.LoadW, memory)
         {
         }
 
         public override void Execute(List<ushort> args)
         {
             var addr = (ushort)(args[0] + 2 * args[1]);
-            var dest = Contents.GetCurrentByteAndInc();
-            Contents.VariableManager.Store(dest, Contents.Manager.GetUShort(addr));
+            var dest = Memory.GetCurrentByteAndInc();
+            Memory.VariableManager.Store(dest, Memory.Manager.GetUShort(addr));
         }
     }
 }

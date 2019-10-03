@@ -10,8 +10,8 @@ namespace ZMachineLib.Operations.OP1
     /// </summary>
     public sealed class RemoveObj : ZMachineOperationBase
     {
-        public RemoveObj(IZMemory contents)
-            : base((ushort)OpCodes.RemoveObj, contents)
+        public RemoveObj(IZMemory memory)
+            : base((ushort)OpCodes.RemoveObj, memory)
         {
 
         }
@@ -22,8 +22,8 @@ namespace ZMachineLib.Operations.OP1
             if (rootObjectNumber == 0)
                 return;
 
-            var zObj = Contents.ObjectTree.GetOrDefault(rootObjectNumber);
-            var parentZObj = Contents.ObjectTree.GetOrDefault(zObj.Parent);
+            var zObj = Memory.ObjectTree.GetOrDefault(rootObjectNumber);
+            var parentZObj = Memory.ObjectTree.GetOrDefault(zObj.Parent);
 
             // if object is the first child, simply set first child to the sibling to skip the the object being de-etached
             if (parentZObj.Child == rootObjectNumber)
@@ -32,7 +32,7 @@ namespace ZMachineLib.Operations.OP1
             }
             else if (parentZObj.Child != 0)
             {
-                RemoveObjectFromParent(zObj, Contents.ObjectTree.GetOrDefault(parentZObj.Child));
+                RemoveObjectFromParent(zObj, Memory.ObjectTree.GetOrDefault(parentZObj.Child));
             }
 
             // set the object's parent to nothing
@@ -42,7 +42,7 @@ namespace ZMachineLib.Operations.OP1
         private void RemoveObjectFromParent(IZMachineObject zObj, IZMachineObject firstChild)
         {
             var currentZObjToSet = firstChild;
-            var nextSibling = Contents.ObjectTree.GetOrDefault(firstChild.Sibling);
+            var nextSibling = Memory.ObjectTree.GetOrDefault(firstChild.Sibling);
             // while sibling of parent1's child has siblings
             while (nextSibling.ObjectNumber != 0)
             {
@@ -55,7 +55,7 @@ namespace ZMachineLib.Operations.OP1
                 }
 
                 currentZObjToSet = nextSibling;
-                nextSibling = Contents.ObjectTree.GetOrDefault(nextSibling.Sibling);
+                nextSibling = Memory.ObjectTree.GetOrDefault(nextSibling.Sibling);
             }
         }
     }

@@ -9,25 +9,25 @@ namespace ZMachineLib.Operations.OP1
     /// </summary>
     public sealed class GetSibling : ZMachineOperationBase
     {
-        public GetSibling(IZMemory contents)
-            : base((ushort)OpCodes.GetSibling, contents)
+        public GetSibling(IZMemory memory)
+            : base((ushort)OpCodes.GetSibling, memory)
         {
         }
 
         public override void Execute(List<ushort> args)
         {
             var obj = args[0];
-            var zObj = Contents.ObjectTree.GetOrDefault(obj).RefreshFromMemory();
-            var storageType = Contents.GetCurrentByteAndInc();
+            var zObj = Memory.ObjectTree.GetOrDefault(obj).RefreshFromMemory();
+            var storageType = Memory.GetCurrentByteAndInc();
 
-            if (Contents.Header.Version <= 3)
+            if (Memory.Header.Version <= 3)
             {
-                Contents.VariableManager.Store(storageType, (byte)zObj.Sibling);
+                Memory.VariableManager.Store(storageType, (byte)zObj.Sibling);
             }
             else
-                Contents.VariableManager.Store(storageType, zObj.Sibling);
+                Memory.VariableManager.Store(storageType, zObj.Sibling);
 
-            Contents.Jump(zObj.Sibling != 0);
+            Memory.Jump(zObj.Sibling != 0);
         }
     }
 }

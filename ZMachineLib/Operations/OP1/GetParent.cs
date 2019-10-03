@@ -10,24 +10,24 @@ namespace ZMachineLib.Operations.OP1
     /// </summary>
     public sealed class GetParent : ZMachineOperationBase
     {
-        public GetParent(IZMemory contents)
-            : base((ushort) OpCodes.GetParent, contents)
+        public GetParent(IZMemory memory)
+            : base((ushort) OpCodes.GetParent, memory)
         {
         }
 
         public override void Execute(List<ushort> args)
         {
             var obj = args[0];
-            var zObj = Contents.ObjectTree.GetOrDefault(obj).RefreshFromMemory();
-            var storageType = Contents.GetCurrentByteAndInc();
+            var zObj = Memory.ObjectTree.GetOrDefault(obj).RefreshFromMemory();
+            var storageType = Memory.GetCurrentByteAndInc();
 
-            if (Contents.Header.Version <= 3)
+            if (Memory.Header.Version <= 3)
             {
-                Contents.VariableManager.Store(storageType, (byte)zObj.Parent);
+                Memory.VariableManager.Store(storageType, (byte)zObj.Parent);
             }
             else
             {
-                Contents.VariableManager.Store(storageType, zObj.Parent);
+                Memory.VariableManager.Store(storageType, zObj.Parent);
             }
         }
     }

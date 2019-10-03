@@ -9,14 +9,14 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class Jg : ZMachineOperationBase
     {
-        public Jg(IZMemory contents)
-            : base((ushort)OpCodes.Jg, contents)
+        public Jg(IZMemory memory)
+            : base((ushort)OpCodes.Jg, memory)
         {
         }
 
         public override void Execute(List<ushort> args)
         {
-            Contents.Jump((short)args[0] > (short)args[1]);
+            Memory.Jump((short)args[0] > (short)args[1]);
         }
     }
 }

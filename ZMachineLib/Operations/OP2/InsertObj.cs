@@ -12,8 +12,8 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class InsertObj : ZMachineOperationBase
     {
-        public InsertObj(IZMemory contents)
-            : base((ushort)OpCodes.InsertObj, contents)
+        public InsertObj(IZMemory memory)
+            : base((ushort)OpCodes.InsertObj, memory)
         {
         }
 
@@ -26,14 +26,14 @@ namespace ZMachineLib.Operations.OP2
             var obj1Number = args[0];
             var obj2Number = args[1];
 
-            var zObj1 = Contents.ObjectTree[obj1Number];
-            var zObj2 = Contents.ObjectTree[obj2Number];
+            var zObj1 = Memory.ObjectTree[obj1Number];
+            var zObj2 = Memory.ObjectTree[obj2Number];
 
 
             if (zObj1.Parent == obj2Number && zObj2.Child == obj1Number)
                 return;
 
-            var parent1ZObj = Contents.ObjectTree[zObj1.Parent];
+            var parent1ZObj = Memory.ObjectTree[zObj1.Parent];
 
             // if parent1's child is obj1 we need to assign the sibling
             if (parent1ZObj.Child == obj1Number)
@@ -44,12 +44,7 @@ namespace ZMachineLib.Operations.OP2
             }
             else // else if I'm not the child but there is a child, we need to link the broken sibling chain
             {
-                // Need a longer test than the drink bottle of water with more interactions
-                // to get more opcodes to be hit.
-
-
-
-                var parent1ChildZObj = Contents.ObjectTree[parent1ZObj.Child];
+                var parent1ChildZObj = Memory.ObjectTree[parent1ZObj.Child];
                 var addr = parent1ChildZObj.Address;
                 var currentSibling = parent1ChildZObj.Sibling;
 
@@ -60,27 +55,27 @@ namespace ZMachineLib.Operations.OP2
                     if (currentSibling == obj1Number)
                     {
                         // set the current object's sibling to the next sibling
-                        Contents.Manager.Set(
-                            (ushort)(addr + Contents.Offsets.Sibling)
+                        Memory.Manager.Set(
+                            (ushort)(addr + Memory.Offsets.Sibling)
                             , (byte) zObj1.Sibling);
 //                        parent1ZObj.Sibling = zObj1.Sibling;
                         break;
                     }
 
-                    addr = Contents.ObjectTree[currentSibling].Address; // ObjectManager.GetObjectAddress(currentSibling);
+                    addr = Memory.ObjectTree[currentSibling].Address;
                     
-                    currentSibling = Contents.Manager.Get((ushort)(addr + Contents.Offsets.Sibling));
+                    currentSibling = Memory.Manager.Get((ushort)(addr + Memory.Offsets.Sibling));
                 }
             }
 
             // set obj1's parent to obj2
-            Contents.Manager.Set((ushort)(zObj1.Address + Contents.Offsets.Parent), (byte) obj2Number);
+            Memory.Manager.Set((ushort)(zObj1.Address + Memory.Offsets.Parent), (byte) obj2Number);
 
             // set obj2's child to obj1
-            Contents.Manager.Set((ushort)(zObj2.Address + Contents.Offsets.Child),(byte) obj1Number);
+            Memory.Manager.Set((ushort)(zObj2.Address + Memory.Offsets.Child),(byte) obj1Number);
 
             // set obj1's sibling to obj2's child
-            Contents.Manager.Set((ushort)(zObj1.Address + Contents.Offsets.Sibling), (byte)zObj2.Child);
+            Memory.Manager.Set((ushort)(zObj1.Address + Memory.Offsets.Sibling), (byte)zObj2.Child);
         }
     }
 }

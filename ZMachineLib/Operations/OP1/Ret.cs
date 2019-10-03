@@ -16,12 +16,12 @@ namespace ZMachineLib.Operations.OP1
 
         public override void Execute(List<ushort> args)
         {
-            var sf = Contents.Stack.Pop();
+            var sf = Memory.Stack.Pop();
             if (sf.StoreResult)
             {
-                var dest = Contents.GetCurrentByteAndInc();
+                var dest = Memory.GetCurrentByteAndInc();
                 ushort value = args[0];
-                Contents.VariableManager.Store(dest, value);
+                Memory.VariableManager.Store(dest, value);
             }
         }
     }

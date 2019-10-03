@@ -12,7 +12,7 @@ namespace ZMachineLib.Operations.OPVAR
 
         public override void Execute(List<ushort> args)
         {
-            var dest = Contents.GetCurrentByteAndInc();
+            var dest = Memory.GetCurrentByteAndInc();
             byte len = 0x02;
 
             if (args.Count == 4)
@@ -24,20 +24,20 @@ namespace ZMachineLib.Operations.OPVAR
                 ushort val;
 
                 if (args.Count == 3 || (args[3] & 0x80) == 0x80)
-                    val = Contents.Manager.GetUShort(addr);
+                    val = Memory.Manager.GetUShort(addr);
                 else
-                    val = Contents.Manager.Get(addr);
+                    val = Memory.Manager.Get(addr);
 
                 if (val == args[0])
                 {
-                    Contents.VariableManager.Store(dest, addr);
-                    Contents.Jump(true);
+                    Memory.VariableManager.Store(dest, addr);
+                    Memory.Jump(true);
                     return;
                 }
             }
 
-            Contents.VariableManager.Store(dest, 0);
-            Contents.Jump(false);
+            Memory.VariableManager.Store(dest, 0);
+            Memory.Jump(false);
         }
     }
 }

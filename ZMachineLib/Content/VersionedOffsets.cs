@@ -13,9 +13,9 @@
             return of;
         }
 
-        public int Parent { get; protected set; }
-        public int Sibling { get; protected set; }
-        public int Child { get; protected set; }
+        public ushort Parent { get; protected set; }
+        public ushort Sibling { get; protected set; }
+        public ushort Child { get; protected set; }
         public int Property { get; protected set; }
         public int ObjectSize { get; protected set; }
         public int PropertyDefaultTableSize { get; protected set; }

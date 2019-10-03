@@ -23,5 +23,5 @@ namespace ZMachineLib.Content
 			RoutineStack = new Stack<ushort>();
 			StoreResult = true;
 		}
-	}
+    }
 }

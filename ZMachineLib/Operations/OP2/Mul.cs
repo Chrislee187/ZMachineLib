@@ -10,19 +10,19 @@ namespace ZMachineLib.Operations.OP2
 
     public sealed class Mul : ZMachineOperationBase
     {
-        public Mul(IZMemory contents)
-            : base((ushort)OpCodes.Mul, contents)
+        public Mul(IZMemory memory)
+            : base((ushort)OpCodes.Mul, memory)
         {
         }
 
         public override void Execute(List<ushort> args)
         {
-            var dest = Contents.GetCurrentByteAndInc();
+            var dest = Memory.GetCurrentByteAndInc();
             var result = args[0] * args[1];
 
             OpLogging.Op2WithStore(GetType().Name.ToUpper(), args[0], args[1], result, dest);
 
-            Contents.VariableManager.Store(dest, (ushort) result);
+            Memory.VariableManager.Store(dest, (ushort) result);
         }
     }
 }

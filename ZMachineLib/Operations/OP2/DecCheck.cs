@@ -11,18 +11,18 @@ namespace ZMachineLib.Operations.OP2
     /// 
     public sealed class DecCheck : ZMachineOperationBase
     {
-        public DecCheck(IZMemory contents)
-            : base((ushort)OpCodes.DecCheck, contents)
+        public DecCheck(IZMemory memory)
+            : base((ushort)OpCodes.DecCheck, memory)
         {
         }
 
         public override void Execute(List<ushort> args)
         {
-            var val = (short)Contents.VariableManager.GetUShort((byte)args[0]);
+            var val = (short)Memory.VariableManager.GetUShort((byte)args[0]);
             val--;
             ushort value = (ushort)val;
-            Contents.VariableManager.Store((byte)args[0], value);
-            Contents.Jump(val < (short)args[1]);
+            Memory.VariableManager.Store((byte)args[0], value);
+            Memory.Jump(val < (short)args[1]);
         }
     }
 }

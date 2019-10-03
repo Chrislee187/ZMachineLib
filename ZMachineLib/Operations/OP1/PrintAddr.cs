@@ -20,7 +20,7 @@ namespace ZMachineLib.Operations.OP1
 
         public override void Execute(List<ushort> args)
         {
-            var s = Contents.GetZscii(args[0]);
+            var s = Memory.GetZscii(args[0]);
 
             _io.Print(s);
             Log.Write($"[{s}]");

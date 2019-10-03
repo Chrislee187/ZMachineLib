@@ -5,8 +5,8 @@ namespace ZMachineLib.Operations.OP2
 {
     public sealed class SetAttribute : ZMachineOperationBase
     {
-        public SetAttribute(IZMemory contents)
-            : base((ushort)OpCodes.SetAttribute, contents)
+        public SetAttribute(IZMemory memory)
+            : base((ushort)OpCodes.SetAttribute, memory)
         {
         }
 
@@ -18,7 +18,7 @@ namespace ZMachineLib.Operations.OP2
             if (obj == 0)
                 return;
 
-            Contents.ObjectTree[obj].SetAttribute(attr);
+            Memory.ObjectTree[obj].SetAttribute(attr);
         }
     }
 }

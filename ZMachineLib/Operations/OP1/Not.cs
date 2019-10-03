@@ -19,9 +19,9 @@ namespace ZMachineLib.Operations.OP1
 
         public override void Execute(List<ushort> args)
         {
-            var dest = Contents.GetCurrentByteAndInc();
+            var dest = Memory.GetCurrentByteAndInc();
             ushort value = (ushort)~args[0];
-            Contents.VariableManager.Store(dest, value);
+            Memory.VariableManager.Store(dest, value);
         }
     }
 }

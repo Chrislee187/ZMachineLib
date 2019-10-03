@@ -9,7 +9,7 @@ namespace ZMachineLib.Content
         void SetAttribute(ushort attr);
         ulong Attributes { get; }
         string Name { get; }
-        ushort Address { get; set; }
+        ushort Address { get; }
         ushort Sibling { get; set; }
         ushort Parent { get; set; }
         ushort Child { get; set; }

@@ -9,6 +9,6 @@ namespace ZMachineLib.Operations.OP0
             : base((ushort)OpCodes.Verify, memory)
         {}
 
-        public override void Execute(List<ushort> args) => Contents.Jump(true);
+        public override void Execute(List<ushort> args) => Memory.Jump(true);
     }
 }

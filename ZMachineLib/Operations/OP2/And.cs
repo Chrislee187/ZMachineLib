@@ -9,20 +9,20 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class And : ZMachineOperationBase
     {
-        public And(IZMemory contents)
-            : base((ushort)OpCodes.And, contents)
+        public And(IZMemory memory)
+            : base((ushort)OpCodes.And, memory)
         {
         }
 
         public override void Execute(List<ushort> args)
         {
             var result = (ushort)(args[0] & args[1]);
-            var dest = Contents.GetCurrentByteAndInc();
+            var dest = Memory.GetCurrentByteAndInc();
 
             OpLogging.Op2WithStore(GetType().Name.ToUpper(), args[0], args[1], result, dest);
 
 
-            Contents.VariableManager.Store(dest, result);
+            Memory.VariableManager.Store(dest, result);
         }
     }
 }

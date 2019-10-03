@@ -15,7 +15,7 @@ namespace ZMachineLib.Operations.OP0
 
         public override void Execute(List<ushort> args)
         {
-            Contents.Running = false;
+            Memory.Running = false;
             _io.Quit();
         }
     }

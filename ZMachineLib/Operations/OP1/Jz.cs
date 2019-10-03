@@ -9,15 +9,15 @@ namespace ZMachineLib.Operations.OP1
     /// </summary>
     public sealed class Jz : ZMachineOperationBase
     {
-        public Jz(IZMemory contents)
-            : base((ushort)OpCodes.Jz, contents)
+        public Jz(IZMemory memory)
+            : base((ushort)OpCodes.Jz, memory)
         {
         }
 
         public override void Execute(List<ushort> args)
         {
             // TODO: Refactor the underlying jump code before sorting the test out for this
-            Contents.Jump(args[0] == 0);
+            Memory.Jump(args[0] == 0);
         }
     }
 }

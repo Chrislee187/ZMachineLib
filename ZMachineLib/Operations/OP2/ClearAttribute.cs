@@ -9,14 +9,14 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class ClearAttribute : ZMachineOperationBase
     {
-        public ClearAttribute(IZMemory contents)
-            : base((ushort)OpCodes.ClearAttribute, contents)
+        public ClearAttribute(IZMemory memory)
+            : base((ushort)OpCodes.ClearAttribute, memory)
         {
         }
 
         public override void Execute(List<ushort> args)
         {
-            Contents.ObjectTree.GetOrDefault(args[0])
+            Memory.ObjectTree.GetOrDefault(args[0])
                 .ClearAttribute(args[1]);
         }
     }

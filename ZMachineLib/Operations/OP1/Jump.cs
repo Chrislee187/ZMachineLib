@@ -31,8 +31,8 @@ namespace ZMachineLib.Operations.OP1
         public override void Execute(List<ushort> args)
         {
             var offset = (short)(args[0] - 2);
-            Contents.Stack.IncrementPC(offset);
-            Log.Write($"-> {Contents.Stack.GetPC():X5}");
+            Memory.Stack.IncrementPC(offset);
+            Log.Write($"-> {Memory.Stack.GetPC():X5}");
         }
     }
 }

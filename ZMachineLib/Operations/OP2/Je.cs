@@ -11,8 +11,8 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class Je : ZMachineOperationBase
     {
-        public Je(IZMemory contents)
-            : base((ushort)OpCodes.Je, contents)
+        public Je(IZMemory memory)
+            : base((ushort)OpCodes.Je, memory)
         {
         }
 
@@ -28,7 +28,7 @@ namespace ZMachineLib.Operations.OP2
                 }
             }
 
-            Contents.Jump(equal);
+            Memory.Jump(equal);
         }
     }
 }

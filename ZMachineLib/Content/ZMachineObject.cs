@@ -10,6 +10,8 @@ namespace ZMachineLib.Content
     [DebuggerDisplay("[{ObjectNumber}] '{Name}'")]
     public class ZMachineObject : IZMachineObject
     {
+        public ushort ObjectNumber { get; set; }
+        public ushort Address { get; }
         public string Name { get; set; }
         public ulong Attributes { get; private set; }
         public IDictionary<int, ZProperty> Properties { get; set; }
@@ -22,14 +24,18 @@ namespace ZMachineLib.Content
         private readonly ZHeader _header;
         private VersionedOffsets Offsets => VersionedOffsets.For(_header.Version);
 
-
-        public ushort Address { get; set; }
-
         public byte BytesRead { get; private set; }
 
-        protected ZMachineObject()
+        protected ZMachineObject(in string name, in ushort address, in ushort objectNumber, 
+            in ushort parent, in ushort sibling, 
+            in ushort child)
         {
-            // Used by tests
+            ObjectNumber = objectNumber;
+            Address = address;
+            Parent = parent;
+            Sibling = sibling;
+            Child = child;
+            Name = name;
         }
 
         public ZMachineObject(ushort objNumber, ushort address,
@@ -49,7 +55,6 @@ namespace ZMachineLib.Content
             Address = address;
 
             HydrateObject();
-
         }
 
         public virtual ZMachineObject RefreshFromMemory()
@@ -75,8 +80,11 @@ namespace ZMachineLib.Content
             SetAttributes(attrs);
             ptr += sizeof(uint);
 
+            Debug.Assert(Address + Offsets.Parent == ptr);
             Parent = _manager.Get(ptr++);
+            Debug.Assert(Address + Offsets.Sibling == ptr);
             Sibling = _manager.Get(ptr++);
+            Debug.Assert(Address + Offsets.Child == ptr);
             Child = _manager.Get(ptr++);
 
             PropertiesAddress = _manager.GetUShort(ptr);
@@ -121,8 +129,7 @@ namespace ZMachineLib.Content
 
             return properties;
         }
-
-
+        
         private void SetAttributes(uint attrs)
         {
             Attributes = attrs;
@@ -139,12 +146,11 @@ namespace ZMachineLib.Content
         
         public ushort PropertiesAddress { get; set; }
 
-        public ushort ObjectNumber { get; set; }
 
         private ushort _parentObjectNumber;
         public ushort Parent
         {
-            get => _parentObjectNumber;
+            get => _parentObjectNumber; // _manager?.Get((ushort)(Address + Offsets.Parent)) ?? 0; //  
             set
             {
                 _parentObjectNumber = value;
@@ -155,10 +161,9 @@ namespace ZMachineLib.Content
         private ushort _childObjectNumber;
         public ushort Child
         {
-            get => _childObjectNumber;
+            get => _childObjectNumber; // _manager?.Get((ushort)(Address + Offsets.Child)) ?? 0; // 
             set
             {
-
                 _childObjectNumber = value;
                 _manager?.Set((ushort)(Address + Offsets.Child), (byte)value);
             }
@@ -167,7 +172,7 @@ namespace ZMachineLib.Content
         private ushort _siblingObjectNumber;
         public ushort Sibling
         {
-            get => _siblingObjectNumber;
+            get => _siblingObjectNumber; // _manager?.Get((ushort)(Address + Offsets.Sibling)) ?? 0; // 
             set
             {
                 _siblingObjectNumber = value;

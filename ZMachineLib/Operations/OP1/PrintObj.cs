@@ -23,7 +23,7 @@ namespace ZMachineLib.Operations.OP1
         public override void Execute(List<ushort> args)
         {
             var obj = args[0];
-            var zObj = Contents.ObjectTree.GetOrDefault(obj);
+            var zObj = Memory.ObjectTree.GetOrDefault(obj);
             _io.Print(zObj.Name);
             Log.Write($"[{zObj.Name}]");
         }

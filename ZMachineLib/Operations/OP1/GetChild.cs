@@ -11,27 +11,27 @@ namespace ZMachineLib.Operations.OP1
     /// </summary>
     public sealed class GetChild : ZMachineOperationBase
     {
-        public GetChild(IZMemory contents)
-            : base((ushort)OpCodes.GetChild, contents)
+        public GetChild(IZMemory memory)
+            : base((ushort)OpCodes.GetChild, memory)
         {
         }
 
         public override void Execute(List<ushort> args)
         {
             var obj = args[0];
-            var zObj = Contents.ObjectTree.GetOrDefault(obj).RefreshFromMemory();
-            var storageType = Contents.GetCurrentByteAndInc();
+            var zObj = Memory.ObjectTree.GetOrDefault(obj).RefreshFromMemory();
+            var storageType = Memory.GetCurrentByteAndInc();
 
-            if (Contents.Header.Version <= 3)
+            if (Memory.Header.Version <= 3)
             {
-                Contents.VariableManager.Store(storageType, (byte) zObj.Child);
+                Memory.VariableManager.Store(storageType, (byte) zObj.Child);
             }
             else
             {
-                Contents.VariableManager.Store(storageType, zObj.Child);
+                Memory.VariableManager.Store(storageType, zObj.Child);
             }
 
-            Contents.Jump(zObj.Child != 0);
+            Memory.Jump(zObj.Child != 0);
         }
     }
 }

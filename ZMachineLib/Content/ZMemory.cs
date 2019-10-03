@@ -118,7 +118,7 @@ namespace ZMachineLib.Content
             }
 
             if (executeBranch)
-                Stack.IncrementPC((uint)newOffset);
+                Stack.IncrementPC(newOffset);
 
             Log.Write($"-> { Stack.GetPC():X5}");
         }

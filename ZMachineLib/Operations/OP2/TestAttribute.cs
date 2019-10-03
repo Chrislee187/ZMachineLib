@@ -9,8 +9,8 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class TestAttribute : ZMachineOperationBase
     {
-        public TestAttribute(IZMemory contents)
-            : base((ushort)OpCodes.TestAttribute, contents)
+        public TestAttribute(IZMemory memory)
+            : base((ushort)OpCodes.TestAttribute, memory)
         {
         }
 
@@ -18,9 +18,9 @@ namespace ZMachineLib.Operations.OP2
         {
             var obj = args[0];
             var attr = args[1];
-            var zObj = Contents.ObjectTree[obj];
+            var zObj = Memory.ObjectTree[obj];
 
-            Contents.Jump(zObj.TestAttribute(attr));
+            Memory.Jump(zObj.TestAttribute(attr));
         }
     }
 

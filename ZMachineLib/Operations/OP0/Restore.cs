@@ -23,28 +23,28 @@ namespace ZMachineLib.Operations.OP0
                 RestoreState(stream);
             }
             
-            if (Contents.Header.Version < 5)
+            if (Memory.Header.Version < 5)
             {
-                Contents.Jump(true);
+                Memory.Jump(true);
             }
             else
             {
-                Contents.VariableManager.Store(Contents.GetCurrentByteAndInc(), 1);
+                Memory.VariableManager.Store(Memory.GetCurrentByteAndInc(), 1);
             }
         }
 
         private void RestoreState(Stream stream)
         {
             stream.Position = 0;
-            stream.Read(((MemoryManager)(Contents.Manager)).Buffer, 0, Contents.Header.DynamicMemorySize - 1);
+            stream.Read(((MemoryManager)(Memory.Manager)).Buffer, 0, Memory.Header.DynamicMemorySize - 1);
 
             var dcs = new DataContractJsonSerializer(typeof(ZStackFrame[]));
             var zStackFrames = (ZStackFrame[])dcs.ReadObject(stream);
             
-            Contents.Stack.Clear();
+            Memory.Stack.Clear();
             foreach (var zStackFrame in zStackFrames.ToArray().Reverse())
             {
-                Contents.Stack.Push(zStackFrame);
+                Memory.Stack.Push(zStackFrame);
             }
 
             stream.Dispose();

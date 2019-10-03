@@ -7,9 +7,9 @@ namespace ZMachineLib.Operations.OP2
     {
         private IUserIo _io;
 
-        public SetColor(IZMemory contents,
+        public SetColor(IZMemory memory,
             IUserIo io)
-            : base((ushort)OpCodes.SetColor, contents)
+            : base((ushort)OpCodes.SetColor, memory)
         {
             _io = io;
         }

@@ -35,7 +35,7 @@ namespace ZMachineLib.Unit.Tests.Operations.OP1
 
             Mockery
                 .ProgramCounterEquals(expectedPC)
-                .ResultWillBeStored()
+                .RoutineResultWillBeStored()
                 .LocalVariablesInitialisedFromMemory(routineArgs.Length)
                 .RoutineArgsStoredInLocalVariables(routineArgs)
                 ;

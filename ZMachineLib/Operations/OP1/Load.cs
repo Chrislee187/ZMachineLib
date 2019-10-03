@@ -18,10 +18,10 @@ namespace ZMachineLib.Operations.OP1
         public override void Execute(List<ushort> args)
         {
             var variable = (byte)args[0];
-            var val = Contents.VariableManager.GetUShort(variable, false);
+            var val = Memory.VariableManager.GetUShort(variable, false);
 
-            var dest = Contents.GetCurrentByteAndInc();
-            Contents.VariableManager.Store(dest, val); // NOTE: The original code cast the value to byte, don't know why, seems to work ok
+            var dest = Memory.GetCurrentByteAndInc();
+            Memory.VariableManager.Store(dest, val); // NOTE: The original code cast the value to byte, don't know why, seems to work ok
         }
     }
 }

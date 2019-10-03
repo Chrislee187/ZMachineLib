@@ -16,7 +16,7 @@ namespace ZMachineLib.Operations.OPVAR
         public override void Execute(List<ushort> args)
         {
             // TODO: print properly
-            var s = Contents.GetZscii(Contents.Manager.AsSpan(args[0]));
+            var s = Memory.GetZscii(Memory.Manager.AsSpan(args[0]));
             _io.Print(s);
             Log.Write($"[{s}]");
         }

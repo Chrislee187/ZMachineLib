@@ -14,24 +14,24 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class GetProp : ZMachineOperationBase
     {
-        public GetProp(IZMemory contents)
-            : base((ushort)OpCodes.GetProp, contents)
+        public GetProp(IZMemory memory)
+            : base((ushort)OpCodes.GetProp, memory)
         {
         }
 
         public override void Execute(List<ushort> args)
         {
-            var dest = Contents.GetCurrentByteAndInc();
+            var dest = Memory.GetCurrentByteAndInc();
             var obj = args[0];
             byte prop = (byte)args[1];
-            var zObj = Contents.ObjectTree[obj];
+            var zObj = Memory.ObjectTree[obj];
 
             ushort valNew = 0;
             var propValues = zObj.GetProperty(prop);
             for (var i = 0; i < propValues.Data.Length; i++)
                 valNew |= (ushort)(propValues.Data[i] << (propValues.Data.Length - 1 - i) * 8);
 
-            Contents.VariableManager.Store(dest, valNew);
+            Memory.VariableManager.Store(dest, valNew);
         }
     }
 }

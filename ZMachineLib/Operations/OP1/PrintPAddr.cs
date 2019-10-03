@@ -21,8 +21,8 @@ namespace ZMachineLib.Operations.OP1
         public override void Execute(List<ushort> args)
         {
             var packedAddress = ZMemory.UnpackedAddress(args[0]);
-            var array = Contents.Manager.AsSpan(packedAddress);
-            var s = Contents.GetZscii(array);
+            var array = Memory.Manager.AsSpan(packedAddress);
+            var s = Memory.GetZscii(array);
             _io.Print(s);
             Log.Write($"[{s}]");
 

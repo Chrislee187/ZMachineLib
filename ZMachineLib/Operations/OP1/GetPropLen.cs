@@ -14,20 +14,20 @@ namespace ZMachineLib.Operations.OP1
     /// </summary>
     public sealed class GetPropLen : ZMachineOperationBase
     {
-        public GetPropLen(IZMemory contents)
-            : base((ushort)OpCodes.GetPropLen, contents)
+        public GetPropLen(IZMemory memory)
+            : base((ushort)OpCodes.GetPropLen, memory)
         {
         }
 
         public override void Execute(List<ushort> args)
         {
             var propAddress = args[0] - 1;
-            var propInfo = Contents.Manager.Get((ushort) propAddress);
-            var dest = Contents.GetCurrentByteAndInc();
+            var propInfo = Memory.Manager.Get((ushort) propAddress);
+            var dest = Memory.GetCurrentByteAndInc();
             
             var len = ZProperty.GetPropertySize(propInfo);
 
-            Contents.VariableManager.Store(dest, len);
+            Memory.VariableManager.Store(dest, len);
         }
     }
 }

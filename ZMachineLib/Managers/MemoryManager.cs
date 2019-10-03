@@ -48,7 +48,7 @@ namespace ZMachineLib.Managers
         public void SetUShort(uint address, ushort value)
         {
             Buffer.Set(address + 0, (byte)(value >> 8));
-            Buffer.Set(address + 1, (byte)(value >> 0));
+            Buffer.Set(address + 1, (byte)value);
         }
         public void SetLong(uint address, uint value) => Buffer.SetLong(address, value);
     }

@@ -12,9 +12,9 @@ namespace ZMachineLib.Operations.OP0
 
         public override void Execute(List<ushort> args)
         {
-            if (Contents.Stack.Pop().StoreResult)
+            if (Memory.Stack.Pop().StoreResult)
             {
-                Contents.VariableManager.Store(Contents.GetCurrentByteAndInc(), 0);
+                Memory.VariableManager.Store(Memory.GetCurrentByteAndInc(), 0);
             }
         }
     }

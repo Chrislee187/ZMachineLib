@@ -9,14 +9,14 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class Test : ZMachineOperationBase
     {
-        public Test(IZMemory contents)
-            : base((ushort)OpCodes.Test, contents)
+        public Test(IZMemory memory)
+            : base((ushort)OpCodes.Test, memory)
         {
         }
 
         public override void Execute(List<ushort> args)
         {
-            Contents.Jump((args[0] & args[1]) == args[1]);
+            Memory.Jump((args[0] & args[1]) == args[1]);
         }
     }
 }

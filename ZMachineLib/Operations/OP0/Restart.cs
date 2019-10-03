@@ -11,7 +11,7 @@ namespace ZMachineLib.Operations.OP0
         }
         public override void Execute(List<ushort> args)
         {
-            Contents.Restart();
+            Memory.Restart();
         }
 
     }

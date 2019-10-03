@@ -25,16 +25,16 @@ namespace ZMachineLib.Operations.OP0
             {
                 var saveSuccessful = Io.Save(state);
                 state.Dispose();
-                if (Contents.Header.Version < 5)
+                if (Memory.Header.Version < 5)
                 {
-                    Contents.Jump(saveSuccessful);
+                    Memory.Jump(saveSuccessful);
                 }
                 else
                 {
-                    Contents.VariableManager.Store(Contents.GetCurrentByteAndInc(), saveSuccessful.ToOneOrZero());
+                    Memory.VariableManager.Store(Memory.GetCurrentByteAndInc(), saveSuccessful.ToOneOrZero());
                 }
             }
-            catch
+            catch(Exception e)
             {
                 // ignored: we don't want to crash the machine so ignore any IO errors
             }
@@ -50,9 +50,9 @@ namespace ZMachineLib.Operations.OP0
             // were always zero, the values are only used whilst reading user input so have been removed from
             // the save/restore code. There is a common save format available that maybe used them, needs checking
 
-            bw.Write(((MemoryManager)(Contents.Manager)).Buffer, 0, Contents.Header.DynamicMemorySize - 1);
+            bw.Write(((MemoryManager)(Memory.Manager)).Buffer, 0, Memory.Header.DynamicMemorySize - 1);
 
-            var frames = ((Contents.Stack as Stack<ZStackFrame>) ?? throw new InvalidOperationException())
+            var frames = ((Memory.Stack as Stack<ZStackFrame>) ?? throw new InvalidOperationException())
                 .Select(f => f).ToArray();
             var dcs = new DataContractJsonSerializer(typeof(ZStackFrame[]));
             dcs.WriteObject(ms, frames);

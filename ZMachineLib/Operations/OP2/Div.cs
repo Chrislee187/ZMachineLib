@@ -10,14 +10,14 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class Div : ZMachineOperationBase
     {
-        public Div(IZMemory contents)
-            : base((ushort)OpCodes.Div, contents)
+        public Div(IZMemory memory)
+            : base((ushort)OpCodes.Div, memory)
         {
         }
 
         public override void Execute(List<ushort> args)
         {
-            var dest = Contents.GetCurrentByteAndInc();
+            var dest = Memory.GetCurrentByteAndInc();
 
             if (args[1] == 0)
             {
@@ -29,7 +29,7 @@ namespace ZMachineLib.Operations.OP2
 
             OpLogging.Op2WithStore(GetType().Name.ToUpper(), args[0], args[1], result, dest);
 
-            Contents.VariableManager.Store(dest, result);
+            Memory.VariableManager.Store(dest, result);
         }
     }
 }

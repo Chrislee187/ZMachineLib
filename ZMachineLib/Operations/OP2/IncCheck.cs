@@ -9,19 +9,19 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class IncCheck : ZMachineOperationBase
     {
-        public IncCheck(IZMemory contents)
-            : base((ushort)OpCodes.IncCheck, contents)
+        public IncCheck(IZMemory memory)
+            : base((ushort)OpCodes.IncCheck, memory)
         {
         }
 
         public override void Execute(List<ushort> args)
         {
-            var variableManager = Contents.VariableManager;
+            var variableManager = Memory.VariableManager;
             var val = (short)variableManager.GetUShort((byte)args[0]);
             val++;
             ushort value = (ushort)val;
             variableManager.Store((byte)args[0], value);
-            Contents.Jump(val > (short)args[1]);
+            Memory.Jump(val > (short)args[1]);
         }
     }
 }

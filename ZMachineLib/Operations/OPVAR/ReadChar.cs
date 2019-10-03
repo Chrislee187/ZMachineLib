@@ -17,9 +17,9 @@ namespace ZMachineLib.Operations.OPVAR
         {
             var key = _io.ReadChar();
 
-            var dest = Contents.GetCurrentByteAndInc();
+            var dest = Memory.GetCurrentByteAndInc();
             byte value = (byte)key;
-            Contents.VariableManager.Store(dest, value);
+            Memory.VariableManager.Store(dest, value);
         }
     }
 }

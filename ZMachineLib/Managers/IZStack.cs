@@ -15,9 +15,9 @@ namespace ZMachineLib.Managers
         void SetPC(uint value);
         uint GetPCAndInc();
 
-        void IncrementPC(ushort value = 1); 
-        void IncrementPC(uint value = 1);
-        void IncrementPC(short value = 1); 
+//        void IncrementPC(ushort value = 1); 
+//        void IncrementPC(uint value = 1);
+//        void IncrementPC(short value = 1); 
         void IncrementPC(int value = 1);
 
     }

@@ -9,16 +9,16 @@ namespace ZMachineLib.Operations.OP2
     /// </summary>
     public sealed class Jin : ZMachineOperationBase
     {
-        public Jin(IZMemory contents)
-            : base((ushort)OpCodes.Jin, contents)
+        public Jin(IZMemory memory)
+            : base((ushort)OpCodes.Jin, memory)
         {
         }
 
         public override void Execute(List<ushort> args)
         {
-            var zObj = Contents.ObjectTree.GetOrDefault(args[0]);
+            var zObj = Memory.ObjectTree.GetOrDefault(args[0]);
 
-            Contents.Jump(zObj.Parent == args[1]);
+            Memory.Jump(zObj.Parent == args[1]);
         }
     }
 }

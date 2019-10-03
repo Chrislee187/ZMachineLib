@@ -20,8 +20,8 @@ namespace ZMachineLib.Operations.OPVAR
             else
                 val = (ushort)(_random.Next(0, args[0]) + 1);
 
-            var dest = Contents.GetCurrentByteAndInc();
-            Contents.VariableManager.Store(dest, val);
+            var dest = Memory.GetCurrentByteAndInc();
+            Memory.VariableManager.Store(dest, val);
         }
     }
 }
