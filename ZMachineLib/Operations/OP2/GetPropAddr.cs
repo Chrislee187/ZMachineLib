@@ -17,7 +17,7 @@ namespace ZMachineLib.Operations.OP2
             var obj = args[0];
             var prop = (byte)args[1];
             var zObj = Memory.ObjectTree[obj];
-            var addr = zObj.GetProperty(prop).DataAddress;
+            var addr = zObj.GetPropertyOrDefault(prop).DataAddress;
 
             Memory.VariableManager.Store(dest, addr);
         }

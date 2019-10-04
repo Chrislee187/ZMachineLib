@@ -1,0 +1,50 @@
+﻿drop all
+go west
+take coal
+take screwdriver
+take torch
+go south
+open lid
+put coal in machine
+close lid
+turn switch with screwdriver
+drop screwdriver
+open lid
+take diamond
+go north
+put torch in basket
+put diamond in basket
+go east
+take skull
+take lamp
+take garlic
+go east
+go up
+go up
+go north
+go east
+go south
+go north
+take bracelet
+go up
+go south
+raise basket
+look in basket
+take diamond
+take torch
+turn off lamp
+go west
+take jade
+go south
+go east
+go south
+go down
+go up
+inventory
+put jade in case
+put diamond in case
+turn on lamp
+go down
+go north
+go east
+go north

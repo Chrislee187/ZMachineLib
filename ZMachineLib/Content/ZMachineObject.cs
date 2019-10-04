@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Net.WebSockets;
 using ZMachineLib.Extensions;
 using ZMachineLib.Managers;
 
@@ -12,19 +13,27 @@ namespace ZMachineLib.Content
     {
         public ushort ObjectNumber { get; set; }
         public ushort Address { get; }
-        public string Name { get; set; }
-        public ulong Attributes { get; private set; }
+        public string Name { get; private set; }
+
+        public ulong Attributes
+        {
+            get => _manager.AsSpan(Address, 4).GetUInt();
+            private set => _manager.SetUInt(Address, (uint) value);
+        }
         public IDictionary<int, ZProperty> Properties { get; set; }
+
+        public byte BytesRead { get; private set; }
+
         private readonly IReadOnlyDictionary<int, byte[]> _defaultProps;
 
-        private readonly Func<ushort, ulong> _flagsProviderV3 = attr => 0x80000000 >> attr;
+        private readonly Func<ushort, ulong> _flagsProviderV3 = attr 
+            => 0x80000000 >> attr;
 
         private readonly IMemoryManager _manager;
         private readonly ZAbbreviations _abbreviations;
         private readonly ZHeader _header;
         private VersionedOffsets Offsets => VersionedOffsets.For(_header.Version);
 
-        public byte BytesRead { get; private set; }
 
         protected ZMachineObject(in string name, in ushort address, in ushort objectNumber, 
             in ushort parent, in ushort sibling, 
@@ -63,11 +72,11 @@ namespace ZMachineLib.Content
             return this;
         }
 
-        public ZProperty GetProperty(int i)
+        public ZProperty GetPropertyOrDefault(int i)
         {
             if (!Properties.TryGetValue(i, out var value))
             {
-                value = new ZProperty(i, 0, _defaultProps[i], _manager);
+                value = new ZProperty(i, _defaultProps[i]);
             }
             return value;
         }
@@ -76,19 +85,11 @@ namespace ZMachineLib.Content
         {
             var ptr = Address;
 
-            var attrs = _manager.AsSpan(ptr, 4).GetUInt();
-            SetAttributes(attrs);
-            ptr += sizeof(uint);
-
-            Debug.Assert(Address + Offsets.Parent == ptr);
-            Parent = _manager.Get(ptr++);
-            Debug.Assert(Address + Offsets.Sibling == ptr);
-            Sibling = _manager.Get(ptr++);
-            Debug.Assert(Address + Offsets.Child == ptr);
-            Child = _manager.Get(ptr++);
+            ptr += sizeof(uint); // skip Attributes
+            ptr += 3; // skip parent/child/sibling
 
             PropertiesAddress = _manager.GetUShort(ptr);
-            ptr += 2;
+            ptr += sizeof(ushort);
 
             BytesRead = (byte) (ptr - Address);
             ptr = PropertiesAddress;
@@ -109,78 +110,40 @@ namespace ZMachineLib.Content
         {
             Debug.Assert(ptr > 0, "GetProperties ptr not > 0");
 
-
             var properties = new Dictionary<int, ZProperty>();
-            while (_manager.Get(ptr) != 0x00)
+            var b = _manager.Get(ptr);
+            while (b != 0)
             {
                 // Section 12.4.1 - V3 Specific
-                var sizeByte = _manager.Get(ptr++);
-                var dataAddress = ptr;
-                var propNum = ZProperty.GetPropertyNumber(sizeByte);
-                var propSize = ZProperty.GetPropertySize(sizeByte);
-
-                var propData = _manager.AsSpan(ptr, propSize);
-                properties.Add(
-                    propNum, 
-                    new ZProperty(sizeByte, dataAddress, propData, _manager)
-                    );
-                ptr += propSize;
+                var prop = new ZProperty(_manager, ptr);
+                Debug.Assert(prop.Number != 0);
+                properties.Add(prop.Number, prop);
+                ptr += prop.BytesUsed;
+                b = _manager.Get(ptr);
             }
 
             return properties;
         }
-        
-        private void SetAttributes(uint attrs)
-        {
-            Attributes = attrs;
 
-            AttributeFlags = new Dictionary<int, bool>();
-            for (int i = 1; i <= 32; i++)
-            {
-                var attrSet = (attrs & (ulong) (1 << i-1)) > 0;
-                AttributeFlags.Add(32 - i, attrSet);
-            }
-        }
-
-        public Dictionary<int, bool> AttributeFlags { get; set; }
-        
         public ushort PropertiesAddress { get; set; }
 
-
-        private ushort _parentObjectNumber;
-        public ushort Parent
+        public virtual ushort Parent
         {
-            get => _parentObjectNumber; // _manager?.Get((ushort)(Address + Offsets.Parent)) ?? 0; //  
-            set
-            {
-                _parentObjectNumber = value;
-                _manager?.Set((ushort)(Address + Offsets.Parent), (byte)value);
-            }
+            get => _manager?.Get((ushort) (Address + Offsets.Parent)) ?? 0;
+            set => _manager?.Set((ushort) (Address + Offsets.Parent), (byte)value);
         }
 
-        private ushort _childObjectNumber;
-        public ushort Child
+        public virtual ushort Sibling
         {
-            get => _childObjectNumber; // _manager?.Get((ushort)(Address + Offsets.Child)) ?? 0; // 
-            set
-            {
-                _childObjectNumber = value;
-                _manager?.Set((ushort)(Address + Offsets.Child), (byte)value);
-            }
+            get => _manager?.Get((ushort) (Address + Offsets.Sibling)) ?? 0;
+            set => _manager?.Set((ushort) (Address + Offsets.Sibling), (byte)value);
         }
 
-        private ushort _siblingObjectNumber;
-        public ushort Sibling
+        public virtual ushort Child
         {
-            get => _siblingObjectNumber; // _manager?.Get((ushort)(Address + Offsets.Sibling)) ?? 0; // 
-            set
-            {
-                _siblingObjectNumber = value;
-                _manager?.Set((ushort)(Address + Offsets.Sibling), (byte)value);
-            }
+            get => _manager?.Get((ushort) (Address + Offsets.Child)) ?? 0;
+            set => _manager?.Set((ushort) (Address + Offsets.Child), (byte)value);
         }
-
-        public ushort PropertyHeader { get; set; }
 
         public bool TestAttribute(ushort attr) 
             => (_flagsProviderV3(attr) & Attributes) == _flagsProviderV3(attr);
@@ -191,18 +154,16 @@ namespace ZMachineLib.Content
 
             if (_header.Version <= 3)
             {
-                var attributes = Attributes & ~flagMask;
-                _manager.SetLong(Address, (uint)attributes);
+                Attributes = Attributes & ~flagMask;
+                _manager.SetUInt(Address, (uint)Attributes);
             }
             else
             {
                 // TODO: _manager NOT tested in this section
-                var attributes = Attributes & ~flagMask;
-                uint val = (uint)attributes >> 16;
-//                _objectManager.Machine._memory.SetLong(DataAddress, val);
-                _manager.SetLong(Address, val);
-                ushort value = (ushort)attributes;
-//                _objectManager.Machine._memory.SetUShort((ushort)(DataAddress + 4), value);
+                Attributes = Attributes & ~flagMask;
+                uint val = (uint)Attributes >> 16;
+                _manager.SetUInt(Address, val);
+                ushort value = (ushort)Attributes;
                 _manager.Set((ushort)(Address + 4), value);
             }
         }
@@ -214,16 +175,14 @@ namespace ZMachineLib.Content
             if (_header.Version <= 3)
             {
                 Attributes |= flagMask;
-                _manager.SetLong(Address, (uint)Attributes);
+                _manager.SetUInt(Address, (uint)Attributes);
 
             }
             else
             {
                 // TODO: _manager NOT tested in this section
                 Attributes |= flagMask;
-//                _objectManager.Machine._memory.SetLong(DataAddress, (uint)(attributes >> 16));
-                _manager.SetLong(Address, (uint)(Attributes >> 16));
-//                _objectManager.Machine._memory.SetUShort((ushort)(DataAddress + 4), (ushort)attributes);
+                _manager.SetUInt(Address, (uint)(Attributes >> 16));
                 _manager.Set((ushort)(Address + 4), (ushort)Attributes);
 
             }

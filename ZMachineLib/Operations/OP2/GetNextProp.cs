@@ -34,16 +34,6 @@ namespace ZMachineLib.Operations.OP2
 
             var zObj = Memory.ObjectTree.GetOrDefault(obj);
 
-            var keyArray = zObj.Properties.Keys.ToArray();
-            var propIdx = Array.FindIndex(keyArray, k => k == prop);
-
-            var nextPropNum = 0;
-            if (propIdx < keyArray.Length - 2)
-            {
-                nextPropNum = keyArray[propIdx++];
-            }
-
-
             var propHeaderAddr = zObj.PropertiesAddress;
 
             var size = Memory.Manager.Get(propHeaderAddr);
@@ -67,7 +57,6 @@ namespace ZMachineLib.Operations.OP2
 
                 if (next)
                 {
-                    Debug.Assert(propNum == nextPropNum);
                     Memory.VariableManager.Store(dest, propNum);
                     return;
                 }
@@ -78,7 +67,6 @@ namespace ZMachineLib.Operations.OP2
                 propHeaderAddr += (ushort)(len + 1);
             }
 
-            Debug.Assert(0 == nextPropNum);
             Memory.VariableManager.Store(dest, 0);
         }
     }

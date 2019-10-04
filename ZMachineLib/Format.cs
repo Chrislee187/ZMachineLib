@@ -83,5 +83,19 @@ namespace ZMachineLib
 
             return string.Join(',', attrs);
         }
+        public static string Attributes(ulong attributes)
+        {
+            var attrs = new List<int>();
+            for (int i = 0; i < 32; i++)
+            {
+                ulong flag = 0x80000000 >> i;
+                if ((flag & attributes) == flag)
+                {
+                    attrs.Add(i);
+                }
+            }
+
+            return string.Join(',', attrs);
+        }
     }
 }

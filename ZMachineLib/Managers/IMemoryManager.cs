@@ -18,6 +18,6 @@
         byte[] AsSpan(ushort start, int length);
         byte[] AsSpan(int start);
         byte[] AsSpan(uint start);
-        void SetLong(uint address, uint value);
+        void SetUInt(uint address, uint value);
     }
 }

@@ -1,17 +1,16 @@
 ZORK I: The Great Underground Empire
 
-Copyright (c) 1981, 1982, 1983 Infocom, Inc. All rights reserved.
+Copyright (c) 1981
 
 ZORK is a registered trademark of Infocom, Inc.
 
-Release 119
-# The serial number gets printed per char which messes with Feature tests
-#/ Serial number 880429
+Release 119 / Serial number 880429
+
 West of House
 You are standing in an open field west of a white house, with a boarded front door.
 There is a small mailbox here.
 
-# NOTE: rand 0 (I hope and think) forces a fixed seed for random event generation, i think this is allowing me to kill the troll first hit each time at least
+# NOTE: rand 0 forces a fixed seed for random event generation
 >#rand 0
 
 >open mailbox
@@ -46,7 +45,7 @@ With great effort, you open the window far enough to allow entry.
 
 Kitchen
 
-You are in the kitchen of the white house. A table seems to have been used recently for the preparation of food. A passage leads to the west and a dark staircase can be seen leading upward. A dark chimney leads own and to the east is a small window which is open.
+You are in the kitchen of the white house. A table seems to have been used recently for the preparation of food. A passage leads to the west and a dark staircase can be seen leading upward. A dark chimney leads down and to the east is a small window which is open.
 
 On the table is an elongated brown sack, smelling of hot peppers.
 A bottle is sitting on the table.
@@ -58,7 +57,7 @@ On the table is an elongated brown sack, smelling of hot peppers.
 
 Living Room
 
-You are in the living room. There is a doorway to the east, a wooden door with strange gothic lettering to the west, which appears to be nailed shut, a trophy case, and a large oriental rug in the center of the Room.
+You are in the living room. There is a doorway to the east, a wooden door with strange gothic lettering to the west, which appears to be nailed shut, a trophy case, and a large oriental rug in the center of the room.
 
 Above the trophy case hangs an elvish sword of great antiquity.
 A battery-powered brass lantern is on the trophy case.
@@ -69,10 +68,9 @@ Taken.
 
 >move rug
 
-With a great effort, the rug is moved to one side of the room, revealing the dusty cover of a closed trap oor.
+With a great effort, the rug is moved to one side of the room, revealing the dusty cover of a closed trap door.
 
-# TODO: I think I have introduced a bug somewhere that requires us to 'look' to force some sort of update after moving rug otherwise the 'trap door' cannot be found
->look
+# A look will show the trap door bit it shouldnt be needed
 
 >open trap door
 
@@ -86,7 +84,11 @@ The brass lantern is now on.
 The trap door crashes shut, and you hear someone barring it.
 
 Cellar
-You are in a dark and damp cellar with a narrow passageway leading north, and a crawlway to the south. On he west is the bottom of a steep metal ramp which is unclimbable.
+You are in a dark and damp cellar with a narrow passageway leading north, and a crawlway to the south. On the west is the bottom of a steep metal ramp which is unclimbable.
+
+> up
+The trap door is closed.
+
 
 >go south
 
@@ -165,37 +167,27 @@ Dropped.
 
 Taken.
 
-#>open trap door
-#
-#The door reluctantly opens to reveal a rickety staircase descending into darkness.
+>open trap door
 
 >go down
 
-The trap door crashes shut, and you hear someone barring it.
-
 Cellar
 
-#NOTE: Seems the version of Zork I i'm using doesn't have the sword "glow"
-#Your sword is glowing with a faint blue glow.
+Your sword is glowing with a faint blue glow.
 
 >go north
 
 The Troll Room
 
 This is a small room with passages to the east and south and a forbidding hole leading west. Bloodstains and deep scratches (perhaps made by an axe) mar the walls.
-
 A nasty-looking troll, brandishing a bloody axe, blocks all passages out of the room.
-
-#NOTE: Seems the version of Zork I i'm using doesn't have the sword "glow"
-#Your sword has begun to glow very brightly.
+Your sword has begun to glow very brightly.
 
 >kill troll with sword
 
+
 The troll takes a fatal blow and slumps to the floor dead.
 Almost as soon as the troll breathes his last breath, a cloud of sinister black fog envelops him, and when the fog lifts, the carcass has disappeared.
-
-#NOTE: Seems the version of Zork I i'm using doesn't have the sword "glow"
-#Your sword is no longer glowing.
 
 >drop sword
 
@@ -286,7 +278,7 @@ You are in a small clearing in a well marked forest path that extends to the eas
 
 Canyon View
 
-You are at the top of the Great Canyon on its west wall. From here there is a marvelous view of the canyon and parts of the Frigid River upstream. Across the canyon, the walls of the White liffs join the mighty ramparts of the Flathead Mountains to the east. Following the Canyon upstream to the north, Aragain Falls may be seen, complete with rainbow. The mighty Frigid River lows out from a great dark cavern. To the west and south can be seen an immense forest, stretching for miles around. A path leads northwest. It is possible to climb down into the canyon from ere.
+You are at the top of the Great Canyon on its west wall. From here there is a marvelous view of the canyon and parts of the Frigid River upstream. Across the canyon, the walls of the White Cliffs join the mighty ramparts of the Flathead Mountains to the east. Following the Canyon upstream to the north, Aragain Falls may be seen, complete with rainbow. The mighty Frigid River flows out from a great dark cavern. To the west and south can be seen an immense forest, stretching for miles around. A path leads northwest. It is possible to climb down into the canyon from here.
 
 >go down
 
@@ -321,6 +313,13 @@ Taken.
 
 Suddenly, the rainbow appears to become solid and, I venture, walkable (I think the giveaway was the stairs and bannister).
 A shimmering pot of gold appears at the end of the rainbow.
+
+>look
+
+End of Rainbow
+You are on a small, rocky beach on the continuation of the Frigid River past the Falls. The beach is narrow due to the presence of the White Cliffs. The river canyon opens here and sunlight shines in from above. A rainbow crosses over the falls to the east and a narrow path continues to the southwest.
+At the end of the rainbow is a pot of gold.
+The solid-gold coffin used for the burial of Ramses II is here.
 
 >take gold
 
@@ -360,7 +359,7 @@ The glass bottle contains:
 
 >open bag
 
-Opening the brown sack reveals a lunch, and a clove of garlic.
+Opening the brown sack reveals a clove of garlic, and a lunch.
 
 >take garlic
 
@@ -373,9 +372,13 @@ There is a nasty knife here.
 Your collection of treasures consists of:
     A painting
 
+> score
+Your score is 74
+
 >put coffin in case
 
 Done.
+
 
 >put gold in case
 
@@ -384,6 +387,8 @@ Done.
 >put sceptre in case
 
 Done.
+
+ 
 
 >open trap door
 
@@ -421,7 +426,7 @@ There is a path along the stream to the east or west, a steep pathway climbing s
 >go east
 
 Dam
-You are standing on the top of the Flood Control Dam 3, which was quite a tourist attraction in times far distant. There are paths to the north, south, and west, and a scramble down.
+You are standing on the top of the Flood Control Dam #3, which was quite a tourist attraction in times far distant. There are paths to the north, south, and west, and a scramble down.
 The sluice gates on the dam are closed. Behind the dam, there can be seen a wide reservoir. Water is pouring over the top of the now abandoned dam.
 There is a control panel here, on which a large metal bolt is mounted. Directly above the bolt is a small green plastic bubble.
 
@@ -429,7 +434,7 @@ There is a control panel here, on which a large metal bolt is mounted. Directly 
 
 Dam Lobby
 This room appears to have been the waiting room for groups touring the dam. There are open doorways here to the north and east marked "Private", and there is a path leading south over the top of the dam.
-Some guidebooks entitled "Flood Control Dam 3" are on the reception desk.
+Some guidebooks entitled "Flood Control Dam #3" are on the reception desk.
 There is a matchbook whose cover says "Visit Beautiful FCD#3" here.
 
 >take matches
@@ -439,7 +444,7 @@ Taken.
 >go north
 
 Maintenance Room
-This is what appears to have been the maintenance room for Flood Control Dam 3. Apparently, this room has been ransacked recently, for most of the valuable equipment is gone. On the wall in front of you is a group of buttons colored blue, yellow, brown, and red. There are doorways to the west and south.
+This is what appears to have been the maintenance room for Flood Control Dam #3. Apparently, this room has been ransacked recently, for most of the valuable equipment is gone. On the wall in front of you is a group of buttons colored blue, yellow, brown, and red. There are doorways to the west and south.
 There is a group of tool chests here.
 There is a wrench here.
 There is an object which looks like a tube of toothpaste here.
@@ -460,12 +465,12 @@ Click.
 >go south
 
 Dam Lobby
-Some guidebooks entitled "Flood Control Dam 3" are on the reception desk.
+Some guidebooks entitled "Flood Control Dam #3" are on the reception desk.
 
 >go south
 
 Dam
-You are standing on the top of the Flood Control Dam 3, which was quite a tourist attraction in times far distant. There are paths to the north, south, and west, and a scramble down.
+You are standing on the top of the Flood Control Dam #3, which was quite a tourist attraction in times far distant. There are paths to the north, south, and west, and a scramble down.
 The sluice gates on the dam are closed. Behind the dam, there can be seen a wide reservoir. Water is pouring over the top of the now abandoned dam.
 There is a control panel here, on which a large metal bolt is mounted. Directly above the bolt is a small green plastic bubble which is glowing serenely.
 
@@ -483,22 +488,30 @@ Deep Canyon
 
 You are on the south edge of a deep canyon. Passages lead off to the east, northwest and southwest. A stairway leads down. You can hear a loud roaring sound, like that of rushing water, from below.
 
+>wait
+
+Time passes...
+
+>wait
+
+Time passes...
+The roar of rushing water is quieter now.
+
 >go down
+
 Loud Room
 This is a large room with a ceiling which cannot be detected from the ground. There is a narrow passage from east to west and a stone stairway leading upward. The room is deafeningly loud with an undetermined rushing sound. The sound seems to reverberate from all of the walls, making it difficult even to think.
-
 On the ground is a large platinum bar.
 
-It is unbearably loud here, with an ear-splitting roar seeming to come from all around you. There is a pounding in your head which won't stop. With a tremendous effort, you scramble out of the room.
+> echo
 
-#
-# NOTE: The above room pushes you out in a random direection, manually tested down twice to get to round room using this games seed
+> get platinum bar
 
->go down
+Taken.
+
+> w
 
 Round Room
-
- 
 
 >go southeast
 
@@ -537,11 +550,14 @@ Altar
 On the two ends of the altar are burning candles.
 On the altar is a large black book, open to page 569.
 
->take candles
+#>take candles#
 
-Taken.
+#Taken.
+>drop torch
 
 >take book
+
+>take candles
 
 Taken.
 
@@ -584,7 +600,8 @@ The match has gone out.
 
 >read book
 
-Commandment #12592
+Each word of the prayer reverberates through the hall in a deafening confusion. As the last word fades, a voice, loud and commanding, speaks: "Begone, fiends!" A heart-stopping scream fills the cavern, and the spirits, sensing a greater power, flee through the walls.
+
 
 >drop book
 
@@ -609,7 +626,6 @@ On the ground is a red hot bell.
 >go up
 
 Cave
-A gust of wind blows out your candles!
 
 >go north
 
@@ -644,8 +660,7 @@ You are in a small room. Strange squeaky sounds may be heard coming from the pas
 
 You are carrying:
   A crystal skull
-  A pair of candles
-  A torch (providing light)
+  A pair of candles (providing light)
   A screwdriver
   A matchbook
   A clove of garlic
@@ -661,10 +676,10 @@ There is an exquisite jade figurine here.
 >go east
 
 Shaft Room
-This is a large room, in the middle of which is a small shaft descending through the floor into darkness below. To the west and the north are exits from this room. Constructed over the top of the shaft is a metal framework to which a heavy iron chain# is attached.
+This is a large room, in the middle of which is a small shaft descending through the floor into darkness below. To the west and the north are exits from this room. Constructed over the top of the shaft is a metal framework to which a heavy iron chain is attached.
 At the end of the chain is a basket.
 
->put torch in basket
+>put candles in basket
 
 Done.
 
@@ -679,7 +694,7 @@ The brass lantern is now on.
 >go north
 
 Smelly Room
-This is a small non-descript room. However, from the direction of a small descending staircase a foul odor can be detected. To the south is a narrow tunnel.
+This is a small nondescript room. However, from the direction of a small descending staircase a foul odor can be detected. To the south is a narrow tunnel.
 
 >go down
 
@@ -690,22 +705,22 @@ There is a sapphire-encrusted bracelet here.
 >go east
 
 Coal Mine
-This is a non-descript part of a coal mine.
+This is a nondescript part of a coal mine.
 
 >go northeast
 
 Coal Mine
-This is a non-descript part of a coal mine.
+This is a nondescript part of a coal mine.
 
 >go southeast
 
 Coal Mine
-This is a non-descript part of a coal mine.
+This is a nondescript part of a coal mine.
 
 >go southwest
 
 Coal Mine
-This is a non-descript part of a coal mine.
+This is a nondescript part of a coal mine.
 
 >go down
 
@@ -766,7 +781,7 @@ Shaft Room
 At the end of the chain is a basket.
 The basket contains:
   A screwdriver
-  A torch (providing light)
+  A pair of candles (providing light)
 
 >put coal in basket
 
@@ -818,7 +833,7 @@ There is a broken timber here.
 >drop all
 
 crystal skull: Dropped.
-pair of candles: Dropped.
+platinum bar: Dropped
 matchbook: Dropped.
 clove of garlic: Dropped.
 brass lantern: Dropped.
@@ -831,7 +846,7 @@ At the end of the chain is a basket.
 The basket contains:
   A small pile of coal
   A screwdriver
-  A torch (providing light)
+  A pair of candles (providing light)
 
 >take coal
 
@@ -841,7 +856,7 @@ Taken.
 
 Taken.
 
->take torch
+>take candles
 
 Taken.
 
@@ -884,7 +899,7 @@ Drafty Room
 
 At the end of the chain is a basket.
 
->put torch in basket
+>put candles in basket
 
 Done.
 
@@ -898,7 +913,7 @@ Timber Room
 There is a brass lantern (battery-powered) here.
 There is a clove of garlic here.
 There is a matchbook whose cover says "Visit Beautiful FCD#3" here.
-There is a pair of candles here.
+On the ground is a large platinum bar.
 There is a crystal skull here.
 There is a broken timber here.
 
@@ -911,6 +926,10 @@ Taken.
 Taken.
 
 >take garlic
+
+Taken.
+
+>take bar
 
 Taken.
 
@@ -929,7 +948,6 @@ Coal Mine
 >go north
 
 Coal Mine
-A seedy-looking individual with a large bag just wandered through the room. On the way through, he quietly abstracted some valuables from the room and from your possession, mumbling something about "Doing unto others before..."
 
 >go east
 
@@ -938,8 +956,6 @@ Coal Mine
 >go south
 
 Coal Mine
-
-A "lean and hungry" gentleman just wandered through, carrying a large bag. Finding nothing of value, he left disgruntled.
 
 >go north
 
@@ -968,19 +984,19 @@ The basket is raised to the top of the shaft.
 
 The basket contains:
   A huge diamond
-  A torch (providing light)
+  A pair of candles
 
 >take diamond
 
 Taken.
 
->take torch
+>take candles
 
 Taken.
 
->turn off lamp
-
-The brass lantern is now off.
+#>turn off lamp
+#
+#The brass lantern is now off.
 
 >go west
 
@@ -1022,7 +1038,7 @@ Your collection of treasures consists of:
 
 You are carrying:
   A jade figurine
-  A torch (providing light)
+  A brass lantern (providing light)
   A huge diamond
   A clove of garlic
   A brass lantern
@@ -1031,9 +1047,9 @@ You are carrying:
 
 >put diamond in case
 
->turn on lamp
+>put bracelet in case
 
-The brass lantern is now on.
+>put bar in case
 
 >go down
 
@@ -1042,7 +1058,6 @@ Cellar
 >go north
 
 The Troll Room
-There is a sword here.
 There is a bloody axe here.
 
 >go east
@@ -1080,10 +1095,6 @@ There is a hand-held air pump here.
 
 Taken.
 
->take pump
-
-Taken.
-
 >go north
 
 Atlantis Room
@@ -1092,24 +1103,18 @@ On the shore lies Poseidon's own crystal trident.
 
 >take trident
 
-Your load is too heavy.
+Taken.
 
 >inventory
 
 You are carrying:
+  A crystal trident
   A hand-held air pump
   A trunk of jewels
-  A torch (providing light)
+  A pair of candles
   A clove of garlic
   A brass lantern (providing light)
-
->drop torch
-
-Dropped.
-
->take trident
-
-Taken.
+  A crystal skull
 
 >go south
 
@@ -1127,12 +1132,15 @@ Reservoir South
 
 Dam
 There is a wrench here.
+
+> score
+Your score is 216
  
 >go east
 
 Dam Base
 
-You are at the base of Flood Control Dam 3, which looms above you and to the north. The river Frigid is flowing by here. Along the river are the White Cliffs which seem to form giant walls stretching from north to south along the shores of the river# as it winds its way downstream.
+You are at the base of Flood Control Dam #3, which looms above you and to the north. The river Frigid is flowing by here. Along the river are the White Cliffs which seem to form giant walls stretching from north to south along the shores of the river as it winds its way downstream.
 
 There is a folded pile of plastic here which has a small valve attached.
 
@@ -1166,6 +1174,10 @@ Frigid River, in the magic boat
 The river turns a corner here making it impossible to see the Dam. The White Cliffs loom on the east bank and large rocks prevent landing on the west.
 The magic boat contains:
   A tan label
+
+>wait
+
+Time passes...
 
 >wait
 

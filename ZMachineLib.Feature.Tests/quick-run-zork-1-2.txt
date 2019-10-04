@@ -1,0 +1,42 @@
+﻿go north
+go east
+go down
+go down
+go north
+drop coffin
+open coffin
+take sceptre
+wave sceptre
+take gold
+take coffin
+go southwest
+go up
+go up
+go northwest
+go west
+enter house
+open bag
+take garlic
+go west
+put coffin in case
+put gold in case
+put sceptre in case
+open trap door
+turn on lamp
+go down
+go north
+go east
+go north
+go northeast
+go east
+go north
+take matches
+go north
+take wrench
+take screwdriver
+push yellow button
+go south
+go south
+turn bolt with wrench
+drop wrench
+look

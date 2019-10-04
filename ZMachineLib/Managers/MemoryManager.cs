@@ -41,15 +41,15 @@ namespace ZMachineLib.Managers
 
             foreach (var value in values)
             {
-                Buffer.Set(address + idx++, value);
+                Set((ushort) (address + idx++),  value);
             }
         }
 
         public void SetUShort(uint address, ushort value)
         {
-            Buffer.Set(address + 0, (byte)(value >> 8));
-            Buffer.Set(address + 1, (byte)value);
+            Set((ushort) (address + 0), (byte) (value >> 8));
+            Set((ushort) (address + 1), (byte) value);
         }
-        public void SetLong(uint address, uint value) => Buffer.SetLong(address, value);
+        public void SetUInt(uint address, uint value) => Buffer.SetLong(address, value);
     }
 }

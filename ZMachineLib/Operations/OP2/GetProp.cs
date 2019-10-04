@@ -27,7 +27,7 @@ namespace ZMachineLib.Operations.OP2
             var zObj = Memory.ObjectTree[obj];
 
             ushort valNew = 0;
-            var propValues = zObj.GetProperty(prop);
+            var propValues = zObj.GetPropertyOrDefault(prop);
             for (var i = 0; i < propValues.Data.Length; i++)
                 valNew |= (ushort)(propValues.Data[i] << (propValues.Data.Length - 1 - i) * 8);
 

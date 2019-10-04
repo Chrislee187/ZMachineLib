@@ -1,3 +1,4 @@
+using System;
 using ZMachineLib.Content;
 
 namespace ZMachineLib.Unit.Tests
@@ -89,5 +90,9 @@ namespace ZMachineLib.Unit.Tests
         {
             return this;
         }
+
+        public override ushort Parent { get; set; }
+        public override ushort Sibling { get; set; }
+        public override ushort Child { get; set; }
     }
 }

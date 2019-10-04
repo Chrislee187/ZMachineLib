@@ -18,7 +18,7 @@ namespace ZMachineLib.Feature.Tests
         public void Should_start_and_quit_zork1_without_error()
         {
             ExpectZorkIStartText();
-            Feature.Quit();
+            Feature.Quit(0);
 
             ShouldRunToCompletion(TestFile);
         }
@@ -27,9 +27,11 @@ namespace ZMachineLib.Feature.Tests
 
         public void Should_move_north_then_south_without_error()
         {
+            ExpectZorkIStartText();
             Feature.Execute("n", "North of House");
             Feature.Execute("s", "boarded");
-            Feature.Quit();
+            Feature.Execute("look", "North of House");
+            Feature.Quit(0);
 
             ShouldRunToCompletion(TestFile);
         }
@@ -38,8 +40,9 @@ namespace ZMachineLib.Feature.Tests
         public void Should_restart()
         {
             ExpectZorkIStartText();
-            Feature.Execute("n", "North of House");
-            Feature.Restart();
+            Feature
+                .Execute("n", "North of House")
+                .Restart();
             ExpectZorkIStartText();
             Feature.Quit();
 
@@ -50,27 +53,31 @@ namespace ZMachineLib.Feature.Tests
         public void Should_save_and_load()
         {
             ExpectZorkIStartText();
-            Feature.Execute("n", "North of House");
-            Feature.Execute("save", "saved");
-
-            Feature.Execute("restore", "Ok.");
-            Feature.Quit();
+            Feature
+                .Execute("n", "North of House")
+                .Execute("save", "saved")
+                .Execute("restore", "Ok.")
+                .Quit();
 
             ShouldRunToCompletion(TestFile);
-
         }
 
         [Test]
         public void Should_drink_the_bottle_of_water()
         {
-            Feature.Execute("s");
-            Feature.Execute("e");
-            Feature.Execute("open window");
-            Feature.Execute("go thru window");
-            Feature.Execute("get bottle");
-            Feature.Execute("open bottle", "Opened.");
-            Feature.Execute("drink water", "Thank you very much.");
-            Feature.Quit();
+            ExpectZorkIStartText();
+            Feature.Execute("s")
+                .Execute("e")
+                .Execute("open window")
+                .Execute("go thru window")
+                .Execute("get bottle")
+                .Execute("i", "A glass bottle")
+                .ExpectAdditionalOutput("A quantity of water")
+                .Execute("open bottle", "Opened.")
+                .Execute("drink water", "Thank you very much.")
+                .Execute("i", "A glass bottle")
+                .Execute("drink water", "You can't see any water here!")
+                .Quit(10);
 
             ShouldRunToCompletion(TestFile);
         }

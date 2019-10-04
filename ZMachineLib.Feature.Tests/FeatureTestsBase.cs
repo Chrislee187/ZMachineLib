@@ -15,7 +15,7 @@ namespace ZMachineLib.Feature.Tests
         protected void ShouldRunToCompletion(string zMachineDataFile)
         {
             Should.NotThrow(() => _machine.RunFile(File.OpenRead(zMachineDataFile)));
-            Feature.Verify();
+
         }
 
         protected void BaseSetup()

@@ -166,7 +166,7 @@ namespace ZDump
 
             if (showAttrs)
             {
-                sb.Append($" Attributes: {Format.Attributes(zObj.AttributeFlags)}");
+                sb.Append($" Attributes: {Format.Attributes(zObj.Attributes)}");
             }
 
             sb.AppendLine();
