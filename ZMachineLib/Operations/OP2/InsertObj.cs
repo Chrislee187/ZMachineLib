@@ -72,10 +72,11 @@ namespace ZMachineLib.Operations.OP2
             Memory.Manager.Set((ushort)(zObj1.Address + Memory.Offsets.Parent), (byte) obj2Number);
 
             // set obj2's child to obj1
+            var obj2OriginalChild = zObj2.Child;
             Memory.Manager.Set((ushort)(zObj2.Address + Memory.Offsets.Child),(byte) obj1Number);
 
-            // set obj1's sibling to obj2's child
-            Memory.Manager.Set((ushort)(zObj1.Address + Memory.Offsets.Sibling), (byte)zObj2.Child);
+            // set obj1's sibling to obj2's original child
+            Memory.Manager.Set((ushort)(zObj1.Address + Memory.Offsets.Sibling), (byte)obj2OriginalChild);
         }
     }
 }
