@@ -254,3 +254,4 @@ paket-files/
 # zMachine story files
 *.dat
 *.z?
+*.dump

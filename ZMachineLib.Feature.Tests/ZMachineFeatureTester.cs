@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Moq;
 using Moq.Language;
+using NUnit.Framework;
 using Shouldly;
 
 namespace ZMachineLib.Feature.Tests
@@ -18,6 +19,7 @@ namespace ZMachineLib.Feature.Tests
 
         private int _commandIndex;
         private readonly StringBuilder _outputBetweenCommands;
+        private string _lastCommand;
 
         public ZMachineFeatureTester(Mock<IUserIo> zMachineIo)
         {
@@ -70,17 +72,19 @@ namespace ZMachineLib.Feature.Tests
                                         .Where(s => !string.IsNullOrWhiteSpace(s))
                                         .ToArray())
                                     );
+                                
+                                var customMessage = $"Last command ('{_lastCommand}') had an expectation of '{outputString}' that was not met by :\n" +
+                                                    $"{_outputBetweenCommands}";
+//                                Assert.True(lastExpectationMet, customMessage);
+                                lastExpectationMet.ShouldBeTrue(customMessage);
                             }
 
-                            lastExpectationMet.ShouldBeTrue(
-                                $"Last expectation of '{outputString}' was not found in last output recorded:\n" +
-                                $"{_outputBetweenCommands}");
                         }
 
                         commandString = _commandStrings[++_commandIndex];
                     } while (string.IsNullOrEmpty(commandString));
                     Console.Write($"{_outputBetweenCommands}");
-
+                    _lastCommand = commandString;
                     _outputBetweenCommands.Clear();
                     return commandString;
                 });
