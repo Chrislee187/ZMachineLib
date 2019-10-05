@@ -19,19 +19,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="ForOriginalZMachine-quick-run-zork1.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="quick-run-zork-1-4.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="quick-run-zork-1-2.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="zork1.349.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="ZORK1.DAT">
+    <None Update="zork1.rand0.walkthru">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="zork1.z3">

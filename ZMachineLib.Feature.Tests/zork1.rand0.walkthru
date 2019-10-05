@@ -371,6 +371,7 @@ Living Room
 There is a nasty knife here.
 Your collection of treasures consists of:
     A painting
+> i
 
 > score
 Your score is 74
@@ -378,7 +379,6 @@ Your score is 74
 >put coffin in case
 
 Done.
-
 
 >put gold in case
 
@@ -388,7 +388,8 @@ Done.
 
 Done.
 
- 
+>score
+Your score is 105
 
 >open trap door
 
@@ -550,9 +551,6 @@ Altar
 On the two ends of the altar are burning candles.
 On the altar is a large black book, open to page 569.
 
-#>take candles#
-
-#Taken.
 >drop torch
 
 >take book
@@ -1058,7 +1056,6 @@ Cellar
 >go north
 
 The Troll Room
-There is a bloody axe here.
 
 >go east
 
@@ -1194,40 +1191,38 @@ There is a red buoy here (probably a warning).
 The magic boat contains:
   A tan label
 
->take buoy
+#>take buoy
+>open buoy
+
+> take emerald
 
 Taken.
 
->go east
+> land
 
 The magic boat comes to a rest on the shore.
 
-Sandy Beach, in the magic boat
-
-You are on a large sandy beach on the east shore of the river, which is flowing quickly by. A path runs beside the river to the south here, and a passage is partially buried in sand to the northeast.
-There is a shovel here. (outside the magic boat)
-  The magic boat contains:
-    A tan label
+Shore, in the magic boat
+You are on the east shore of the river. The water here seems somewhat treacherous. A path travels from north to south here, the south end quickly turning around a sharp corner.
 
 >leave boat
 
 You are on your own feet again.
 
->take shovel
-
-Your load is too heavy.
-
->drop garlic
-
+>drop emerald
 Dropped.
 
->take shovel
-
-Your load is too heavy.
-
->drop buoy
-
+>drop trunk
 Dropped.
+
+>i
+
+>n
+
+Sandy Beach
+
+You are on a large sandy beach on the east shore of the river, which is flowing quickly by. A path runs beside the river to the south here, and a passage is partially buried in sand to the northeast.
+There is a shovel here.
 
 >take shovel
 
@@ -1239,14 +1234,9 @@ Sandy Cave
 
 This is a sand-filled cave whose exit is to the southwest.
 
->dig
-
-What do you want to dig in?
-
->sand
+>dig sand
 
 (with the shovel)
-
 You seem to be digging a hole here.
 
 >dig sand
@@ -1277,29 +1267,19 @@ Dropped.
 
 >go southwest
 
+>look
+
 Sandy Beach
-There is a red buoy here.
-There is a clove of garlic here.
-There is a magic boat here.
-The magic boat contains:
-  A tan label
-
->open buoy
-
-Opening the red buoy reveals a large emerald.
-
->take emerald
-
-Taken.
-
->take garlic
-
-Taken.
 
 >go south
 
 Shore
-You are on the east shore of the river. The water here seems somewhat treacherous. A path travels from north to south here, the south end quickly turning around a sharp corner.
+There is an old trunk here, bulging with assorted jewels.
+There is a large emerald here.
+There is a magic boat here.
+
+> take emerald
+Taken.
 
 >go south
 
@@ -1361,12 +1341,13 @@ Your collection of treasures consists of:
 >inventory
 
 You are carrying:
-  A clove of garlic
   A large emerald
   A beautiful jeweled scarab
   A crystal trident
-  A trunk of jewels
+  A pair of candles
+  A clove of garlic
   A brass lantern
+  A crystal skull
 
 >put emerald in case
 
@@ -1380,7 +1361,7 @@ Done.
 
 Done.
 
->put jewels in case
+>put skull in case
 
 Done.
 
@@ -1421,9 +1402,7 @@ Taken.
 
 >climb down
 
-(down the tree)
 Forest Path
-You hear in the distance the chirping of a song bird.
 
 >go south
 
@@ -1448,16 +1427,20 @@ The brown sack contains:
 Living Room
 There is a nasty knife here.
 Your collection of treasures consists of:
-    A trunk of jewels
+    A crystal skull
     A crystal trident
     A beautiful jeweled scarab
     A large emerald
+    A platinum bar
+    A sapphire-encrusted bracelet
     A huge diamond
     A jade figurine
     A sceptre
     A pot of gold
     A gold coffin
     A painting
+
+>take knife
 
 >turn on lamp
 
@@ -1471,7 +1454,6 @@ Cellar
 
 The Troll Room
 There is a sword here.
-There is a bloody axe here.
 
 >go west
 
@@ -1510,7 +1492,6 @@ Taken.
 
 Maze
 This is part of a maze of twisty little passages, all alike.
-The lamp appears a bit dimmer.
 
 >go east
 
@@ -1531,16 +1512,34 @@ A cyclops, who looks prepared to eat horses (much less mere adventurers), blocks
 >Ulysses
 
 The cyclops, hearing the name of his father's deadly nemesis, flees the room by knocking down the wall on the east of the room.
+>i
+
+>u
 
 Treasure Room
 This is a large room, whose east wall is solid granite. A number of discarded bags, which crumble at your touch, are scattered about on the floor. There is an exit down a staircase.
 There is a suspicious-looking individual, holding a large bag, leaning against one wall. He is armed with a deadly stiletto.
 There is a silver chalice, intricately engraved, here.
-The thief attacks, and you fall back desperately.
 
->give egg to thief
+>attack thief with knife
 
-The thief is taken aback by your unexpected generosity, but accepts the jewel-encrusted egg and stops to admire its beauty.
+>attack thief with knife
+
+>attack thief with knife
+
+>attack thief with knife
+
+> take bag
+Taken.
+
+>take egg
+Taken.
+
+>take chalice
+Taken.
+
+>drop knife
+Dropped.
 
 >go down
 
@@ -1554,84 +1553,39 @@ This is a long passage. To the west is one entrance. On the east there is an old
 >go east
 
 Living Room
-There is a nasty knife here.
 Your collection of treasures consists of:
-    A trunk of jewels
-    A crystal trident
-    A beautiful jeweled scarab
-    A large emerald
-    A huge diamond
-    A jade figurine
-    A sceptre
-    A pot of gold
-    A gold coffin
-    A painting
+  A crystal skull
+  A crystal trident
+  A beautiful jeweled scarab
+  A large emerald
+  A platinum bar
+  A sapphire-encrusted bracelet
+  A huge diamond
+  A jade figurine
+  A sceptre
+  A pot of gold
+  A gold coffin
+  A painting
 
 >put coins in case
-
 Done.
 
->take knife
+>put chalice in case
+Done.
 
+>open egg
+
+>take canary from egg
 Taken.
+
+>put egg in case
+Done.
 
 >go west
 
 Strange Passage
 
 >go west
-
-Cyclops Room
-
->go up
-
-You hear a scream of anguish as you violate the robber's hideaway. Using passages unknown to you, he rushes to its defense.
-The thief gestures mysteriously, and the treasures in the room suddenly vanish.
-
-Treasure Room
-There is a suspicious-looking individual, holding a large bag, leaning against one wall. He is armed with a deadly stiletto.
-There is a silver chalice, intricately engraved, here.
-You dodge as the thief comes in low.
-
->kill thief with knife
-
-It's curtains for the thief as your nasty knife removes his head.
-Almost as soon as the thief breathes his last breath, a cloud of sinister black fog envelops him, and when the fog lifts, the carcass has disappeared.
-As the thief dies, the power of his magic decreases, and his treasures reappear:
-  A stiletto
-  A jewel-encrusted egg, with a golden clockwork canary
-  A torch
-  A crystal skull
-  A sapphire-encrusted bracelet
-
-The chalice is now safe to take.
-
->take all
-
-stiletto: Taken.
-jewel-encrusted egg: Taken.
-torch: Taken.
-crystal skull: Taken.
-sapphire-encrusted bracelet: Taken.
-chalice: Your load is too heavy.
-
->drop stiletto
-
-Dropped.
-
->take chalice
-
-You're holding too many things already!
-
->drop torch
-
-Dropped.
-
->take chalice
-
-Taken.
-
->go down
 
 Cyclops Room
 
@@ -1686,13 +1640,15 @@ There is an open grating, descending into darkness.
 >go south
 
 Forest Path
-You hear in the distance the chirping of a song bird.
 
 >climb tree
 
 Up a Tree
 Beside you on the branch is a small bird's nest.
-You hear in the distance the chirping of a song bird.
+
+>wait
+
+>look in nest
 
 >wind up canary
 
@@ -1702,16 +1658,6 @@ The canary chirps, slightly off-key, an aria from a forgotten opera. From out of
 
 Forest Path
 There is a beautiful brass bauble here.
-
->take bauble
-
-You're holding too many things already!
-
->drop knife
-
-Dropped.
-
-You hear in the distance the chirping of a song bird.
 
 >take bauble
 
@@ -1738,137 +1684,37 @@ The brown sack contains:
 >go west
 
 Living Room
-Your collection of treasures consists of:
 
-  A leather bag of coins
-  A trunk of jewels
-  A crystal trident
-  A beautiful jeweled scarab
-  A large emerald
-  A huge diamond
-  A jade figurine
-  A sceptre
-  A pot of gold
-  A gold coffin
-  A painting
 
 >put bauble in case
 
 Done.
 
->put chalice in case
-
-Done.
-
->take canary from egg
-
-Taken.
-
 >put canary in case
 
 Done.
-
->put egg in case
-
-Done.
-
->put bracelet in case
-
-Done.
-
->put skull in case
-
-Done.
-
->go down
-
-Cellar
-
->go north
-
-The Troll Room
-
-There is a sword here.
-
-There is a bloody axe here.
-
->go east
-
-East-West Passage
-
->go east
-
-Round Room
-
->go east
-
-Loud Room
-
-This is a large room with a ceiling which cannot be detected from the ground. There is a narrow passage from east to west and a stone stairway leading upward. The room is deafeningly loud with an undetermined rushing sound. The sound seems to reverberate from all of the walls, making it difficult even to think.
-
-On the ground is a large platinum bar.
-
->echo
-
-The acoustics of the room change subtly.
-
-Loud Room
-
-On the ground is a large platinum bar.
-
->take bar
-
-Taken.
-
->go west
-
-Round Room
-
->go west
-
-East-West Passage
-
- 
-
->go west
-
-The Troll Room
-
-There is a sword here.
-
-There is a bloody axe here.
-
->go south
-
-Cellar
-
->go up
+>look
 
 Living Room
-
 Your collection of treasures consists of:
-
-  A crystal skull
-  A sapphire-encrusted bracelet
-  A jewel-encrusted egg
   A golden clockwork canary
-  A chalice
   A beautiful brass bauble
+  A jewel-encrusted egg
+  A chalice
   A leather bag of coins
-  A trunk of jewels
+  A crystal skull
   A crystal trident
   A beautiful jeweled scarab
   A large emerald
+  A platinum bar
+  A sapphire-encrusted bracelet
   A huge diamond
   A jade figurine
   A sceptre
   A pot of gold
   A gold coffin
   A painting
->put bar in case
 
-Done.
 
- 
-
-Points: 349
+> score
+Your score is 339
