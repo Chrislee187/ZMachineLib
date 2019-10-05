@@ -1,10 +1,8 @@
 using System;
 using NUnit.Framework;
-using ZMachineLib.Content;
 using ZMachineLib.Operations.OP0;
-using ZMachineLib.Operations.OP1;
 
-namespace ZMachineLib.Unit.Tests.Operations.OP1
+namespace ZMachineLib.Unit.Tests.Operations.OP0
 {
     /// <summary>
     /// 0OP:187 B new_line

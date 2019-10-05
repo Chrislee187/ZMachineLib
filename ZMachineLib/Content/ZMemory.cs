@@ -16,9 +16,8 @@ namespace ZMachineLib.Content
         public IVariableManager VariableManager { get; }
         public IOperandManager OperandManager { get; }
         public ZGlobals Globals { get; set; }
+        public VersionedOffsets Offsets { get; }
 
-
-        public VersionedOffsets Offsets { get; private set; }
         public ushort DictionaryWordStart => (ushort) (Header.Dictionary + Dictionary.WordStart);
 
         public ZMemory(byte[] data,
@@ -28,7 +27,7 @@ namespace ZMachineLib.Content
             Header = new ZHeader(data.AsSpan(0, 31));
             if (Header.Version > 3) throw new NotSupportedException("ZMachine > V3 not currently supported");
 
-            // Version specific offsets - not used every yet
+            // Version specific offsets
             Offsets = VersionedOffsets.For(Header.Version);
 
             Manager = new MemoryManager(data);

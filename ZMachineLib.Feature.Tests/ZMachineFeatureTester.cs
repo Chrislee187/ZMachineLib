@@ -2,10 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Text;
-using Castle.Core.Internal;
-using Microsoft.VisualBasic.CompilerServices;
 using Moq;
 using Moq.Language;
 using Shouldly;
@@ -18,13 +15,9 @@ namespace ZMachineLib.Feature.Tests
         private readonly List<string> _outputStrings;
         private readonly List<string> _commandStrings;
         private readonly Mock<IUserIo> _zMachineIo;
-        private string _lastCommand;
 
-        private string _lastExpectation;
-
-        private int _commandIndex = 0;
-        private StringBuilder _outputBetweenCommands;
-        private bool _firstRead;
+        private int _commandIndex;
+        private readonly StringBuilder _outputBetweenCommands;
 
         public ZMachineFeatureTester(Mock<IUserIo> zMachineIo)
         {
@@ -45,14 +38,11 @@ namespace ZMachineLib.Feature.Tests
         }
 
         public ZMachineFeatureTester Execute(string command, string outputContains = "")
-        {                        // NOTE: Output text can be split across multiple calls to print mechansims
-
+        {                        
             _commandStrings.Add(command);
             _outputStrings.Add(outputContains);
-                _firstRead = true;
-                _inputSequence.Returns(() =>
+            _inputSequence.Returns(() =>
                 {
-
                     var commandString = _commandStrings[_commandIndex];
                     do
                     {
@@ -71,6 +61,7 @@ namespace ZMachineLib.Feature.Tests
 
                             if (!lastExpectationMet)
                             {
+                                Console.WriteLine("\n\n\nCommand Log:");
                                 Console.WriteLine(
                                     string.Join('\n', _commandStrings
                                         .ToArray()
@@ -85,12 +76,10 @@ namespace ZMachineLib.Feature.Tests
                                 $"Last expectation of '{outputString}' was not found in last output recorded:\n" +
                                 $"{_outputBetweenCommands}");
                         }
-                        _lastCommand = commandString;
 
                         commandString = _commandStrings[++_commandIndex];
                     } while (string.IsNullOrEmpty(commandString));
-                    Console.Write($"{_outputBetweenCommands}\n");
-
+                    Console.Write($"{_outputBetweenCommands}");
 
                     _outputBetweenCommands.Clear();
                     return commandString;
@@ -98,11 +87,6 @@ namespace ZMachineLib.Feature.Tests
 
                 return this;
         }
-
-        private string Santise(string word) 
-            => new string(word.Where(c 
-                => !".,:;".Contains(c)
-                ).ToArray());
 
         public void SetupInputs(string textFile)
         {
@@ -132,21 +116,6 @@ namespace ZMachineLib.Feature.Tests
             }
         }
 
-        public void SetupQuickInputs(string textFile)
-        {
-            var text = File.OpenText(textFile).ReadToEnd();
-            var lines = new StringReader(text);
-            var line = lines.ReadLine();
-            while (line != null)
-            {
-                if (!line.StartsWith("//"))
-                {
-                    Execute(line.Trim());
-                }
-
-                line = lines.ReadLine();
-            }
-        }
         public void Quit(int? score = null)
         {
             var t = Execute("quit");

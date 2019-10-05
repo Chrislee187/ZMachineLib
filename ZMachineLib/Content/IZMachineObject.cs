@@ -7,7 +7,7 @@ namespace ZMachineLib.Content
         bool TestAttribute(ushort attr);
         void ClearAttribute(ushort attr);
         void SetAttribute(ushort attr);
-        ulong Attributes { get; }
+        uint Attributes { get; }
         string Name { get; }
         ushort Address { get; }
         ushort Sibling { get; set; }

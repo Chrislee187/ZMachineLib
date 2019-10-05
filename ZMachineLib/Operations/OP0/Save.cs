@@ -34,7 +34,7 @@ namespace ZMachineLib.Operations.OP0
                     Memory.VariableManager.Store(Memory.GetCurrentByteAndInc(), saveSuccessful.ToOneOrZero());
                 }
             }
-            catch(Exception e)
+            catch(Exception )
             {
                 // ignored: we don't want to crash the machine so ignore any IO errors
             }

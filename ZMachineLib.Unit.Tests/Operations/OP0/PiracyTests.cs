@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using ZMachineLib.Operations.OP0;
 
-namespace ZMachineLib.Unit.Tests.Operations.OP1
+namespace ZMachineLib.Unit.Tests.Operations.OP0
 {
     public class PiracyTests : OperationsTestsBase<Piracy>
     {

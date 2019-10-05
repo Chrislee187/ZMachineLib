@@ -8,7 +8,7 @@ namespace ZMachineLib.Feature.Tests
     public class FeatureTestsBase
     {
         protected Mock<IUserIo> MockUserIo;
-        private Mock<IFileIo> MockFileIo;
+        protected Mock<IFileIo> MockFileIo;
         private ZMachine2 _machine;
         protected ZMachineFeatureTester Feature;
 

@@ -49,7 +49,7 @@ namespace ZMachineLib.Content
         }
 
         /// <summary>
-        /// Constructor that will maintain an objects property in memory
+        /// Constructor that will maintain an objects property in zmemory
         /// </summary>
         /// <param name="manager"></param>
         /// <param name="propAddress"></param>

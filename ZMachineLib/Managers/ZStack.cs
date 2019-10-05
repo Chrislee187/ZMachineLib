@@ -20,7 +20,7 @@ namespace ZMachineLib.Managers
         public uint GetPCAndInc()
         {
             var pc = GetPC();
-            IncrementPC(1);
+            IncrementPC();
 
             return pc;
         }

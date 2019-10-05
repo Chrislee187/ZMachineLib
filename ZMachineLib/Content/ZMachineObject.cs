@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Net.WebSockets;
 using ZMachineLib.Extensions;
 using ZMachineLib.Managers;
 
@@ -15,10 +14,10 @@ namespace ZMachineLib.Content
         public ushort Address { get; }
         public string Name { get; private set; }
 
-        public ulong Attributes
+        public uint Attributes 
         {
             get => _manager.AsSpan(Address, 4).GetUInt();
-            private set => _manager.SetUInt(Address, (uint) value);
+            private set => _manager.SetUInt(Address, value);
         }
         public IDictionary<int, ZProperty> Properties { get; set; }
 
@@ -26,8 +25,6 @@ namespace ZMachineLib.Content
 
         private readonly IReadOnlyDictionary<int, byte[]> _defaultProps;
 
-        private readonly Func<ushort, ulong> _flagsProviderV3 = attr 
-            => 0x80000000 >> attr;
 
         private readonly IMemoryManager _manager;
         private readonly ZAbbreviations _abbreviations;
@@ -41,9 +38,11 @@ namespace ZMachineLib.Content
         {
             ObjectNumber = objectNumber;
             Address = address;
+            // ReSharper disable VirtualMemberCallInConstructor
             Parent = parent;
             Sibling = sibling;
             Child = child;
+            // ReSharper restore VirtualMemberCallInConstructor
             Name = name;
         }
 
@@ -116,7 +115,6 @@ namespace ZMachineLib.Content
             {
                 // Section 12.4.1 - V3 Specific
                 var prop = new ZProperty(_manager, ptr);
-                Debug.Assert(prop.Number != 0);
                 properties.Add(prop.Number, prop);
                 ptr += prop.BytesUsed;
                 b = _manager.Get(ptr);
@@ -145,6 +143,9 @@ namespace ZMachineLib.Content
             set => _manager?.Set((ushort) (Address + Offsets.Child), (byte)value);
         }
 
+        private readonly Func<ushort, uint> _flagsProviderV3 = attr
+            => 0x80000000 >> attr;
+
         public bool TestAttribute(ushort attr) 
             => (_flagsProviderV3(attr) & Attributes) == _flagsProviderV3(attr);
 
@@ -155,15 +156,14 @@ namespace ZMachineLib.Content
             if (_header.Version <= 3)
             {
                 Attributes = Attributes & ~flagMask;
-                _manager.SetUInt(Address, (uint)Attributes);
             }
             else
             {
                 // TODO: _manager NOT tested in this section
                 Attributes = Attributes & ~flagMask;
-                uint val = (uint)Attributes >> 16;
+                var val = Attributes >> 16;
                 _manager.SetUInt(Address, val);
-                ushort value = (ushort)Attributes;
+                var value = (ushort)Attributes;
                 _manager.Set((ushort)(Address + 4), value);
             }
         }
@@ -175,14 +175,12 @@ namespace ZMachineLib.Content
             if (_header.Version <= 3)
             {
                 Attributes |= flagMask;
-                _manager.SetUInt(Address, (uint)Attributes);
-
             }
             else
             {
                 // TODO: _manager NOT tested in this section
                 Attributes |= flagMask;
-                _manager.SetUInt(Address, (uint)(Attributes >> 16));
+                _manager.SetUInt(Address, Attributes >> 16);
                 _manager.Set((ushort)(Address + 4), (ushort)Attributes);
 
             }

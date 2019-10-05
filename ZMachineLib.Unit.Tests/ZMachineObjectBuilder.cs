@@ -1,4 +1,3 @@
-using System;
 using ZMachineLib.Content;
 
 namespace ZMachineLib.Unit.Tests

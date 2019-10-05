@@ -1,5 +1,6 @@
 ﻿using System;
 using ZMachineLib.Extensions;
+// ReSharper disable ShiftExpressionRealShiftCountIsZero
 
 namespace ZMachineLib.Managers
 {

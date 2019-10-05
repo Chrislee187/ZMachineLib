@@ -1152,8 +1152,9 @@ A tan label is lying inside the boat.
 >drop pump
 
 Dropped.
+>look
 
->go inside boat
+>board boat
 
 You are now in the magic boat.
 
