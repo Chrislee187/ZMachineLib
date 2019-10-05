@@ -68,15 +68,12 @@ namespace ZMachineLib.Extensions
         public static byte FromBitNumber(this byte bitNumber)
             => (byte) (1 << bitNumber);
 
-        public static byte[] ToByteArray(this ushort value)
-        {
-            var result = new byte[2];
-
-            result[0] = (byte) value;
-            result[1] = (byte) (value >> 8);
-
-            return result;
-        }
+        public static byte[] ToByteArray(this ushort value) 
+            => new byte[2]
+            {
+                (byte) (value >> 8),
+                (byte) value
+            };
 
         public static byte[] ToByteArray(this Stream stream)
         {

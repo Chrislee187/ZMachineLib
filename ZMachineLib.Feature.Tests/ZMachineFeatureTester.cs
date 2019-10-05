@@ -73,7 +73,7 @@ namespace ZMachineLib.Feature.Tests
                                         .ToArray())
                                     );
                                 
-                                var customMessage = $"Last command ('{_lastCommand}') had an expectation of '{outputString}' that was not met by :\n" +
+                                var customMessage = $"Last command ('{_lastCommand}') expected a response containing '{outputString}'!\nResponse:\n" +
                                                     $"{_outputBetweenCommands}";
 //                                Assert.True(lastExpectationMet, customMessage);
                                 lastExpectationMet.ShouldBeTrue(customMessage);

@@ -1,7 +1,9 @@
-﻿using ZMachineLib.Managers;
+﻿using System.Diagnostics;
+using ZMachineLib.Managers;
 
 namespace ZMachineLib.Content
 {
+    [DebuggerDisplay("{Number}")]
     public class ZProperty
     {
         private readonly IMemoryManager _manager;
