@@ -14,11 +14,25 @@ An incomplete (ZMachine)[https://en.wikipedia.org/wiki/Z-machine] interpreter wr
 
 The core approach was to attempt to refactor lots of pieces of code that grab bytes from the machine "memory" (a `byte[]`), in to clearly named objects that abstracted the byte array handling away as much as possible.
 
-To this end some of the core underlying concepts of the the ZMachine have been abstracted into objects such as the ZDictionary, ZAbbreviations, ZObjectTree available in a ZMachine as well some of a machines core functionality in when handling variables and arguments via the Variable and Operand Manager classes.
+To this end some of the core underlying concepts of the the ZMachine have been abstracted into objects such as the ZDictionary, ZAbbreviations, ZObjectTree available in a ZMachine as well some of a machines core functionality in handling variables and arguments via the Variable and Operand Manager classes.
 
-All of these are held in a root ZMemory object which is given the byte[] array of data that represents the code for a ZMachine program.
+All of these are held in a root ZMemory object which maintains the byte[] array containing both the code and data of a ZMachine program.
 
 Individual operations (Ops) that the ZMachine supports get and set the values required via the nice OO 'Z' abtractions described above rather than directly manipulating the byte array.
+
+# Architecture
+
+## ZmachineLib
+
+The core library containing the code to run a ZMachine program from it bytecode.
+
+## ZDump
+
+Utility to dump useful information about a ZMachine program file.
+
+## ZPlay
+
+Simple console application to run ZMachine programs files.
 
 # Testing
 
@@ -26,7 +40,7 @@ Individual operations (Ops) that the ZMachine supports get and set the values re
 * There is an ongoing effort to get unit-tests written for each operation.
 * There are some feature tests that send games commands for a specific game (I've used Zork I) and check that the game responds as expected.
 * I found a special command(in Zork I at least, not checked elsewhere yet) called `#rand` that seems to allow me to set a seed for testing so that the play-thru is consistent, by consistent we mean that any random in-game events while happen at the same time/place for a given seed.
-* The `#rand` command has allowed me to partially develop (it's a WIP) a complete walk-thru of Zork I that can be executed very quickly to ensure that nothing is broken.
+* An, almost complete, run-thru (339/350 points) of Zork I is implemented as feature test to exercise the ZMachine V3 support.
 
 
 # NOTES
@@ -34,15 +48,29 @@ Individual operations (Ops) that the ZMachine supports get and set the values re
 * Refactoring an ancient byte-code interpreter to something more "objecty" is not necessarily the best idea but it's a fun excercise in extreme refactoring of legacy code, note the original C# that I forked from isn't that old, but the ZMachine was designed 40 years ago, when every bit and byte counted and much of the design of the operation code set reflects thats.
 * Whilst the "ZMachine" does use the same bytecode as any other ZMachine interpreter might, underneath, it's uses OO/SOLID/XP code and abstractions to represent the underlying concepts of the ZMachine and its Operations, such as Objects, Properties and Dictionaries etc.
 * I've only concentrated on V3 files initially and whilst there is some of the old, incomplete v5 code still around I'm intending to formalise an approach to handling the version differences once I'm happy the V3 implementation is solid.
-* To avoid any copyright issues, this repo contains no actual games files, there are various sources available for these, a great starting point is here on github at [Historical Source](https://github.com/historicalsource)
 
 # REFERENCES
 
 * Heavy use was made of (The ZMachine Standards document)[http://inform-fiction.org/zmachine/standards/z1point1/index.html], amazing effort over the years on that, great job!
+* Forked and refactored from, and therefore heavily based on, Brian Peek's (C# ZMachineLib)[https://github.com/BrianPeek/ZMachineLib]
 
+# ACQUIRE ZPROGRAM FILES
 
+* To avoid any copyright issues, this repo contains no actual games files, there are various sources available for these, a great starting point is here on github at [Historical Source](https://github.com/historicalsource)
+
+The powershell sample below will retrieve Zork I, II & III in V3 ZMachine compatible with both `ZDump` & `ZPlay`
+
+```
+Invoke-WebRequest https://github.com/historicalsource/zork1/blob/master/COMPILED/zork1.z3?raw=true -OutFile .\zork1.z3
+Invoke-WebRequest https://github.com/historicalsource/zork2/blob/master/COMPILED/zork2.z3?raw=true -OutFile .\zork2.z3
+Invoke-WebRequest https://github.com/historicalsource/zork3/blob/master/COMPILED/zork3.z3?raw=true -OutFile .\zork3.z3
+```
+
+There are many other V3 programs available in the historical source archive
 
 # Todos
+
+* Now V3 support is pretty solid look at implementing support and a full test against B43
 
 Some things I've been thinking about doing;
 
