@@ -9,6 +9,11 @@
         public bool HasCommand => !string.IsNullOrEmpty(Command);
         public bool HasExpectation => !string.IsNullOrEmpty(Expectation);
 
+        public bool MeetsExpectation(string output)
+        => !HasExpectation 
+           || string.IsNullOrEmpty(output) 
+           || output.Contains(Expectation);
+
         public CommandExpects(string command, string expectation, int lineNo)
         {
             LineNo = lineNo;

@@ -25,7 +25,7 @@
     <None Update="quick-run-zork-1-2.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="zork1.rand0.walkthru">
+    <None Update="zork1.rand0.ztest">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="zork1.z3">

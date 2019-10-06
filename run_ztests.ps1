@@ -1,7 +1,7 @@
 dotnet build -v=q --nologo
 
 $programFile = ".\zork1.z3"
-$walkthru = ".\ZMachineLib.Feature.Tests\zork1.rand0.walkthru"
+$walkthru = ".\ZMachineLib.Feature.Tests\zork1.rand0.ztest"
 
 Function file-exists($path) {
 	Test-Path $path -PathType Leaf

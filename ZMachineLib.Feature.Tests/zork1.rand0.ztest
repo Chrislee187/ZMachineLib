@@ -1153,6 +1153,8 @@ Dam Base
 You are at the base of Flood Control Dam #3, which looms above you and to the north. The river Frigid is flowing by here. Along the river are the White Cliffs which seem to form giant walls stretching from north to south along the shores of the river as it winds its way downstream.
 
 There is a folded pile of plastic here which has a small valve attached.
+>drop trunk
+Dropped.
 
 >inflate plastic with pump
 
@@ -1225,9 +1227,6 @@ You are on your own feet again.
 >drop emerald
 Dropped.
 
->drop trunk
-Dropped.
-
 >i
 
 >n
@@ -1287,14 +1286,10 @@ Sandy Beach
 >go south
 
 Shore
-There is an old trunk here, bulging with assorted jewels.
 There is a large emerald here.
 There is a magic boat here.
 
 > take emerald
-Taken.
-
-> take trunk
 Taken.
 
 >go south
@@ -1730,10 +1725,11 @@ Your collection of treasures consists of:
   A gold coffin
   A painting
 
+# Need to go and get the trunk i left at the dam base
+
 >quit
 Your score is 339
 >y
-
 
 
 

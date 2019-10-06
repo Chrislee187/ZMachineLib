@@ -255,3 +255,4 @@ paket-files/
 *.dat
 *.z?
 *.dump
+*.cmdlog

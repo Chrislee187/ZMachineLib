@@ -16,7 +16,7 @@ namespace ZMachineLib.Feature.Tests
 
         public void Should_play_Zork_I()
         {
-            Feature.SetupInputs("zork1.rand0.walkthru");
+            Feature.SetupInputs("zork1.rand0.ztest");
             Feature.Quit();
 
             ShouldRunToCompletion(Zork3V3);

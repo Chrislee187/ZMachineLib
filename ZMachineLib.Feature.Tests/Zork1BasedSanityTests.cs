@@ -72,7 +72,7 @@ namespace ZMachineLib.Feature.Tests
                 .Execute("go thru window")
                 .Execute("get bottle")
                 .Execute("i", "A glass bottle")
-                .ExpectAdditionalOutput("A quantity of water")
+                .Expect("A quantity of water")
                 .Execute("open bottle", "Opened.")
                 .Execute("drink water", "Thank you very much.")
                 .Execute("i", "A glass bottle")
@@ -84,7 +84,7 @@ namespace ZMachineLib.Feature.Tests
 
         private void ExpectZorkIStartText()
         {
-            Feature.ExpectAdditionalOutput(
+            Feature.Expect(
                 "ZORK I",
                 "West of House"
             );

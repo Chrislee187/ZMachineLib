@@ -7,8 +7,8 @@ namespace ZTest
     {
         private static readonly Stack<(ConsoleColor background, ConsoleColor foreground)> ColoursStack 
             = new Stack<(ConsoleColor background, ConsoleColor foreground)>();
-        
-        public static void PopColors()
+
+        private static void PopColors()
         {
             var colours = ColoursStack.Pop();
 
@@ -16,7 +16,7 @@ namespace ZTest
             Console.ForegroundColor = colours.foreground;
         }
 
-        public static void PushColors(ConsoleColor background, ConsoleColor foreground)
+        private static void PushColors(ConsoleColor background, ConsoleColor foreground)
         {
             ColoursStack.Push((Console.BackgroundColor, Console.ForegroundColor));
 
@@ -25,11 +25,11 @@ namespace ZTest
 
         }
 
-        public static void ColouredWriteLine(ConsoleColor background, ConsoleColor foreground, string text)
+        public static void ColouredWriteLine(string text, ConsoleColor background, ConsoleColor foreground)
         {
-            ConsoleX.PushColors(background, foreground);
+            PushColors(background, foreground);
             Console.Write(text);
-            ConsoleX.PopColors();
+            PopColors();
             Console.WriteLine();
         }
 

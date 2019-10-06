@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Threading.Channels;
 
 namespace ZTest
 {
@@ -18,95 +14,96 @@ namespace ZTest
             var testFile = args[1];
             var playerFile = @"D:\Src\ZMachineLib\ZPlay\bin\Debug\netcoreapp3.0\zplay.exe";
 
+            CheckFilesExists(playerFile, programFile, testFile);
             _quietMode = args.Length == 3;
 
-            CheckFilesExists(playerFile, programFile, testFile);
+            var zMachineTestScript = new ZMachineTestScript(testFile);
 
-            var testData = ReadTestFile(testFile);
+            using var zPlayer = new TestableZPlayerProcess(playerFile, programFile);
+            
+            var failedExpectation = RunTest(zPlayer, zMachineTestScript);
 
-            using var zPlayer = CreateRedirectedPlayerProcess(playerFile, programFile);
-            zPlayer.Start();
+            zPlayer.Close();
 
-            var testLine = 0;
-            var lastLine = testData.Max(td => td.LineNo);
+            ShowFinalMessage(programFile, testFile, failedExpectation);
+        }
+
+        private static string RunTest(TestableZPlayerProcess testableZPlayer,
+            ZMachineTestScript zMachineTestScript)
+        {
+            var scriptLines = zMachineTestScript.Lines;
+            string failedExpectation = string.Empty;
+            testableZPlayer.Start();
+
             var lastCommand = string.Empty;
-            var failedExpectation = string.Empty;
-
-            // Grab and show any startup output
-            var lastOutput = ReadToNextCommandRequest(zPlayer.StandardOutput);
 
             if (_quietMode) Console.WriteLine("QUIET mode...");
 
+            var lastOutput = testableZPlayer.CaptureOutputUntilTheNextCommandRequest();
             EchoToConsole(lastOutput);
 
+            var scriptLineIdx = 0;
             do
             {
-                var testItem = testData[testLine];
+                var scriptLine = scriptLines[scriptLineIdx];
 
-                if (testItem.HasCommand)
+                if (scriptLine.HasCommand)
                 {
-                    lastCommand = testItem.Command;
+                    testableZPlayer.ExecuteCommand(scriptLine.Command);
+                    EchoToConsole($"{scriptLine.Command}\n");
 
-                    zPlayer.StandardInput.WriteLine(testItem.Command);
-
-                    EchoToConsole($"{lastCommand}\n");
-
-                    lastOutput = ReadToNextCommandRequest(zPlayer.StandardOutput);
-
+                    lastCommand = scriptLine.Command;
+                    lastOutput = testableZPlayer.CaptureOutputUntilTheNextCommandRequest();
                     EchoToConsole(lastOutput);
                 }
 
-                if (testItem.HasExpectation)
+                if (!scriptLine.MeetsExpectation(lastOutput))
                 {
-                    var lastExpectationMet = true;
-
-                    if (!string.IsNullOrEmpty(lastOutput))
-                    {
-                        lastExpectationMet = lastOutput.Contains(testItem.Expectation);
-                    }
-
-                    if (!lastExpectationMet)
-                    {
-                        var failureMessage =
-                            $"Last command ('{lastCommand}') expected response from line [{testItem.LineNo}] ('{testItem.Expectation}')!";
-
-                        if (_quietMode) failureMessage += $"\nOutput was:\n{lastOutput}";
-
-                        failedExpectation = failureMessage;
-                        break;
-                    }
+                    failedExpectation = CreateFailureMessage(lastCommand, scriptLine, lastOutput);
+                    break;
                 }
 
-                testLine++;
+                scriptLineIdx++;
 
-                if (_quietMode)
-                {
-                    Console.CursorLeft = 0;
-                    Console.Write($"{testItem.LineNo:D5}");
-                }
+                ShowProgress(scriptLine);
+            } while (scriptLineIdx < scriptLines.Count);
 
-            } while (testLine < testData.Length);
+            Console.WriteLine($"\nCommand Log: {LogExecutedCommands(testableZPlayer.ExecutedCommands, zMachineTestScript.ScriptFile)}");
 
+            return failedExpectation;
+        }
 
-            zPlayer.StandardInput.Close();
-            zPlayer.StandardOutput.Close();
-            zPlayer.Kill();
+        private static string LogExecutedCommands(IEnumerable<string> executedCommands, string scriptFile)
+        {
+            var filename = Path.GetFileName($"{scriptFile}.cmdlog");
+            File.WriteAllLines(filename, executedCommands);
+            return filename;
+        }
 
+        private static void ShowFinalMessage(string programFile, string testFile, string failedExpectation)
+        {
             Console.WriteLine();
-
             if (!string.IsNullOrEmpty(failedExpectation))
             {
-                ConsoleX.ColouredWriteLine(ConsoleColor.Red, ConsoleColor.Yellow, "**FAILED**");
+                ConsoleX.ColouredWriteLine("**FAILED**", ConsoleColor.Red, ConsoleColor.Yellow);
                 Console.WriteLine(failedExpectation);
                 Environment.ExitCode = -1;
             }
             else
             {
-                ConsoleX.ColouredWriteLine(ConsoleColor.Green, ConsoleColor.Black, $"SUCCESS");
-                Console.WriteLine($"{programFile} tested using {testFile}");
+                ConsoleX.ColouredWriteLine($"SUCCESS", ConsoleColor.Green, ConsoleColor.Black);
                 Environment.ExitCode = 0;
             }
+            Console.WriteLine($"{programFile} tested using {testFile}");
+        }
 
+        private static void ShowProgress(CommandExpects testItem)
+        {
+            if (_quietMode)
+            {
+                Console.CursorLeft = 0;
+                Console.Write($"Test line: {testItem.LineNo:D5}");
+            }
         }
 
         private static void EchoToConsole(string lastOutput)
@@ -114,19 +111,13 @@ namespace ZTest
             if (!_quietMode) Console.Write(lastOutput);
         }
 
-        private static Process CreateRedirectedPlayerProcess(string playerFile, string programFile)
+        private static string CreateFailureMessage(string lastCommand, CommandExpects testItem, string lastOutput)
         {
-            return new Process
-            {
-                StartInfo =
-                {
-                    FileName = playerFile,
-                    Arguments = programFile,
-                    UseShellExecute = false,
-                    RedirectStandardInput = true,
-                    RedirectStandardOutput = true,
-                }
-            };
+            var failureMessage =
+                $"Last command ('{lastCommand}') expected response from line [{testItem.LineNo}] ('{testItem.Expectation}')!";
+
+            if (_quietMode) failureMessage += $"\nOutput was:\n{lastOutput}";
+            return failureMessage;
         }
 
         private static void CheckFilesExists(string playerFile, string programFile, string testFile)
@@ -139,59 +130,6 @@ namespace ZTest
             Exists(playerFile);
             Exists(programFile);
             Exists(testFile);
-        }
-
-        private static string ReadToNextCommandRequest(StreamReader playerOutputReader)
-        {
-            var playerOutput = "";
-            var nextChar = (char) playerOutputReader.Read();
-            while (nextChar != '>' && nextChar != 0xffff)
-            {
-                playerOutput += $"{nextChar}";
-                nextChar = (char) playerOutputReader.Read();
-            }
-
-            playerOutput += $"{nextChar}";
-            return playerOutput;
-        }
-
-        private static CommandExpects[] ReadTestFile(string zTextFile)
-        {
-            var text = File.OpenText(zTextFile).ReadToEnd();
-            var lines = new StringReader(text);
-            var line = lines.ReadLine();
-            var cmd = "";
-
-            var list = new List<CommandExpects>();
-            var lineNo = 1;
-            while (line != null)
-            {
-                if (!line.StartsWith('#'))
-                {
-                    if (line.Trim().StartsWith(">"))
-                    {
-                        if (!string.IsNullOrEmpty(cmd))
-                        {
-                            list.Add(new CommandExpects(cmd, "", lineNo));
-                        }
-
-                        cmd = line.Substring(1).Trim();
-                    }
-                    else
-                    {
-                        var result = line.Trim();
-
-                        list.Add(new CommandExpects(cmd, result, lineNo));
-
-                        cmd = string.Empty;
-                    }
-                }
-
-                lineNo++;
-                line = lines.ReadLine();
-            }
-
-            return list.ToArray();
         }
     }
 }
