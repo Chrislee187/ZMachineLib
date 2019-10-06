@@ -12,7 +12,6 @@ There is a small mailbox here.
 
 # NOTE: rand 0 forces a fixed seed for random event generation
 >#rand 0
-
 >open mailbox
 
 Opening the small mailbox reveals a leaflet.
@@ -1685,7 +1684,6 @@ The brown sack contains:
 
 Living Room
 
-
 >put bauble in case
 
 Done.
@@ -1715,6 +1713,10 @@ Your collection of treasures consists of:
   A gold coffin
   A painting
 
-
-> score
+>quit
 Your score is 339
+>y
+
+
+
+

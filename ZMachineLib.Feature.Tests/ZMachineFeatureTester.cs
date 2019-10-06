@@ -48,18 +48,18 @@ namespace ZMachineLib.Feature.Tests
                     var commandString = _commandStrings[_commandIndex];
                     do
                     {
-                        var outputString = _outputStrings[_commandIndex];
+                        var expectedText = _outputStrings[_commandIndex];
 
                         if (!string.IsNullOrEmpty(commandString))
                         {
                             Console.WriteLine($"{commandString}");
                         }
 
-                        if (!string.IsNullOrEmpty(outputString))
+                        if (!string.IsNullOrEmpty(expectedText))
                         {
                             var lastExpectationMet = _outputBetweenCommands
                                 .ToString()
-                                .Contains(outputString);
+                                .Contains(expectedText);
 
                             if (!lastExpectationMet)
                             {
@@ -73,7 +73,7 @@ namespace ZMachineLib.Feature.Tests
                                         .ToArray())
                                     );
                                 
-                                var customMessage = $"Last command ('{_lastCommand}') expected a response containing '{outputString}'!\nResponse:\n" +
+                                var customMessage = $"Last command ('{_lastCommand}') expected a response containing '{expectedText}'!\nResponse:\n" +
                                                     $"{_outputBetweenCommands}";
 //                                Assert.True(lastExpectationMet, customMessage);
                                 lastExpectationMet.ShouldBeTrue(customMessage);

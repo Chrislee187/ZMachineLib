@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ZTest": {
+      "commandName": "Project",
+      "commandLineArgs": "D:\\zFiles\\zork1.z3 D:\\Src\\ZMachineLib\\ZMachineLib.Feature.Tests\\zork1.rand0.walkthru"
+    }
+  }
+}

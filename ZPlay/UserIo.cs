@@ -13,8 +13,8 @@ namespace ZPlay
 
         public UserIo()
 		{
-            Console.SetBufferSize(Console.WindowWidth, Console.WindowHeight);
-			Console.SetCursorPosition(0, Console.WindowHeight-1);
+//            Console.SetBufferSize(Console.WindowWidth, Console.WindowHeight);
+//			Console.SetCursorPosition(0, Console.WindowHeight-1);
             _defaultFore = ConsoleColor.White; //Console.ForegroundColor;
             _defaultBack = ConsoleColor.Black; //Console.BackgroundColor;
 		}

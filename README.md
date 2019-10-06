@@ -54,7 +54,7 @@ Simple console application to run ZMachine programs files.
 * Heavy use was made of (The ZMachine Standards document)[http://inform-fiction.org/zmachine/standards/z1point1/index.html], amazing effort over the years on that, great job!
 * Forked and refactored from, and therefore heavily based on, Brian Peek's (C# ZMachineLib)[https://github.com/BrianPeek/ZMachineLib]
 
-# ACQUIRE ZPROGRAM FILES
+# ACQUIRING ZPROGRAM FILES
 
 * To avoid any copyright issues, this repo contains no actual games files, there are various sources available for these, a great starting point is here on github at [Historical Source](https://github.com/historicalsource)
 
@@ -69,8 +69,6 @@ Invoke-WebRequest https://github.com/historicalsource/zork3/blob/master/COMPILED
 There are many other V3 programs available in the historical source archive
 
 # Todos
-
-* Now V3 support is pretty solid look at implementing support and a full test against B43
 
 Some things I've been thinking about doing;
 
