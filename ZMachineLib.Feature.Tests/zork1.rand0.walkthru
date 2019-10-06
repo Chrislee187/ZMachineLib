@@ -1,3 +1,17 @@
+# Zork 1 walkthru test
+# Originally based on http://steel.lcc.gatech.edu/~marleigh/zork/transcript.html
+# 
+# Forces a fixed random seed using #rand 0 allowing a consistent sequeence of "random" events
+# (candles blowing out, fights, the thief etc.)
+# 
+# NOTES:
+# * DOES NOT contain a complete set of outputs
+# * some outputs and inputs (typically `look` and `inventory` commands and their results) are in place to help identify some bugs I'd introduced.
+# 
+# 
+
+
+
 ZORK I: The Great Underground Empire
 
 Copyright (c) 1981
@@ -1278,6 +1292,9 @@ There is a large emerald here.
 There is a magic boat here.
 
 > take emerald
+Taken.
+
+> take trunk
 Taken.
 
 >go south
