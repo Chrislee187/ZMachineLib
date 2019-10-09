@@ -24,7 +24,7 @@ namespace ZPlay
 
         public Stream Restore()
         {
-            var saveFilePath = GetUserSavePath();
+            var saveFilePath = GetUserSavePath(false);
                 
             try
             {
@@ -39,7 +39,7 @@ namespace ZPlay
             }
         }
 
-        private string GetUserSavePath()
+        private string GetUserSavePath(bool checkForOverwrite = true)
         {
             var saveFilePath = !string.IsNullOrEmpty(_lastSavePath) 
                 ? _lastSavePath 
@@ -58,7 +58,7 @@ namespace ZPlay
                         $"{readLine}.zSave"
                     );
                 }
-                if (File.Exists(saveFilePath))
+                if (checkForOverwrite && File.Exists(saveFilePath))
                 {
                     Console.Write("File already exists, overwrite Y/n?: ");
 

@@ -26,6 +26,11 @@ Individual operations (Ops) that the ZMachine supports get and set the values re
 
 The core library containing the code to run a ZMachine program from it bytecode.
 
+### Debugging
+
+* I've added some custom debugging supporting in the form of `!!` commands which can be entered whilst playing a game to dump out parts of the ZMachine state. use `!!` to see supported commands
+* This is WIP and needs some attention, better handling around the debug command parsing, extended output for object instead of just the name. other commands as required.
+
 ## ZDump
 
 Utility to dump useful information about a ZMachine program file.

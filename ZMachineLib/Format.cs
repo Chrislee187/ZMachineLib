@@ -18,6 +18,7 @@ namespace ZMachineLib
         }
 
         public static string Word(ushort value) => $"{value:X4} ({value})";
+        public static string Byte(byte value) => $"{value:X2} ({value})";
 
         public static string Flags(byte value)
         {

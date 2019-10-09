@@ -1,4 +1,5 @@
 ﻿using System;
+using ZMachineLib.Content;
 
 namespace ZMachineLib
 {
@@ -15,14 +16,14 @@ namespace ZMachineLib
 	public interface IUserIo
 	{
 		void Print(string s);
-		string Read(int max);
+		string Read(int max, IZMemory memory);
 		char ReadChar();
 		void SetCursor(ushort line, ushort column, ushort window);
 		void SetWindow(ushort window);
 		void EraseWindow(ushort window);
 		void BufferMode(bool buffer);
 		void SplitWindow(ushort lines);
-		void ShowStatus();
+		void ShowStatus(IZMemory memory);
 		void SetTextStyle(TextStyle textStyle);
 		void SetColor(ZColor foreground, ZColor background);
 		void SoundEffect(ushort number);

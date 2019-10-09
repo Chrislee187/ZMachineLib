@@ -7,7 +7,7 @@ namespace ZMachineLib.Operations.OPVAR
     public sealed class Read : ZMachineOperationBase
     {
         private readonly IUserIo _io;
-
+        private readonly ZMDebugger _debugger = new ZMDebugger();
         public Read(IZMemory memory, IUserIo io)
             : base((ushort)OpCodes.Read, memory)
         {
@@ -21,10 +21,27 @@ namespace ZMachineLib.Operations.OPVAR
             else
             {
                 var max = Memory.Manager.Get(args[0]);
-                var input = _io.Read(max);
+                bool isDebugCommand;
+                string input;
+                
+                do
+                {
+                    input = _io.Read(max, Memory);
+                    string output;
+                    (isDebugCommand, output) = _debugger.HandleDebugCommands(Memory, input);
+
+                    if (isDebugCommand)
+                    {
+                        // TODO: Create seperate endpoint for Debug output
+                        _io.Print(output);
+                    }
+
+                } while (isDebugCommand);
+
                 FinishRead(input, args[0], args[1]);
             }
         }
+
 
         private void FinishRead(string input, ushort readTextAddr, ushort readParseAddr)
         {

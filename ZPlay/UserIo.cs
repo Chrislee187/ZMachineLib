@@ -1,12 +1,18 @@
 ﻿#define SIMPLE_IO
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using ZMachineLib;
+using ZMachineLib.Content;
 
 namespace ZPlay
 {
     public class UserIo : IUserIo
-	{
+    {
+        public string PROMPT = ">";
+
 		private int _lines;
 		private readonly ConsoleColor _defaultFore;
 		private readonly ConsoleColor _defaultBack;
@@ -48,16 +54,18 @@ namespace ZPlay
 			}
 		}
 
-		public string Read(int max)
+		public string Read(int max, IZMemory memory)
 		{
+            ShowStatus(memory); // As per the 8.2.4 of the specification
+
 #if SIMPLE_IO
-			var s = Console.ReadLine();
-			Console.MoveBufferArea(0, 0, Console.WindowWidth, _lines, 0, 1);
+            var s = Console.ReadLine();
+            Console.MoveBufferArea(0, 0, Console.WindowWidth, _lines, 0, 1);
             var substring = s?.Substring(0, Math.Min(s.Length, max));
 
             return substring;
 #else
-			string s = string.Empty;
+			string commandLine = string.Empty;
 			ConsoleKeyInfo key = new ConsoleKeyInfo();
 
 			do
@@ -68,16 +76,16 @@ namespace ZPlay
 					switch(key.Key)
 					{
 						case ConsoleKey.Backspace:
-							if(s.Length > 0)
+							if(commandLine.Length > 0)
 							{
-								s = s.Remove(s.Length-1, 1);
+								commandLine = commandLine.Remove(commandLine.Length-1, 1);
 								Console.Write(key.KeyChar);
 							}
 							break;
 						case ConsoleKey.Enter:
 							break;
 						default:
-							s += key.KeyChar;
+							commandLine += key.KeyChar;
 							Console.Write(key.KeyChar);
 							break;
 					}
@@ -87,11 +95,11 @@ namespace ZPlay
 
 			Console.MoveBufferArea(0, 0, Console.WindowWidth, _lines, 0, 1);
 			Console.WriteLine(string.Empty);
-			return s;
+			return commandLine;
 #endif
-		}
+        }
 
-		public char ReadChar()
+        public char ReadChar()
 		{
 			return Console.ReadKey(true).KeyChar;
 		}
@@ -126,9 +134,14 @@ namespace ZPlay
 			_lines = lines;
 		}
 
-		public void ShowStatus()
+		public void ShowStatus(IZMemory memory)
 		{
-            Log("ShowStatus not implemented");
+            var currentRoomObjNumber = (byte) memory.Globals.Get(0);
+            var currentRoom = memory.ObjectTree.GetOrDefault(currentRoomObjNumber);
+            var score = memory.Globals.Get(1);
+            var turn = memory.Globals.Get(2);
+
+            Console.Title = $"{currentRoom.Name} - Score: {score}, Turn: {turn} ";
 		}
 
         public void SetTextStyle(TextStyle textStyle)
