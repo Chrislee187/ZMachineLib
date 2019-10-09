@@ -227,6 +227,6 @@ namespace ZMachineLib.Content
 
         public static readonly ZMachineObject Object0 = new ZMachineObject(0, 0, default, null, null, null);
         public override string ToString()
-            => $"[{ObjectNumber:D3}] ({Address:X4}) '{Name}' ";
+            => $"#{ObjectNumber:D3} @0x{Address:X4} - '{Name}' ";
     }
 }

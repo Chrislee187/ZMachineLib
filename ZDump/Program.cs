@@ -77,13 +77,12 @@ namespace ZDump
 
         private static void WriteObjects(ZMemory contents)
         {
-            var objs = contents.ObjectTree;
-            WriteHeading($"Object Tree ({objs.Count} objects)");
+            WriteHeading($"Object Tree ({contents.ObjectTree.Count} objects)");
 
             var sb = new StringBuilder();
-            foreach (var zObj in objs.Values)
+            foreach (var zObj in contents.ObjectTree.Values)
             {
-                sb.AppendLine(FormatObj(zObj, objs, true));
+                sb.AppendLine(Format.Object(contents.ObjectTree, zObj.ObjectNumber, true));
             }
 
             Console.WriteLine(sb);
@@ -95,11 +94,12 @@ namespace ZDump
 
             var d = contents.Dictionary;
 
-            var pairs = new Dictionary<string, string>();
-
-            pairs.Add($"InputCodes", $"{Format.ByteArray(d.InputCodes, false)} {Format.CharArray(d.InputCodes, false)}");
-
+            var pairs = new Dictionary<string, string>
+            {
+                {$"InputCodes", $"{Format.ByteArray(d.InputCodes, false)} {Format.CharArray(d.InputCodes, false)}"}
+            };
             Console.WriteLine(Format.TwoColumn(pairs, 25));
+            
             WriteSubHeading("Words");
 
             Console.WriteLine(string.Join(", ", d.Words));
@@ -130,25 +130,9 @@ namespace ZDump
 
         private static void WriteHeader(string filename, ZMemory contents)
         {
-            var h = contents.Header;
+            Console.WriteLine($"File: {Path.GetFileNameWithoutExtension(filename)}");
 
-            var pairs = new Dictionary<string, string>();
-
-            pairs.Add($"File", Path.GetFileNameWithoutExtension(filename));
-            pairs.Add($"ZMachine Version", $"{h.Version}");
-            pairs.Add("Addresses", "");
-            pairs.Add($"Program Counter:", Format.Word(h.ProgramCounter));
-            pairs.Add($"High Memory", Format.Word(h.HighMemoryBaseAddress));
-            pairs.Add($"Static Memory", Format.Word(h.StaticMemoryBaseAddress));
-            pairs.Add($"Dictionary", Format.Word(h.Dictionary));
-            pairs.Add($"Object Table", Format.Word(h.ObjectTable));
-            pairs.Add($"Globals", Format.Word(h.Globals));
-            pairs.Add($"Abbreviations Table", Format.Word(h.AbbreviationsTable));
-            pairs.Add($"Dynamic Memory Size", Format.Word(h.DynamicMemorySize));
-            pairs.Add($"Flags1", Format.Flags((byte) h.Flags1));
-            pairs.Add("Flags2", Format.Flags(h.Flags2));
-
-            Console.WriteLine(Format.TwoColumn(pairs, 25));
+            Console.WriteLine(contents.Header.ToTable(25));
         }
         
         private static byte[] Read(Stream stream)
@@ -157,46 +141,6 @@ namespace ZDump
             stream.Seek(0, SeekOrigin.Begin);
             stream.Read(buffer, 0, (int)stream.Length);
             return buffer;
-        }
-
-        private static string FormatObj(IZMachineObject zObj, IZObjectTree objs, bool showAttrs = false)
-        {
-            var sb = new StringBuilder();
-            sb.Append($"{zObj}");
-
-            if (showAttrs)
-            {
-                sb.Append($" Attributes: {Format.Attributes(zObj.Attributes)}");
-            }
-
-            sb.AppendLine();
-
-            if (zObj.Parent != 0)
-            {
-                sb.AppendLine($"   Parent: {objs[zObj.Parent]}");
-//                sb.AppendLine(FormatObj(objs[zObj.Parent], objs));
-            }
-
-            if (zObj.Sibling != 0)
-            {
-                sb.AppendLine($"  Sibling: {objs[zObj.Sibling]}");
-//                sb.AppendLine(FormatObj(objs[zObj.Sibling], objs));
-            }
-
-            if (zObj.Child != 0)
-            {
-                sb.AppendLine($"    Child: {objs[zObj.Child]}");
-//                sb.AppendLine(FormatObj(objs[zObj.Child], objs));
-            }
-
-            sb.AppendLine($"  Properties:");
-            foreach (var pair in zObj.Properties)
-            {
-                sb.AppendLine($"   [{pair.Key:D2}] : {Format.ByteArray(pair.Value.Data, false)}");
-
-            }
-
-            return sb.ToString();
         }
     }
 }

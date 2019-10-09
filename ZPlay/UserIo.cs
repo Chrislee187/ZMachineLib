@@ -138,6 +138,7 @@ namespace ZPlay
 
 		public void ShowStatus(IZMemory memory)
 		{
+            // Section 8.2
             var currentRoomObjNumber = (byte) memory.Globals.Get(0);
             var currentRoom = memory.ObjectTree.GetOrDefault(currentRoomObjNumber);
             var score = memory.Globals.Get(1);
