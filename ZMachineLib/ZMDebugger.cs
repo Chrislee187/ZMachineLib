@@ -43,12 +43,5 @@ namespace ZMachineLib
 
             return (debugging, sb.ToString());
         }
-
-        private static string DebugObject(IZMemory memory, byte objectNumber)
-        {
-            var sb = new StringBuilder();
-            sb.Append(Format.Object(memory.ObjectTree, objectNumber, true));
-            return sb.ToString();
-        }
     }
 }

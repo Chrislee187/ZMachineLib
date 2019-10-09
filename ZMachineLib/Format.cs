@@ -29,7 +29,7 @@ namespace ZMachineLib
             var s = Convert
                 .ToString(value, 2)
                 .PadLeft(8, '0');
-            return $"{value:X2} ({s})";
+            return $"{value:X2} ({ToBinary(value)})";
         }
 
         public static string Flags(ushort value)
@@ -37,7 +37,7 @@ namespace ZMachineLib
             var s = Convert
                 .ToString(value, 2)
                 .PadLeft(16, '0');
-            return $"{value:X4} ({s})";
+            return $"{value:X4} ({ToBinary(value)})";
         }
 
         public static string ByteArray(Span<byte> bytes, bool newline = true)
@@ -89,7 +89,45 @@ namespace ZMachineLib
                 binary += (flag & attributes) == flag ? "1" : "0";
             }
 
-            return $"{string.Join(',', attrs)} (0b{binary.Reverse()})";
+            return $"{string.Join(',', attrs)} ({attributes.ToBinary()})";
+        }
+
+        public static string ToBinary(this ulong value)
+        {
+            var binary = "";
+            for (int i = 0; i < 32; i++)
+            {
+                ulong flag = (ulong) 1 << i;
+
+                binary += (flag & value) == flag ? "1" : "0";
+            }
+
+            return $"0b{binary}";
+        }
+        public static string ToBinary(this ushort value)
+        {
+            var binary = "";
+            for (int i = 0; i < 16; i++)
+            {
+                ulong flag = (ulong)1 << i;
+
+                binary += (flag & value) == flag ? "1" : "0";
+            }
+
+            return $"0b{binary}";
+        }
+
+        public static string ToBinary(this byte value)
+        {
+            var binary = "";
+            for (int i = 0; i < 8; i++)
+            {
+                ulong flag = (ulong)1 << i;
+
+                binary += (flag & value) == flag ? "1" : "0";
+            }
+
+            return $"0b{binary}";
         }
 
         public static string Header(ZHeader header, int col1Width = 25)
@@ -98,20 +136,24 @@ namespace ZMachineLib
 
             var pairs = new Dictionary<string, string>();
 
-            pairs.Add($"ZMachine Version", $"{h.Version}");
-            pairs.Add("Addresses", "");
-            pairs.Add($"Program Counter:", Word(h.ProgramCounter));
-            pairs.Add($"High Memory", Word(h.HighMemoryBaseAddress));
-            pairs.Add($"Static Memory", Word(h.StaticMemoryBaseAddress));
-            pairs.Add($"Dictionary", Word(h.Dictionary));
-            pairs.Add($"Object Table", Word(h.ObjectTable));
-            pairs.Add($"Globals", Word(h.Globals));
-            pairs.Add($"Abbreviations Table", Word(h.AbbreviationsTable));
-            pairs.Add($"Dynamic Memory Size", Word(h.DynamicMemorySize));
-            pairs.Add($"Flags1", Flags((byte)h.Flags1));
-            pairs.Add("Flags2", Flags(h.Flags2));
 
-            return TwoColumn(pairs, col1Width);
+            pairs.Add("ZMachine Version", $"{h.Version}");
+            pairs.Add("Flags1", Flags((byte)h.Flags1));
+            pairs.Add("Flags2", Flags(h.Flags2));
+            pairs.Add("Abbreviations Table", Word(h.AbbreviationsTable));
+            pairs.Add("Object Table", Word(h.ObjectTable));
+            pairs.Add("Globals", Word(h.Globals));
+            pairs.Add("Dynamic Memory Size", Word(h.DynamicMemorySize));
+            pairs.Add("Static Memory", Word(h.StaticMemoryBaseAddress));
+            pairs.Add("Dictionary", Word(h.Dictionary));
+            pairs.Add("High Memory", Word(h.HighMemoryBaseAddress));
+            pairs.Add("Program Counter:", Word(h.ProgramCounter));
+
+ 
+
+            return TwoColumn(
+                pairs
+                , col1Width);
         }
 
         public static string Object(IZObjectTree objs, ushort objNumber, bool showAttrs = false)
