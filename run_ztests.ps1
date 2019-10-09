@@ -9,12 +9,12 @@ Function file-exists($path) {
 
 if(!(file-exists $programFile)) {
 	echo "Downloading $programFile ..."
-	Invoke-WebRequest https://github.com/historicalsource/zork1/blob/master/COMPILED/zork1.z3?raw=true -OutFile .\zork1.z3
+	Invoke-WebRequest https://raw.githubusercontent.com/historicalsource/zork1/master/COMPILED/zork1.z3 -OutFile .\zork1.z3
 }
 
 if((file-exists $walkthru)) {
-	echo "Running $programFile walkthru : $walkthru ..."
-	dotnet run -p ZTest -- $programFile $walkthru
+	echo "Running ZTest against $programFile using test file : $walkthru ..."
+	dotnet run -p ZTest -- $programFile $walkthru q
 }
 else {
 	echo "File not found: $walkthru"

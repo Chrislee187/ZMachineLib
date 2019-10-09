@@ -48,7 +48,6 @@ namespace ZMachineLib
         {
             _zMemory.TerminateOnInput = terminateOnInput;
             _zMemory.Running = true;
-            
             bool restart = false;
             while (_zMemory.Running)
             {

@@ -111,13 +111,15 @@ namespace ZPlay
 
 		public void SetWindow(ushort window)
 		{
+            Console.WriteLine($"SetWindow {window}");
 			if(window == 0)
 				Console.SetCursorPosition(0, Console.WindowHeight-1);
 		}
 
 		public void EraseWindow(ushort window)
 		{
-			var c = Console.BackgroundColor;
+            Console.WriteLine($"EraseWindow {window}");
+            var c = Console.BackgroundColor;
 			Console.BackgroundColor = _defaultBack;
 			Console.Clear();
 			Console.BackgroundColor = c;

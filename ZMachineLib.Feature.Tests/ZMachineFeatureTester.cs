@@ -6,6 +6,7 @@ using System.Text;
 using Moq;
 using Moq.Language;
 using NUnit.Framework;
+using ZMachineLib.Content;
 
 namespace ZMachineLib.Feature.Tests
 {
@@ -22,7 +23,7 @@ namespace ZMachineLib.Feature.Tests
         public ZMachineFeatureTester(Mock<IUserIo> zMachineIo)
         {
             _inputSequence = zMachineIo
-                .SetupSequence(io => io.Read(It.IsAny<int>()));
+                .SetupSequence(io => io.Read(It.IsAny<int>(), It.IsAny<IZMemory>()));
 
             zMachineIo.Setup(m => m.Print(It.IsAny<string>()))
                 .Callback<string>(s =>
