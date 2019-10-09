@@ -49,19 +49,6 @@ namespace ZMachineLib.Feature.Tests
             ShouldRunToCompletion(TestFile);
         }
 
-        [Test, Ignore("Need an explicit FileIO to properly test this")]
-        public void Should_save_and_load()
-        {
-            ExpectZorkIStartText();
-            Feature
-                .Execute("n", "North of House")
-                .Execute("save", "saved")
-                .Execute("restore", "Ok.")
-                .Quit();
-
-            ShouldRunToCompletion(TestFile);
-        }
-
         [Test]
         public void Should_drink_the_bottle_of_water()
         {

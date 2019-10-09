@@ -48,7 +48,7 @@ namespace ZPlay
         {
             new ZMachine2(
                 new UserIo(),
-                new FileIo(Path.GetFileNameWithoutExtension(zFile)),
+                new ConsoleFileIo(Path.GetFileNameWithoutExtension(zFile)),
                 LoggerSetup.Create<ZMachine2>()
             ).RunFile(zFile);
         }
