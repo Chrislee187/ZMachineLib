@@ -10,6 +10,7 @@ An incomplete (ZMachine)[https://en.wikipedia.org/wiki/Z-machine] interpreter wr
 * As an exercise in refactoring legacy code.
 * A way for me to play some of the old Infocom games.. 
 
+
 # Approach
 
 The core approach was to attempt to refactor lots of pieces of code that grab bytes from the machine "memory" (a `byte[]`), in to clearly named objects that abstracted the byte array handling away as much as possible.
@@ -21,6 +22,12 @@ All of these are held in a root ZMemory object which maintains the byte[] array 
 Individual operations (Ops) that the ZMachine supports get and set the values required via the nice OO 'Z' abtractions described above rather than directly manipulating the byte array.
 
 # Architecture
+
+A zmachine program's execution is a simple loop getting the next byte code instruction and executing it. Input and outputs are effectively interrupts and block the execution until the input or output is received/finished.
+
+Whilst this is fine in todays generally multi-core environments, we still all use a single-core, single-thread machine when we use browser scripting. This means to "run" the zmachine in a browser it would run until the zprogram exits (i.e. when the user 'quits' a game) effectively locking the browser UI thread.
+
+
 
 ## ZmachineLib
 

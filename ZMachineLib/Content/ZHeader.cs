@@ -11,7 +11,7 @@ namespace ZMachineLib.Content
     {
         [FieldOffset(0x00)] public readonly byte Version;
         [FieldOffset(0x01)] [MarshalAs(UnmanagedType.U2)] private readonly ushort Flags1Raw;
-        [FieldOffset(0x03)] private readonly byte Unknown1;
+        [FieldOffset(0x03)] public readonly byte Unknown1;
         [FieldOffset(0x04)] private readonly ushort HighMemoryBaseAddressRaw;
         [FieldOffset(0x06)] private readonly ushort ProgramCounterRaw;     // 0x06 (NB. Packed address of initial main routine in >= V6)
         [FieldOffset(0x08)] private readonly ushort DictionaryRaw;
@@ -19,9 +19,9 @@ namespace ZMachineLib.Content
         [FieldOffset(0x0c)] private readonly ushort GlobalsRaw;
         [FieldOffset(0x0e)] private readonly ushort StaticMemoryBaseAddressRaw;
         [FieldOffset(0x10)] private readonly ushort Flags2Raw;
-        [FieldOffset(0x12)] private readonly ushort Unknown2;
-        [FieldOffset(0x14)] private readonly ushort Unknown3;
-        [FieldOffset(0x16)] private readonly ushort Unknown4;
+        [FieldOffset(0x12)] public readonly ushort Unknown2;
+        [FieldOffset(0x14)] public readonly ushort Unknown3;
+        [FieldOffset(0x16)] public readonly ushort Unknown4;
         [FieldOffset(0x18)] private readonly ushort AbbreviationsTableRaw;
         [FieldOffset(0x1a)] private readonly ushort LengthOfFileRaw;
         [FieldOffset(0x1c)] private readonly ushort ChecksumOfFileRaw;

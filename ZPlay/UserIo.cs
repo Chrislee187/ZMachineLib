@@ -16,9 +16,11 @@ namespace ZPlay
 		private int _lines;
 		private readonly ConsoleColor _defaultFore;
 		private readonly ConsoleColor _defaultBack;
+        private string _programFileId;
 
-        public UserIo()
+        public UserIo(string programFileId)
 		{
+            _programFileId = programFileId;
 //            Console.SetBufferSize(Console.WindowWidth, Console.WindowHeight);
 //			Console.SetCursorPosition(0, Console.WindowHeight-1);
             _defaultFore = ConsoleColor.White; //Console.ForegroundColor;
@@ -144,7 +146,7 @@ namespace ZPlay
             var score = memory.Globals.Get(1);
             var turn = memory.Globals.Get(2);
 
-            Console.Title = $"{currentRoom.Name} - Score: {score}, Turn: {turn} ";
+            Console.Title = $"{_programFileId} : {currentRoom.Name} - Score: {score}, Turn: {turn} ";
 		}
 
         public void SetTextStyle(TextStyle textStyle)

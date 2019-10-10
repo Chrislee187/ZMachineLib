@@ -14,12 +14,7 @@ namespace ZMachineLib.Content
         IOperandManager OperandManager { get; }
         VersionedOffsets Offsets { get; }
         ushort DictionaryWordStart { get; }
-        byte PeekNextByte();
-        byte PeekPreviousByte();
-        byte PeekCurrentByte();
         byte GetCurrentByteAndInc();
-
-        bool TerminateOnInput { get; set; }
 
         bool Running { get; set; }
         ZGlobals Globals { get; set; }

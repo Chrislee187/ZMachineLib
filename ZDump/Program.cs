@@ -98,7 +98,7 @@ namespace ZDump
             {
                 {$"InputCodes", $"{Format.ByteArray(d.InputCodes, false)} {Format.CharArray(d.InputCodes, false)}"}
             };
-            Console.WriteLine(Format.TwoColumn(pairs, 25));
+            Console.WriteLine(Format.KeyValues(pairs, 25));
             
             WriteSubHeading("Words");
 
@@ -132,7 +132,7 @@ namespace ZDump
         {
             Console.WriteLine($"File: {Path.GetFileNameWithoutExtension(filename)}");
 
-            Console.WriteLine(contents.Header.ToTable(25));
+            Console.WriteLine(Format.Header(contents.Header));
         }
         
         private static byte[] Read(Stream stream)

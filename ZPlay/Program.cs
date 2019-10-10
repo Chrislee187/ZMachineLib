@@ -9,20 +9,23 @@ namespace ZPlay
     class Program
     {
         private static IConfiguration _config;
+        private static ZMachine2 _zMachine2;
+
         static void Main(string[] args)
         {
             _config = Config.Get();
             string zFile = string.Empty;
             zFile = GetZFileToPlay(args, zFile);
-            
+
             if (!File.Exists(zFile))
             {
                 Abort("USAGE: ZPlay <zfile>|<zFileDir>");
             }
 
             RunZFile(zFile);
-        }
+//            RunZFileWithoutInterrupts(zFile);
 
+        }
         private static string GetZFileToPlay(string[] args, string zFile)
         {
             if (args.Any())
@@ -44,11 +47,34 @@ namespace ZPlay
             return zFile;
         }
 
+        /// <summary>
+        /// Simple test for the non-interrupt version
+        /// </summary>
+        /// <param name="zFile"></param>
+        // ReSharper disable once UnusedMember.Local
+        private static void RunZFileWithoutInterrupts(string zFile)
+        {
+            var progId = Path.GetFileNameWithoutExtension(zFile);
+            _zMachine2 = new ZMachine2(
+                new UserIo(progId),
+                new ConsoleFileIo(progId),
+                LoggerSetup.Create<ZMachine2>()
+            );
+            _zMachine2.RunFile(File.OpenRead(zFile), false);
+
+            do
+            {
+                var input = Console.ReadLine();
+                _zMachine2.ContinueTillNextRead(input);
+
+            } while (_zMachine2.Running);
+        }
         private static void RunZFile(string zFile)
         {
+            var progId = Path.GetFileNameWithoutExtension(zFile);
             new ZMachine2(
-                new UserIo(),
-                new ConsoleFileIo(Path.GetFileNameWithoutExtension(zFile)),
+                new UserIo(progId),
+                new ConsoleFileIo(progId),
                 LoggerSetup.Create<ZMachine2>()
             ).RunFile(zFile);
         }

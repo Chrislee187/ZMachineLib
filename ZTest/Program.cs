@@ -85,7 +85,7 @@ namespace ZTest
             Console.WriteLine();
             if (!string.IsNullOrEmpty(failedExpectation))
             {
-                ConsoleX.ColouredWriteLine("**FAILED**", ConsoleColor.Red, ConsoleColor.Yellow);
+                ConsoleX.ColouredWriteLine("FAILED", ConsoleColor.Red, ConsoleColor.Yellow);
                 Console.WriteLine(failedExpectation);
                 Environment.ExitCode = -1;
             }

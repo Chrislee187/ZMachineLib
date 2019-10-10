@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Text;
 using ZMachineLib.Content;
@@ -10,12 +9,17 @@ namespace ZMachineLib
 {
     public static class Format
     {
-        public static string TwoColumn(IDictionary<string, string> pairs, int col1Width)
+        public static string KeyValues(IDictionary<string, string> pairs, int keyWidth = 0)
         {
+            if (keyWidth == 0)
+            {
+                keyWidth = pairs.Keys.Max(k => k.Length) + 1;
+            }
+
             var sb = new StringBuilder();
             foreach (var pair in pairs)
             {
-                sb.AppendLine($"{pair.Key.PadRight(col1Width)}:{pair.Value}");
+                sb.AppendLine($"{pair.Key.PadRight(keyWidth)}:{pair.Value}");
             }
 
             return sb.ToString();
@@ -134,26 +138,26 @@ namespace ZMachineLib
         {
             var h = header;
 
-            var pairs = new Dictionary<string, string>();
-
-
-            pairs.Add("ZMachine Version", $"{h.Version}");
-            pairs.Add("Flags1", Flags((byte)h.Flags1));
-            pairs.Add("Flags2", Flags(h.Flags2));
-            pairs.Add("Abbreviations Table", Word(h.AbbreviationsTable));
-            pairs.Add("Object Table", Word(h.ObjectTable));
-            pairs.Add("Globals", Word(h.Globals));
-            pairs.Add("Dynamic Memory Size", Word(h.DynamicMemorySize));
-            pairs.Add("Static Memory", Word(h.StaticMemoryBaseAddress));
-            pairs.Add("Dictionary", Word(h.Dictionary));
-            pairs.Add("High Memory", Word(h.HighMemoryBaseAddress));
-            pairs.Add("Program Counter:", Word(h.ProgramCounter));
-
- 
-
-            return TwoColumn(
-                pairs
-                , col1Width);
+            var pairs = new Dictionary<string, string>
+            {
+                {"ZMachine Version", $"{h.Version}"},
+                {"Flags1", Flags((byte) h.Flags1)},
+                {"Flags2", Flags(h.Flags2)},
+                {"Abbreviations Table", Word(h.AbbreviationsTable)},
+                {"Object Table", Word(h.ObjectTable)},
+                {"Globals", Word(h.Globals)},
+                {"Dynamic Memory Size", Word(h.DynamicMemorySize)},
+                {"Static Memory", Word(h.StaticMemoryBaseAddress)},
+                {"Dictionary", Word(h.Dictionary)},
+                {"High Memory", Word(h.HighMemoryBaseAddress)},
+                {"Program Counter:", Word(h.ProgramCounter)},
+                {"Unknown1 (0x01):", Byte(h.Unknown1)},
+                {"Unknown2 (0x12):", Word(h.Unknown2)},
+                {"Unknown3 (0x14):", Word(h.Unknown3)},
+                {"Unknown4 (0x16):", Word(h.Unknown4)}
+            };
+            
+            return KeyValues(pairs);
         }
 
         public static string Object(IZObjectTree objs, ushort objNumber, bool showAttrs = false)

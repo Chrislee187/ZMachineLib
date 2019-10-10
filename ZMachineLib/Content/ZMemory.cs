@@ -46,10 +46,6 @@ namespace ZMachineLib.Content
             OperandManager = new OperandManager(Manager, Stack, VariableManager);
         }
 
-        public byte PeekCurrentByte() => Manager.Get(Stack.GetPC());
-        public byte PeekNextByte() => Manager.Get(Stack.GetPC() + 1);
-        public byte PeekPreviousByte() => Manager.Get(Stack.GetPC() - 1);
-
         /// <summary>
         /// Get the byte pointed to by the current Program Counter and increment the counter by 1
         /// </summary>
@@ -65,7 +61,6 @@ namespace ZMachineLib.Content
                     : 0;
         }
 
-        public bool TerminateOnInput { get; set; }
         public bool Running { get; set; }
 
         public void Restart()

@@ -8,6 +8,9 @@ namespace ZMachineLib.Operations.OPVAR
     {
         private readonly IUserIo _io;
         private readonly ZmDebugger _debugger = new ZmDebugger();
+        private ushort _lastReadTextAddr;
+        private ushort _lastReadParseAddr;
+
         public Read(IZMemory memory, IUserIo io)
             : base((ushort)OpCodes.Read, memory)
         {
@@ -16,34 +19,45 @@ namespace ZMachineLib.Operations.OPVAR
 
         public override void Execute(List<ushort> args)
         {
-            if (Memory.TerminateOnInput)
-                Memory.Running = false;
-            else
+            var max = Memory.Manager.Get(args[0]);
+            bool isDebugCommand;
+            string input;
+            
+            do
             {
-                var max = Memory.Manager.Get(args[0]);
-                bool isDebugCommand;
-                string input;
-                
-                do
+                input = _io.Read(max, Memory);
+                string debugOutput;
+                (isDebugCommand, debugOutput) = _debugger.HandleDebugCommand(Memory, input);
+
+                if (isDebugCommand)
                 {
-                    input = _io.Read(max, Memory);
-                    string debugOutput;
-                    (isDebugCommand, debugOutput) = _debugger.HandleDebugCommand(Memory, input);
+                    // TODO: Create seperate endpoint for Debug output
+                    _io.Print(debugOutput);
+                }
 
-                    if (isDebugCommand)
-                    {
-                        // TODO: Create seperate endpoint for Debug output
-                        _io.Print(debugOutput);
-                    }
+            } while (isDebugCommand);
 
-                } while (isDebugCommand);
-
-                FinishRead(input, args[0], args[1]);
-            }
+            _lastReadTextAddr = args[0];
+            _lastReadParseAddr = args[1];
+            SetupParseTables(input, _lastReadTextAddr, _lastReadParseAddr);
         }
 
+        public bool ReadContinue(string input)
+        {
+            var (isDebugCommand, debugOutput) = _debugger.HandleDebugCommand(Memory, input);
 
-        private void FinishRead(string input, ushort readTextAddr, ushort readParseAddr)
+            if (isDebugCommand)
+            {
+                // TODO: Create seperate endpoint for Debug output
+                _io.Print(debugOutput);
+                return false;
+            }
+
+            SetupParseTables(input, _lastReadTextAddr, _lastReadParseAddr);
+            return true;
+        }
+
+        private void SetupParseTables(string input, ushort readTextAddr, ushort readParseAddr)
         {
             if (input != null && readTextAddr != 0 && readParseAddr != 0)
             {
@@ -92,7 +106,14 @@ namespace ZMachineLib.Operations.OPVAR
                     Memory.VariableManager.Store(dest, 10);
                 }
             }
+
+            SetParseAddresses(0,0);
         }
 
+        public void SetParseAddresses(ushort lastReadTextAddr, ushort lastReadParseAddr)
+        {
+            _lastReadTextAddr = lastReadTextAddr;
+            _lastReadParseAddr = lastReadParseAddr;
+        }
     }
 }
