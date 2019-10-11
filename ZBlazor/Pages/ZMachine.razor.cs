@@ -24,7 +24,7 @@ namespace ZBlazor.Pages
         // ReSharper restore UnassignedField.Global
 
         private readonly ZMachine2 _zMachine2;
-        public string Output { get; set; } //= new string('#', 10000)  + Environment.NewLine;
+        public string Output { get; set; } = "Loading...";//= new string('#', 10000)  + Environment.NewLine;
 
         [Parameter] public string ProgramName { get; set; }
         [Parameter] public string ProgramFile { get; set; }
@@ -67,9 +67,16 @@ namespace ZBlazor.Pages
         {
             base.OnInitialized();
 
-            var programStream = await HttpClient.GetStreamAsync(ProgramFile);
-
-            _zMachine2.RunFile(programStream, false);
+            try
+            {
+                var programStream = await HttpClient.GetStreamAsync(ProgramFile);
+                Output = "";
+                _zMachine2.RunFile(programStream, false);
+            }
+            catch (Exception e)
+            {
+                Output = e.Message;
+            }
             StateHasChanged();
         }
 
