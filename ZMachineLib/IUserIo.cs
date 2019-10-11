@@ -15,7 +15,7 @@ namespace ZMachineLib
 
 	public interface IUserIo
 	{
-		void Print(string s);
+		void Print(string text);
 		string Read(int max, IZMemory memory);
 		char ReadChar();
 		void SetCursor(ushort line, ushort column, ushort window);

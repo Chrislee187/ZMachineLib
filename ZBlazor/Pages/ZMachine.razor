@@ -1,0 +1,26 @@
+﻿@inherits ZBlazor.Pages.ZMachineModel
+
+
+<link href="css/zmachine.css" rel="stylesheet" />
+<div class="zm-container">
+    <div class="zm-status">
+        <span id="name">&nbsp;@ProgramName</span>
+        <span id="room">@CurrentRoom</span>
+        <span id="score">Score: @Score Turns: @Turns</span>
+    </div>
+    <div class="zm-output-container">
+        <textarea @ref="MachineOutputElement" class="zm-output">@Output</textarea>
+    </div>
+    <div class="zm-input">
+        <label>&gt;&nbsp;</label>
+        <span>
+            <input @ref="MachineInputElement" type="text"
+                    class="zm-user-input"
+                    @bind="Value"
+                    @onkeypress="e => OnKeypress(e)" 
+                    @onkeydown="e => OnKeydown(e)" 
+                   />
+        </span>
+    </div>
+</div>
+

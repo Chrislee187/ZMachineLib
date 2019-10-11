@@ -1,27 +1,8 @@
 ﻿@page "/zork1"
-@inherits ZBlazor.Pages.Zork1Model
 
 
-<link href="css/zmachine.css" rel="stylesheet" />
-<div class="zm-container">
-    <div class="zm-status">
-        <span id="name">@ProgramName</span>
-        <span id="room">@CurrentRoom</span>
-        <span id="score">Score: @Score Turns: @Turns</span>
-    </div>
-    <div @ref="ZmOutputElement"
-         class="zm-output">
-        <span>@Output</span>
-        <div @ref="ZmOutputAnchor"></div>
-    </div>
-    <div class="zm-input">
-        <label>&gt;&nbsp;</label>
-        <span>
-            <input @ref="ZmUserInputElement" type="text"
-                   class="zm-user-input"
-                   @bind="Value"
-                   @onkeypress="e => OnKeyUp(e)" />
-        </span>
-    </div>
+<ZMachine 
+          ProgramName="Zork I"
 
-</div>
+          ProgramFile="https://raw.githubusercontent.com/historicalsource/zork1/master/COMPILED/zork1.z3"
+          />

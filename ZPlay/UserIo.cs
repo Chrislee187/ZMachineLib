@@ -27,15 +27,15 @@ namespace ZPlay
             _defaultBack = ConsoleColor.Black; //Console.BackgroundColor;
 		}
 
-		public void Print(string s)
+		public void Print(string text)
 		{
-			for(var i = 0; i < s.Length; i++)
+			for(var i = 0; i < text.Length; i++)
 			{
-				if(s[i] == ' ')
+				if(text[i] == ' ')
 				{
-					var next = s.IndexOf(' ', i+1);
+					var next = text.IndexOf(' ', i+1);
 					if(next == -1)
-						next = s.Length;
+						next = text.Length;
 					if(next >= 0)
 					{
 						if(Console.CursorLeft + (next - i) >= Console.WindowWidth)
@@ -48,11 +48,11 @@ namespace ZPlay
 					}
 				}
 
-				if(i < s.Length && s[i] == Environment.NewLine[0])
+				if(i < text.Length && text[i] == Environment.NewLine[0])
 					Console.MoveBufferArea(0, 0, Console.WindowWidth, _lines, 0, 1);
 
-				if(i < s.Length)
-					Console.Write(s[i]);
+				if(i < text.Length)
+					Console.Write(text[i]);
 			}
 		}
 
@@ -62,8 +62,9 @@ namespace ZPlay
 
 #if SIMPLE_IO
             var s = Console.ReadLine();
+
             Console.MoveBufferArea(0, 0, Console.WindowWidth, _lines, 0, 1);
-            var substring = s?.Substring(0, Math.Min(s.Length, max));
+            var substring = s?[..Math.Min(s.Length, max)]; 
 
             return substring;
 #else

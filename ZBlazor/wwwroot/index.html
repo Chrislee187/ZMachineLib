@@ -12,22 +12,6 @@
     <app>Loading...</app>
 
 <script src="_framework/blazor.webassembly.js"></script>
-<script>
-    window.interopElement = {
-        focus: function(element) {
-            element.focus();
-        },
-        scrollToBottom: function(element) {
-            element.scrollTop = element.scrollHeight;
-        },
-        ensureVisible: function(element) {
-            element.ensureVisible();
-        },
-        click: function(element) {
-            element.click();
-        }
-    }
-
-</script>
+<script src="scripts/interop.js"></script>
 </body>
 </html>
