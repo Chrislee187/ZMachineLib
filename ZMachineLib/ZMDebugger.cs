@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 using ZMachineLib.Content;
 
@@ -9,6 +10,7 @@ namespace ZMachineLib
         private string PROMPT = ">";
         public (bool isDebug, string output) HandleDebugCommand(IZMemory memory, string commandLine)
         {
+            if(memory == null) Console.WriteLine("MEMORY NULL");
             var args = commandLine.Split(' ');
             var cmd = args.First();
             

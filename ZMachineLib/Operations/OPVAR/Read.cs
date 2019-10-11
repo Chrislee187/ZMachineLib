@@ -44,6 +44,8 @@ namespace ZMachineLib.Operations.OPVAR
 
         public bool ReadContinue(string input)
         {
+            if(_debugger == null) throw new Exception("NULLNULL");
+
             var (isDebugCommand, debugOutput) = _debugger.HandleDebugCommand(Memory, input);
 
             if (isDebugCommand)

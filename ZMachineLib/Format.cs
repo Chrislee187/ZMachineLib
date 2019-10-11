@@ -93,7 +93,7 @@ namespace ZMachineLib
                 binary += (flag & attributes) == flag ? "1" : "0";
             }
 
-            return $"{string.Join(',', attrs)} ({attributes.ToBinary()})";
+            return $"{string.Join(",", attrs.Select(a => a.ToString()))} ({attributes.ToBinary()})";
         }
 
         public static string ToBinary(this ulong value)

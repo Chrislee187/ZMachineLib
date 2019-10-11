@@ -1,0 +1,61 @@
+﻿.zm-container {
+    background-color: black;
+}
+.zm-status {
+    height: 2em;
+    border: 2px;
+    color: lightblue;
+    text-align: center;
+    display: table;
+}
+.zm-status * {
+    display: table-cell;
+}
+    .zm-status #name {
+        width: 20%;
+        text-align: left
+    }
+    .zm-status #room {
+        width: 50%;
+        text-align: center;
+    }
+    .zm-status #score {
+        width: 100%;
+        text-align: right;
+    }
+.zm-output {
+
+    white-space: pre-wrap;
+    color: white;
+    height: 400px;
+    overflow-y: auto;
+    line-height: 1.2;
+    /* vertical-align: bottom; */
+}
+
+.zm-input {
+    border: 2px;
+    border-color: yellow;
+
+    display: table;
+}
+    .zm-input label {
+        display: table-cell;
+        color: yellow;
+    }
+    .zm-input span {
+        display: table-cell;
+        width: 100%
+    }
+
+#zm-output-anchor {
+    height: 1px;
+}
+
+.zm-user-input {
+    width: 100%;
+    border: 2px;
+    background-color: black;
+    color: yellow;
+    display: inline;
+}

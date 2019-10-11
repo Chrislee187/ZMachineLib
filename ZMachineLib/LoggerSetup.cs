@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using ZMachineLib.Managers;
 
 namespace ZMachineLib
@@ -85,7 +86,7 @@ namespace ZMachineLib
 
     public static class OpLogging
     {
-        private static readonly ILogger<Operations.Operations> Logger = LoggerSetup.Create<Operations.Operations>();
+        private static readonly ILogger<Operations.Operations> Logger = NullLogger<Operations.Operations>.Instance; // LoggerSetup.Create<Operations.Operations>();
 
         public static void Op2WithStore(string opName, ushort arg1, ushort arg2, int result, byte variable)
         {
