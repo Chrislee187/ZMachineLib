@@ -95,9 +95,16 @@ namespace ZBlazor.Pages
                 Value = string.Empty;
                 
                 StateHasChanged();
-
-                _zMachine2.ContinueTillNextRead(cmd);
-                StateHasChanged();
+                try
+                {
+                    _zMachine2.ContinueTillNextRead(cmd);
+                    StateHasChanged();
+                }
+                catch (Exception e)
+                {
+                    Output += $"\nError: {e.Message}\n{e.StackTrace}";
+//                    throw;
+                }
             }
         }
 
