@@ -21,8 +21,15 @@ namespace ZMachineLib.Content
 
             String = DecodeZsciiChars(chars, abbreviations);
         }
+        public ZsciiString(Span<byte> data, int zsciiWordsToUse, ZAbbreviations abbreviations)
+        {
+            var chars = GetZsciiChars(data, zsciiWordsToUse);
 
-        private List<byte> GetZsciiChars(Span<byte> data)
+            BytesUsed = (ushort)(chars.Count / 3 * 2);
+
+            String = DecodeZsciiChars(chars, abbreviations);
+        }
+        private List<byte> GetZsciiChars(Span<byte> data, int zsciiWordsToUse = int.MinValue)
         {
             var chars = new List<byte>();
             var ptr = 0;
@@ -33,7 +40,8 @@ namespace ZMachineLib.Content
                 chars.AddRange(GetZCharsFromWord(word));
                 ptr += 2;
             }
-            while ((word & LastZChars) != LastZChars);
+            while ((word & LastZChars) != LastZChars 
+                   && (ptr / 2 ) != zsciiWordsToUse );
 
             return chars;
         }
@@ -95,21 +103,21 @@ namespace ZMachineLib.Content
         /// <param name="word"></param>
         /// <param name="charIdx"></param>
         /// <returns></returns>
-        private byte CharMask(ushort word, ZCharIdxMask charIdx) 
-            => (byte)(word >> ((int)charIdx) * 5 & 0x1f);
+        private byte CharMask(ushort word, ZCharShift charIdx) 
+            => (byte)(word >> (ushort)charIdx & 0x1f);
 
-        private enum ZCharIdxMask
+        private enum ZCharShift : ushort
         {
-            Char1 = 2, Char2 = 1, Char3 = 0
+            Char1 = 10, Char2 = 5, Char3 = 0
         }
 
         private IEnumerable<byte> GetZCharsFromWord(ushort word)
         {
             var chars = new List<byte>
             {
-                CharMask(word, ZCharIdxMask.Char1),
-                CharMask(word, ZCharIdxMask.Char2),
-                CharMask(word, ZCharIdxMask.Char3)
+                CharMask(word, ZCharShift.Char1),
+                CharMask(word, ZCharShift.Char2),
+                CharMask(word, ZCharShift.Char3)
             };
             return chars;
         }
