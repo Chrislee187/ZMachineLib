@@ -13,15 +13,7 @@ namespace ZMachineLib.Content
 
         public ushort BytesUsed { get; }
 
-        public ZsciiString(Span<byte> data, ZAbbreviations abbreviations)
-        {
-            var chars = GetZsciiChars(data);
-
-            BytesUsed = (ushort)(chars.Count / 3 * 2);
-
-            String = DecodeZsciiChars(chars, abbreviations);
-        }
-        public ZsciiString(Span<byte> data, int zsciiWordsToUse, ZAbbreviations abbreviations)
+        public ZsciiString(Span<byte> data, ZAbbreviations abbreviations, int zsciiWordsToUse = int.MaxValue)
         {
             var chars = GetZsciiChars(data, zsciiWordsToUse);
 

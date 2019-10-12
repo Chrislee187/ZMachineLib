@@ -1,3 +1,4 @@
+using System;
 using ZMachineLib;
 using ZMachineLib.Content;
 
@@ -23,6 +24,8 @@ namespace ZBlazor.Pages
 //                _model.Output = _model.Output[..^Prompt.Length]; // Blazor wasm is still in preview and doesn't target .NET Standard 2.1 yet
                 _model.Output = _model.Output.Substring(0,_model.Output.Length - Prompt.Length);
             }
+
+            Console.WriteLine(text);
         }
 
         public string Read(int max, IZMemory memory)

@@ -29,7 +29,7 @@ namespace ZMachineLib.Content
             Words = new string[numEntries];
             for (var i = 0; i < numEntries; i++)
             {
-                var zStr = new ZsciiString(bytes.AsSpan(ptr), 2,abbreviations);
+                var zStr = new ZsciiString(bytes.AsSpan(ptr),abbreviations, 2);
 
                 ptr += EntryLength;
                 Words[i] = zStr.String;

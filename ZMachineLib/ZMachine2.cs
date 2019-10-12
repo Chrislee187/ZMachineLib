@@ -129,7 +129,7 @@ namespace ZMachineLib
 
         private void InitialiseMachine(byte[] memory)
         {
-            _logger.InfoMessage("Initialising ZMachine");
+            Console.WriteLine("Initialising ZMachine");
             _restartState = (byte[]) memory.Clone();
             _zMemory = new ZMemory(memory, () => InitialiseMachine(_restartState));
             _zOperations = new ZOperations(_io, _fileIo, _zMemory);
