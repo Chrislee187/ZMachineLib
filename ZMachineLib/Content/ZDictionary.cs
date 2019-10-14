@@ -18,7 +18,7 @@ namespace ZMachineLib.Content
             InputCodes = bytes.AsSpan(addr, numOfInputCodes ).ToArray();
             addr += numOfInputCodes;
 
-            var zsciiStringArray = new ZsciiStringArray(bytes.AsSpan(addr), abbreviations);
+            var zsciiStringArray = new ZsciiStringArray(bytes.AsSpan(addr), abbreviations, header);
             Words = zsciiStringArray.Words;
             EntryLength = zsciiStringArray.EntryLength;
             WordStart = (ushort) (addr + zsciiStringArray.WordStart);

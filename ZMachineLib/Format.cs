@@ -78,6 +78,7 @@ namespace ZMachineLib
             return sb.ToString();
         }
 
+
         public static string Attributes(ulong attributes)
         {
             var attrs = new List<int>();
@@ -85,12 +86,13 @@ namespace ZMachineLib
             for (int i = 0; i < 32; i++)
             {
                 ulong flag = 0x80000000 >> i;
-                if ((flag & attributes) == flag)
+                var test = (flag & attributes) == flag;
+                if (test)
                 {
                     attrs.Add(i);
                 }
 
-                binary += (flag & attributes) == flag ? "1" : "0";
+                binary += test ? "1" : "0";
             }
 
             return $"{string.Join(",", attrs.Select(a => a.ToString()))} ({attributes.ToBinary()})";
@@ -168,7 +170,7 @@ namespace ZMachineLib
 
             if (showAttrs)
             {
-                sb.Append($" Attributes: {Attributes(zObj.Attributes)}");
+                sb.Append($" Value: {Attributes(zObj.Attributes.Value)}");
             }
 
             sb.AppendLine();

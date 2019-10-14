@@ -257,3 +257,5 @@ paket-files/
 *.dump
 *.cmdlog
 /dump.txt
+*.infodump
+*.zdump

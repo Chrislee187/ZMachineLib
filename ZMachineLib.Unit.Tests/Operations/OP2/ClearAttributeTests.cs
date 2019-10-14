@@ -28,13 +28,13 @@ namespace ZMachineLib.Unit.Tests.Operations.OP2
                 .Build();
             
             var zObj = new Mock<IZMachineObject>();
-
+            var zAttributes = new Mock<IZAttributes>();
+            zObj.Setup(z => z.Attributes).Returns(zAttributes.Object);
             Mockery.SetNextObject(zObj.Object);
 
             Operation.Execute(args);
-            
-            zObj.Verify(o => o.ClearAttribute(
-                It.Is<ushort>(v => v == attribute)));
+
+            zAttributes.Verify(o => o.ClearAttribute((byte) It.Is<byte>(v => v == attribute)));
 
         }
     }

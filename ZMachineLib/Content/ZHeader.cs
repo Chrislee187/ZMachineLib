@@ -6,6 +6,7 @@ using ZMachineLib.Extensions;
 
 namespace ZMachineLib.Content
 {
+    
     [StructLayout(LayoutKind.Explicit)]
     public struct ZHeader
     {
@@ -27,6 +28,22 @@ namespace ZMachineLib.Content
         [FieldOffset(0x1c)] private readonly ushort ChecksumOfFileRaw;
         [FieldOffset(0x1e)] private readonly byte InterpreterNumber;
         [FieldOffset(0x1f)] private readonly byte InterpreterNumberVersion;
+        [FieldOffset(0x20)] private readonly byte ScreenHeight; // in Lines - 255 means infinite
+        [FieldOffset(0x21)] private readonly byte ScreenWidth; // in Chars
+        [FieldOffset(0x22)] private readonly ushort ScreenHeightInUnits; 
+        [FieldOffset(0x24)] private readonly ushort ScreenWidthInUnits; 
+        [FieldOffset(0x26)] private readonly byte FontWidthInUnits; // Width of '0'
+        [FieldOffset(0x27)] private readonly byte FontHeightInUnits; // Note these are flipped in V6
+        [FieldOffset(0x28)] private readonly ushort RoutinesOffset; // divided by 8
+        [FieldOffset(0x2a)] private readonly ushort StaticStringsOffset; // divided by 8
+        [FieldOffset(0x2c)] private readonly byte DefaultBackgroundColor;
+        [FieldOffset(0x2d)] private readonly byte DefaultForegroundColor;
+        [FieldOffset(0x2e)] private readonly ushort TerminatingCharactersTableAddress;
+        [FieldOffset(0x30)] private readonly ushort WidthOfPixelsSentToOurputStream3;
+        [FieldOffset(0x32)] private readonly byte SpecVersion;
+        [FieldOffset(0x33)] private readonly byte SpecRevision;
+        [FieldOffset(0x34)] private readonly ushort AlphabetTableAddress;
+        [FieldOffset(0x36)] private readonly ushort HeaderExtensionTableAddress;
 
 
         public ushort Flags1 => Flags1Raw.SwapBytes();

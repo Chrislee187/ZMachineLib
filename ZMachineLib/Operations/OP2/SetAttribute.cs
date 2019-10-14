@@ -18,7 +18,7 @@ namespace ZMachineLib.Operations.OP2
             if (obj == 0)
                 return;
 
-            Memory.ObjectTree[obj].SetAttribute(attr);
+            Memory.ObjectTree[obj].Attributes.SetAttribute((byte) attr);
         }
     }
 }

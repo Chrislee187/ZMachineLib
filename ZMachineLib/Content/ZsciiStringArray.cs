@@ -15,7 +15,7 @@ namespace ZMachineLib.Content
         public ushort WordStart { get; }
 
         public string[] Words { get; }
-        public ZsciiStringArray(Span<byte> data, ZAbbreviations abbreviations)
+        public ZsciiStringArray(Span<byte> data, ZAbbreviations abbreviations, ZHeader header)
         {
             var bytes = data.ToArray();
 
@@ -29,7 +29,9 @@ namespace ZMachineLib.Content
             Words = new string[numEntries];
             for (var i = 0; i < numEntries; i++)
             {
-                var zStr = new ZsciiString(bytes.AsSpan(ptr),abbreviations, 2);
+                var stringData = bytes.AsSpan(ptr);
+                var zStr = new ZsciiString(stringData,abbreviations, header.Version <= 3 
+                    ? 2 : 3);
 
                 ptr += EntryLength;
                 Words[i] = zStr.String;

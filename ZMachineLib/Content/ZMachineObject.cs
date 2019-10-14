@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Security.Cryptography;
 using ZMachineLib.Extensions;
 using ZMachineLib.Managers;
 
@@ -14,11 +15,8 @@ namespace ZMachineLib.Content
         public ushort Address { get; }
         public string Name { get; private set; }
 
-        public uint Attributes 
-        {
-            get => _manager.AsSpan(Address, 4).GetUInt();
-            private set => _manager.SetUInt(Address, value);
-        }
+        public IZAttributes Attributes { get; }
+
         public IDictionary<int, ZProperty> Properties { get; set; }
 
         public byte BytesRead { get; private set; }
@@ -61,7 +59,7 @@ namespace ZMachineLib.Content
 
             ObjectNumber = objNumber;
             Address = address;
-
+            Attributes = new ZAttributes(manager, address, header);
             HydrateObject();
         }
 
@@ -84,7 +82,7 @@ namespace ZMachineLib.Content
         {
             var ptr = Address;
 
-            ptr += sizeof(uint); // skip Attributes
+            ptr += sizeof(uint); // skip Value
             ptr += 3; // skip parent/child/sibling
 
             PropertiesAddress = _manager.GetUShort(ptr);
@@ -143,53 +141,10 @@ namespace ZMachineLib.Content
             set => _manager?.Set((ushort) (Address + Offsets.Child), (byte)value);
         }
 
-        private readonly Func<ushort, uint> _flagsProviderV3 = attr
-            => 0x80000000 >> attr;
-
-        public bool TestAttribute(ushort attr) 
-            => (_flagsProviderV3(attr) & Attributes) == _flagsProviderV3(attr);
-
-        public void ClearAttribute(ushort attr)
-        {
-            var flagMask = _flagsProviderV3(attr);
-
-            if (_header.Version <= 3)
-            {
-                Attributes = Attributes & ~flagMask;
-            }
-            else
-            {
-                // TODO: _manager NOT tested in this section
-                Attributes = Attributes & ~flagMask;
-                var val = Attributes >> 16;
-                _manager.SetUInt(Address, val);
-                var value = (ushort)Attributes;
-                _manager.Set((ushort)(Address + 4), value);
-            }
-        }
-
-        public void SetAttribute(ushort attr)
-        {
-            var flagMask = _flagsProviderV3(attr);
-
-            if (_header.Version <= 3)
-            {
-                Attributes |= flagMask;
-            }
-            else
-            {
-                // TODO: _manager NOT tested in this section
-                Attributes |= flagMask;
-                _manager.SetUInt(Address, Attributes >> 16);
-                _manager.Set((ushort)(Address + 4), (ushort)Attributes);
-
-            }
-        }
-
         #region Equals overrides
         public bool Equals(ZMachineObject other)
         {
-            return Attributes == other.Attributes
+            return Attributes.Value == other.Attributes.Value
                    && string.Equals(Name, other.Name)
                    && Address == other.Address
                    && ObjectNumber == other.ObjectNumber
@@ -212,7 +167,7 @@ namespace ZMachineLib.Content
         {
             unchecked
             {
-                var hashCode = Attributes.GetHashCode();
+                var hashCode = Attributes.Value.GetHashCode();
                 hashCode = (hashCode * 397) ^ (Name != null ? Name.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ Address.GetHashCode();
                 hashCode = (hashCode * 397) ^ ObjectNumber.GetHashCode();

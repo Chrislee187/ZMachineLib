@@ -9,6 +9,7 @@ namespace ZMachineLib.Content
     public class ZObjectTree : IZObjectTree
     {
         private readonly Dictionary<ushort, IZMachineObject> _dict;
+        private ZHeader _header;
 
         // ReSharper disable once UnusedAutoPropertyAccessor.Local
         private Dictionary<int, byte[]> DefaultProperties { get; set; }
@@ -17,6 +18,7 @@ namespace ZMachineLib.Content
             IMemoryManager manager,
             ZAbbreviations abbreviations)
         {
+            _header = header;
             var objectTableData = manager.AsSpan(header.ObjectTable);// memory.AsSpan(header.ObjectTable);
 
             var (defaultProps, ptr) = GetDefaultProps(objectTableData);
@@ -62,15 +64,15 @@ namespace ZMachineLib.Content
         {
             // Section 12.2 - Default Property Table
             // NOTE: Default properties values are fixed at 2 bytes (words)
-            const int propCountV3 = 31;
+            var propCount = (ushort) (_header.Version <= 3 ? 31 : 63);
             var defaultProps = new Dictionary<int, byte[]>();
 
-            for (int i = 0; i < propCountV3; i++)
+            for (int i = 0; i < propCount; i++)
             {
                 defaultProps.Add(i + 1, data.Slice(i * 2, 2).ToArray());
             }
 
-            return (defaultProps, propCountV3 * 2);
+            return (defaultProps, (ushort)(propCount * 2));
         }
         
         #region IReadOnlyDictionary<>

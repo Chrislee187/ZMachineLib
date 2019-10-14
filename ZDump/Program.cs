@@ -44,9 +44,9 @@ namespace ZDump
 
         private static bool CheckStoryVersion(byte[] bytes)
         {
-            if (bytes[0] > 3)
+            if (bytes[0] > 5)
             {
-                Console.Error.WriteLine(" >V3 Story files not currently supported");
+                Console.Error.WriteLine(" >V5 Story files not currently supported");
                 Environment.ExitCode = -1;
                 return true;
             }

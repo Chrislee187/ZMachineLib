@@ -2,7 +2,7 @@
   "profiles": {
     "ZDump": {
       "commandName": "Project",
-      "commandLineArgs": "\"\\\\nas\\NAS\\Vault\\Infocom Files\\zFiles\\enchanter.z3\""
+      "commandLineArgs": "\"\\\\nas\\nas\\Vault\\Infocom Files\\zFiles\\zork1.z3\" \"\\\\nas\\nas\\Vault\\Infocom Files\\zFiles\\bureaucracy.z4\""
     }
   }
 }

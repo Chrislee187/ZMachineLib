@@ -25,7 +25,7 @@ namespace ZMachineLib.Content
         {
             _restart = restart;
             Header = new ZHeader(data.AsSpan(0, 31));
-            if (Header.Version > 3) throw new NotSupportedException("ZMachine > V3 not currently supported");
+            if (Header.Version > 5) throw new NotSupportedException("ZMachine > V5 not currently supported");
 
             // Version specific offsets
             Offsets = VersionedOffsets.For(Header.Version);
@@ -52,13 +52,13 @@ namespace ZMachineLib.Content
         /// <returns></returns>
         public byte GetCurrentByteAndInc() => Manager.Get(Stack.GetPCAndInc());
 
-        public static uint UnpackedAddress(ushort address, byte version = 3)
+        public static uint UnpackedAddress(ushort packedAddress, byte version = 3)
         {
             return version <= 3 
-                ? (uint) (address * 2) 
+                ? (uint) (packedAddress * 2) 
                 : version <= 5 
-                    ? (uint) (address * 4) 
-                    : 0;
+                    ? (uint) (packedAddress * 4) 
+                    : throw new NotImplementedException(">V5 support not currently implemented");
         }
 
         public bool Running { get; set; }

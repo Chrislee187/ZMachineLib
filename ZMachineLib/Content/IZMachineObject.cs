@@ -4,10 +4,7 @@ namespace ZMachineLib.Content
 {
     public interface IZMachineObject
     {
-        bool TestAttribute(ushort attr);
-        void ClearAttribute(ushort attr);
-        void SetAttribute(ushort attr);
-        uint Attributes { get; }
+        IZAttributes Attributes { get; }
         string Name { get; }
         ushort Address { get; }
         ushort Sibling { get; set; }

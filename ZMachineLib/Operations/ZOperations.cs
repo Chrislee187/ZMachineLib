@@ -28,8 +28,6 @@ namespace ZMachineLib.Operations
                 _extendedOperations.TryGetValue((KindExtOpCodes)(opCode & 0x1f), out operation);
                 // TODO: hack to make this a VAR opcode...
                 opCode |= 0xc0;
-
-                Log.Write($" Ext ");
             }
             else
             {

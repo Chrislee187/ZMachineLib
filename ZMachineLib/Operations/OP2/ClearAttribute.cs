@@ -16,8 +16,7 @@ namespace ZMachineLib.Operations.OP2
 
         public override void Execute(List<ushort> args)
         {
-            Memory.ObjectTree.GetOrDefault(args[0])
-                .ClearAttribute(args[1]);
+            Memory.ObjectTree.GetOrDefault(args[0]).Attributes.ClearAttribute((byte) args[1]);
         }
     }
 }
