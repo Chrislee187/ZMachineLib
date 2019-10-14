@@ -30,7 +30,7 @@ namespace ZMachineLib.Content
             for (var i = 0; i < numEntries; i++)
             {
                 var stringData = bytes.AsSpan(ptr);
-                var zStr = new ZsciiString(stringData,abbreviations, header.Version <= 3 
+                var zStr = new ZsciiString(stringData,abbreviations, header, header.Version <= 3 
                     ? 2 : 3);
 
                 ptr += EntryLength;

@@ -9,6 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZMachineLib.Feature.Tests",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{66A90C02-2756-434C-9EA3-10021CA8513C}"
 	ProjectSection(SolutionItems) = preProject
+		dump_all_zfiles.ps1 = dump_all_zfiles.ps1
 		README.md = README.md
 		run_ztests.ps1 = run_ztests.ps1
 	EndProjectSection

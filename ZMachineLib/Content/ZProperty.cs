@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using ZMachineLib.Extensions;
 using ZMachineLib.Managers;
 
 namespace ZMachineLib.Content
@@ -7,7 +8,7 @@ namespace ZMachineLib.Content
     public class ZProperty
     {
         private readonly IMemoryManager _manager;
-
+        private readonly ZHeader _header;
 
 
         public byte Number { get; }
@@ -55,13 +56,27 @@ namespace ZMachineLib.Content
         /// </summary>
         /// <param name="manager"></param>
         /// <param name="propAddress"></param>
-        public ZProperty(IMemoryManager manager, ushort propAddress)
+        /// <param name="header"></param>
+        public ZProperty(IMemoryManager manager, ushort propAddress, ZHeader header)
         {
             _manager = manager;
+            _header = header;
             PropertyAddress = propAddress;
+            var ptr = propAddress;
             var propByte = _manager.Get(PropertyAddress);
-            Number = GetPropertyNumber(propByte);
-            Length = GetPropertySize(propByte);
+
+            if (_header.Version > 3 && (byte) (propByte & Bits.Bit7) == Bits.Bit7)
+            {
+                Number = GetPropertyNumber(propByte);
+                Length = (ushort) (_manager.Get(++ptr) & 0x3F);
+
+                if (Length == 0) Length = 64;
+            }
+            else
+            {
+                Number = GetPropertyNumber(propByte);
+                Length = GetPropertySize(propByte);
+            }
 
             DataAddress = (ushort) (PropertyAddress + 1);
             _data = _manager.AsSpan(DataAddress, 2);
@@ -72,6 +87,6 @@ namespace ZMachineLib.Content
             => (ushort)((propInfo >> (byte)PropertyMasks.PropertySizeShiftV3) + 1);
 
         public static byte GetPropertyNumber(byte propInfo)
-            => (byte)(propInfo & (byte)PropertyMasks.PropertyNumberMaskV3);
+            => (byte)(propInfo & (byte)PropertyMasks.PropertyNumberMask);
     }
 }

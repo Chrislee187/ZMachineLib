@@ -82,8 +82,8 @@ namespace ZMachineLib.Content
         {
             var ptr = Address;
 
-            ptr += sizeof(uint); // skip Value
-            ptr += 3; // skip parent/child/sibling
+            ptr += (ushort)(_header.Version <= 3 ? 4 : 6); // skip attributes
+            ptr += (ushort)(_header.Version <= 3 ? 3 : 6); // skip parent/child/sibling
 
             PropertiesAddress = _manager.GetUShort(ptr);
             ptr += sizeof(ushort);
@@ -95,7 +95,7 @@ namespace ZMachineLib.Content
 
             if (len != 0)
             {
-                var zStr = new ZsciiString(_manager.AsSpan(ptr), _abbreviations);
+                var zStr = new ZsciiString(_manager.AsSpan(ptr), _abbreviations, _header);
                 Name = zStr.String;
                 ptr += zStr.BytesUsed;
             }
@@ -105,40 +105,63 @@ namespace ZMachineLib.Content
 
         private Dictionary<int, ZProperty> GetProperties(ushort ptr)
         {
+            byte AddProperty(ushort propPtr, Dictionary<int, ZProperty> zProperties)
+            {
+                // Section 12.4.1 - V3 Specific
+                var prop = new ZProperty(_manager, propPtr, _header);
+                zProperties.Add(prop.Number, prop);
+                ptr += prop.BytesUsed;
+                return _manager.Get(ptr);
+            }
+
             Debug.Assert(ptr > 0, "GetProperties ptr not > 0");
 
             var properties = new Dictionary<int, ZProperty>();
-            var b = _manager.Get(ptr);
-            while (b != 0)
+            var sizeByte = _manager.Get(ptr);
+            while (sizeByte != 0)
             {
-                // Section 12.4.1 - V3 Specific
-                var prop = new ZProperty(_manager, ptr);
-                properties.Add(prop.Number, prop);
-                ptr += prop.BytesUsed;
-                b = _manager.Get(ptr);
+                sizeByte = AddProperty(ptr, properties);
             }
 
             return properties;
         }
 
         public ushort PropertiesAddress { get; set; }
-
+        
+        private ushort ParentOffset => (ushort)(Address + Offsets.Parent);
+        private ushort SiblingOffset => (ushort)(Address + Offsets.Sibling);
+        private ushort ChildOffset => (ushort)(Address + Offsets.Child);
+        
         public virtual ushort Parent
         {
-            get => _manager?.Get((ushort) (Address + Offsets.Parent)) ?? 0;
-            set => _manager?.Set((ushort) (Address + Offsets.Parent), (byte)value);
+            get => GetRelatedObjectNumber(ParentOffset);
+            set => SetRelatedObjectNumber(ParentOffset, value);
         }
 
         public virtual ushort Sibling
         {
-            get => _manager?.Get((ushort) (Address + Offsets.Sibling)) ?? 0;
-            set => _manager?.Set((ushort) (Address + Offsets.Sibling), (byte)value);
+            get => GetRelatedObjectNumber(SiblingOffset);
+            set => SetRelatedObjectNumber(SiblingOffset, value);
         }
 
         public virtual ushort Child
         {
-            get => _manager?.Get((ushort) (Address + Offsets.Child)) ?? 0;
-            set => _manager?.Set((ushort) (Address + Offsets.Child), (byte)value);
+            get => GetRelatedObjectNumber(ChildOffset);
+            set => SetRelatedObjectNumber(ChildOffset, value);
+        }
+
+        private ushort GetRelatedObjectNumber(ushort offset) => _header.Version <= 3 ? _manager?.Get(offset) ?? 0 : _manager?.GetUShort(offset) ?? 0;
+
+        private void SetRelatedObjectNumber(ushort offset, ushort value)
+        {
+            if (_header.Version <= 3)
+            {
+                _manager?.Set(offset, (byte)value);
+            }
+            else
+            {
+                _manager.SetUInt(offset, value);
+            }
         }
 
         #region Equals overrides

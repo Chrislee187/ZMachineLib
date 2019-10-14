@@ -24,7 +24,7 @@ namespace ZMachineLib.Content
                 anyMoreEntries = addr != 0;
                 if (anyMoreEntries)
                 {
-                    var zStr = ZsciiString.Get(dynamicMemory.AsSpan((ushort)(addr * 2)), null);
+                    var zStr = ZsciiString.Get(dynamicMemory.AsSpan((ushort)(addr * 2)), null, header);
                     abbrevs.Add(zStr);
                     abbrIdx++;
                 }

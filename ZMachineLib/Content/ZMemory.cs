@@ -119,12 +119,12 @@ namespace ZMachineLib.Content
 
         public string GetZscii(ushort address)
         {
-            return ZsciiString.Get(Manager.AsSpan(address), Abbreviations);
+            return ZsciiString.Get(Manager.AsSpan(address), Abbreviations, Header);
         }
 
         public string GetZscii(byte[] data)
         {
-            return ZsciiString.Get(data, Abbreviations);
+            return ZsciiString.Get(data, Abbreviations, Header);
         }
         private void OperationReturnBoolean(bool val)
         {

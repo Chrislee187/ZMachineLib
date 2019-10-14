@@ -16,7 +16,7 @@ namespace ZMachineLib.Operations.OP0
             var array = Memory.Manager
                 .AsSpan((int)Memory.Stack.GetPC());
 
-            var zStr = new ZsciiString(array, Memory.Abbreviations);
+            var zStr = new ZsciiString(array, Memory.Abbreviations, Memory.Header);
 
             Memory.Stack.IncrementPC(zStr.BytesUsed);
 

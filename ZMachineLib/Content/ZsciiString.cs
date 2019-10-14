@@ -1,26 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 using ZMachineLib.Extensions;
+using ZMachineLib.Operations.OP2;
 
 namespace ZMachineLib.Content
 {
-    public class ZsciiString
+    public partial class ZsciiString
     {
-        public static string Get(Span<byte> data, ZAbbreviations abbreviations) => new ZsciiString(data, abbreviations).String;
+        private ZHeader _header;
+        public static string Get(Span<byte> data, ZAbbreviations abbreviations, ZHeader header) => new ZsciiString(data, abbreviations, header).String;
 
         public string String { get; }
 
         public ushort BytesUsed { get; }
+        private readonly V2CharProvider _v2CharProvider;
 
-        public ZsciiString(Span<byte> data, ZAbbreviations abbreviations, int zsciiWordsToUse = int.MaxValue)
+        public ZsciiString(Span<byte> data, ZAbbreviations abbreviations, ZHeader header,
+            int zsciiWordsToUse = int.MaxValue)
         {
+            _v2CharProvider = new V2CharProvider(abbreviations);
+            _header = header;
             var chars = GetZsciiChars(data, zsciiWordsToUse);
 
             BytesUsed = (ushort)(chars.Count / 3 * 2);
 
             String = DecodeZsciiChars(chars, abbreviations);
         }
+
         private List<byte> GetZsciiChars(Span<byte> data, int zsciiWordsToUse = int.MinValue)
         {
             var chars = new List<byte>();
@@ -39,49 +49,126 @@ namespace ZMachineLib.Content
         }
 
         private bool IsAbbreviation(byte c)
-            => c >= 0x01 && c <= 0x03;
-
-        private string DecodeZsciiChars(List<byte> chars, ZAbbreviations abbreviations)
         {
+            return c >= 0x01 && c <= 0x03;
+//            return _header.Version < 3 
+//                ? c == 1 
+//                : c >= 0x01 && c <= 0x03;
+        }
+
+
+        private string DecodeZsciiChars(List<byte> zChars, ZAbbreviations abbreviations)
+        {
+            _v2CharProvider.ResetTable();
+
             var sb = new StringBuilder();
-            for (var i = 0; i < chars.Count; i++)
+
+            for (var i = 0; i < zChars.Count; i++)
             {
-                if (chars[i] == 0x00)
+                if (zChars[i] == 0x00)
                     sb.Append(" ");
-                else if (abbreviations != null && IsAbbreviation(chars[i]))
+                else if (_header.Version <= 2)
                 {
-                    var offset = (ushort)(32 * (chars[i] - 1) + chars[++i]);
-                    sb.Append(abbreviations.Abbreviations[offset]);
+                    var zChar = zChars[i];
+
+                    if (zChar == 1)
+                    {
+                        var abbrIdx = zChars[++i];
+                        sb.Append(abbreviations.Abbreviations[abbrIdx]);
+                    }
+                    else
+                    {
+                        var (zCharTable, inc) = _v2CharProvider.GetCharTable(zChar);
+                        i += inc;
+
+                        if (i < zChars.Count)
+                        {
+                            zChar = zChars[i];
+                            if (zChar == 6 && zCharTable[0] == ' ') 
+                            {
+                                ushort x = (ushort)(zChars[i + 1] << 5 | zChars[i + 2]);
+                                sb.Append(Convert.ToChar(x));
+                                i += 2;
+                            }
+
+                            if (zChar > 5)
+                            {
+                                var realChar = zCharTable[zChar - 6];
+                                sb.Append(realChar);
+                            }
+                        }
+                    }
                 }
-                else if (chars[i] == 0x04)
-                    sb.Append(Convert.ToChar((chars[++i] - 6) + 'A'));
-                else if (chars[i] == 0x05)
+//                else if (zChars[i] >= 0x01 && zChars[i] <= 0x03)
+//                {
+//                    ushort offset = (ushort)(32 * (chars[i] - 1) + chars[++i]);
+//                    ushort lookup = (ushort)(_abbreviationsTable + (offset * 2));
+//                    ushort wordAddr = GetWord(lookup);
+//                    List<byte> abbrev = GetZsciiChars((ushort)(wordAddr * 2));
+//                    sb.Append(DecodeZsciiChars(abbrev));
+//                }
+                //                else if (zChars[i] == 0x02 && _header.Version <= 2)
+                //                {
+                //                    sb.Append(Convert.ToChar((zChars[++i] - 6) + 'A'));
+                //                }
+                //                else if (zChars[i] == 0x03 && _header.Version <= 2)
+                //                {
+                //                    if (zChars.Count < i + 1)
+                //                    {
+                //                        sb.Append(Table[zChars[++i] - 6]);
+                //                    }
+                //                }
+                //                else if (zChars[i] == 0x04 && _header.Version <= 2)
+                //                {
+                //                    sb.Append(Convert.ToChar((zChars[++i] - 6) + 'A'));
+                //                }
+                //                else if (zChars[i] == 0x05 && _header.Version <= 2)
+                //                {
+                //                    if (zChars.Count < i + 1)
+                //                    {
+                //                        sb.Append(Table[zChars[++i] - 6]);
+                //                    }
+                //                }
+                else if (abbreviations != null && IsAbbreviation(zChars[i]))
                 {
-                    if (i == chars.Count - 1 || chars[i + 1] == 0x05)
+                    if (i + 1 <= zChars.Count - 1)
+                    {
+                        var offset = (ushort)(32 * (zChars[i] - 1) + zChars[++i]);
+                        sb.Append(abbreviations.Abbreviations[offset]);
+                    }
+                }
+
+                else if (zChars[i] == 0x04)
+                    sb.Append(Convert.ToChar((zChars[++i] - 6) + 'A'));
+                else if (zChars[i] == 0x05)
+                {
+                    if (i == zChars.Count - 1 || zChars[i + 1] == 0x05)
                         break;
 
-                    if (chars[i + 1] == 0x06)
+                    if (zChars[i + 1] == 0x06)
                     {
-                        var x = (ushort)(chars[i + 2] << 5 | chars[i + 3]);
+                        var x = (ushort)(zChars[i + 2] << 5 | zChars[i + 3]);
                         i += 3;
                         sb.Append(Convert.ToChar(x));
                     }
-                    else if (chars[i + 1] == 0x07)
+                    else if (zChars[i + 1] == 0x07)
                     {
                         sb.AppendLine("");
                         i++;
                     }
                     else
                     {
-                        sb.Append(Table[chars[++i] - 6]);
+                        sb.Append(Table[zChars[++i] - 6]);
                     }
 
                 }
                 else
-                    sb.Append(Convert.ToChar((chars[i] - 6) + 'a'));
+                    sb.Append(Convert.ToChar((zChars[i] - 6) + 'a'));
             }
+
             return sb.ToString();
         }
+
 
         /// <summary>
         /// <see cref="http://inform-fiction.org/zmachine/standards/z1point1/sect03.html"/> S3.2
