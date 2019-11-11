@@ -27,6 +27,8 @@ A zmachine program's execution is a simple loop getting the next byte code instr
 
 Whilst this is fine in todays generally multi-core environments, we still all use a single-core, single-thread machine when we use browser scripting. This means to "run" the zmachine in a browser it would run until the zprogram exits (i.e. when the user 'quits' a game) effectively locking the browser UI thread.
 
+To cater for this ZMachine can also be run in a sequential mode where by it will run until the next input from the user is required at which the machine continued with user input passed in.
+
 
 
 ## ZmachineLib
